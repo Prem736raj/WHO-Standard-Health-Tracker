@@ -249,6 +249,9 @@ This file is the source of truth for the sequential product-development phases. 
   policy tests. Full `test`, `lintRelease`, `assembleDebug`, `assembleRelease`
   and `bundleRelease` verification is green; connected instrumentation is
   blocked by the absence of a connected device.
+- **Follow-up:** Widget blood-pressure accessibility text now uses the shared
+  calculator categorization, with regression coverage for mixed and severe
+  readings.
 - **Known limitations:** Connected Room migration, Health Connect provider,
   TalkBack/large-font, OEM scheduling, signed artifact and Play/Firebase
   console checks still require owner/device access. The oldest distributed Room

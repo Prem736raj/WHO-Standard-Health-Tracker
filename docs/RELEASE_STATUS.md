@@ -66,6 +66,9 @@ These cannot be proven by a Windows unit/build run:
   error bubble and reuses the persisted user turn rather than inserting a
   duplicate user message. Public privacy/terms/support links now use the
   canonical `Health-Metrics-Tracker` Pages/repository URL.
+- **Follow-up:** Widget blood-pressure badges now delegate to the same
+  categorization precedence as the calculator, so isolated severe systolic or
+  diastolic readings cannot be mislabeled as Stage 1.
 - **Tests:** Added WHR landmark/reference-boundary, blood-pressure severe-edge,
   heart-rate guidance and AI conversation-turn policy tests. The full local
   Gradle gate is green; connected instrumentation built its APK but stopped

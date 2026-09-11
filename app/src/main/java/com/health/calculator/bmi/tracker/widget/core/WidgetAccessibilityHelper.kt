@@ -1,7 +1,8 @@
 package com.health.calculator.bmi.tracker.widget.core
 
 import android.widget.RemoteViews
-import com.health.calculator.bmi.tracker.data.model.BloodPressureReference
+import com.health.calculator.bmi.tracker.data.model.BloodPressureCalculator
+import com.health.calculator.bmi.tracker.data.model.BpCategory
 
 /**
  * Ensures all widgets meet accessibility standards:
@@ -152,13 +153,19 @@ object WidgetAccessibilityHelper {
         else         -> "✗ Obese"
     }
 
-    fun bpCategoryBadge(systolic: Int, diastolic: Int): String = when {
-        systolic == 0                        -> "– Not tracked"
-        systolic < 120 && diastolic < 80     -> "✓ Normal"
-        systolic < 130 && diastolic < 80     -> "⚠ Elevated"
-        systolic < 140 || diastolic < 90     -> "⚠ Stage 1"
-        systolic >= BloodPressureReference.SEVERE_SYSTOLIC_MMHG ||
-            diastolic >= BloodPressureReference.SEVERE_DIASTOLIC_MMHG -> "✗ Markedly elevated"
-        else                                 -> "✗ Stage 2"
+    fun bpCategoryBadge(systolic: Int, diastolic: Int): String {
+        if (systolic <= 0) return "– Not tracked"
+
+        return when (BloodPressureCalculator.categorize(systolic, diastolic)) {
+            BpCategory.HYPOTENSION -> "↓ Low"
+            BpCategory.OPTIMAL -> "✓ Normal"
+            BpCategory.NORMAL -> "⚠ Elevated"
+            BpCategory.HIGH_NORMAL -> "⚠ Stage 1"
+            BpCategory.ISOLATED_SYSTOLIC,
+            BpCategory.GRADE_1_HYPERTENSION,
+            BpCategory.GRADE_2_HYPERTENSION -> "✗ Stage 2"
+            BpCategory.GRADE_3_HYPERTENSION,
+            BpCategory.HYPERTENSIVE_CRISIS -> "✗ Markedly elevated"
+        }
     }
 }
