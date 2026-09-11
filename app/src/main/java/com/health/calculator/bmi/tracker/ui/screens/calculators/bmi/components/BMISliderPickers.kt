@@ -29,6 +29,8 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -77,7 +79,7 @@ fun RealTimeBMIPreview(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = stringResource(R.string.txt_live_bmi_preview),
                         style = MaterialTheme.typography.labelSmall,
@@ -110,6 +112,7 @@ fun RealTimeBMIPreview(
                 Surface(
                     shape = RoundedCornerShape(20.dp),
                     color = categoryColor.value.copy(alpha = 0.15f),
+                    modifier = Modifier.padding(start = 8.dp),
                     border = androidx.compose.foundation.BorderStroke(
                         1.dp,
                         categoryColor.value.copy(alpha = 0.3f)
@@ -120,7 +123,8 @@ fun RealTimeBMIPreview(
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = categoryColor.value,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
                     )
                 }
             }
@@ -140,16 +144,7 @@ private fun MiniCategoryBar(
     bmi: Float,
     modifier: Modifier = Modifier
 ) {
-    val segments = listOf(
-        16f to Color(0xFFB71C1C),
-        18.5f to Color(0xFFFF9800),
-        25f to Color(0xFF4CAF50),
-        30f to Color(0xFFFFC107),
-        35f to Color(0xFFFF9800),
-        40f to Color(0xFFD32F2F),
-        50f to Color(0xFFB71C1C)
-    )
-    val markerPosition = ((bmi - 12f) / (50f - 12f)).coerceIn(0f, 1f)
+    val markerPosition = bmiMarkerFraction(bmi)
 
     val animatedPosition by animateFloatAsState(
         targetValue = markerPosition,
@@ -162,6 +157,13 @@ private fun MiniCategoryBar(
         modifier = modifier
             .fillMaxWidth()
             .height(16.dp)
+            .semantics {
+                contentDescription = if (bmi.isFinite() && bmi > 0f) {
+                    "BMI category scale. Current BMI ${String.format("%.1f", bmi)}: ${getBMICategoryLabel(bmi)}."
+                } else {
+                    "BMI category scale. No value available."
+                }
+            }
     ) {
         val barHeight = 6.dp.toPx()
         val barY = size.height / 2 - barHeight / 2
@@ -196,10 +198,11 @@ private fun MiniCategoryBar(
         }
 
         // Marker
-        val markerX = animatedPosition * size.width
+        val markerRadius = 7.dp.toPx()
+        val markerX = (animatedPosition * size.width).coerceIn(markerRadius, size.width - markerRadius)
         drawCircle(
             color = Color.White,
-            radius = 7.dp.toPx(),
+            radius = markerRadius,
             center = Offset(markerX, size.height / 2)
         )
         drawCircle(
@@ -270,7 +273,11 @@ fun WeightSliderPicker(
                 onWeightChange(kg)
             },
             valueRange = range,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .semantics {
+                    contentDescription = "Weight. ${String.format("%.1f", displayValue)} $unit. Adjust with the slider."
+                },
             colors = SliderDefaults.colors(
                 thumbColor = MaterialTheme.colorScheme.primary,
                 activeTrackColor = MaterialTheme.colorScheme.primary,
@@ -309,11 +316,11 @@ fun WeightSliderPicker(
                     onWeightChange(kg)
                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                 },
-                modifier = Modifier.size(36.dp)
+                modifier = Modifier.size(48.dp)
             ) {
                 Icon(
                     Icons.Filled.Remove,
-                    contentDescription = "Decrease",
+                    contentDescription = "Decrease weight",
                     modifier = Modifier.size(18.dp)
                 )
             }
@@ -336,11 +343,11 @@ fun WeightSliderPicker(
                     onWeightChange(kg)
                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                 },
-                modifier = Modifier.size(36.dp)
+                modifier = Modifier.size(48.dp)
             ) {
                 Icon(
                     Icons.Filled.Add,
-                    contentDescription = "Increase",
+                    contentDescription = "Increase weight",
                     modifier = Modifier.size(18.dp)
                 )
             }
@@ -420,7 +427,11 @@ fun HeightSliderPicker(
                         onHeightChange(newVal)
                     },
                     valueRange = rangeCm,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .semantics {
+                            contentDescription = "Height. $displayText. Adjust with the slider."
+                        },
                     colors = SliderDefaults.colors(
                         thumbColor = MaterialTheme.colorScheme.primary,
                         activeTrackColor = MaterialTheme.colorScheme.primary,
@@ -469,11 +480,11 @@ fun HeightSliderPicker(
                     onHeightChange(newCm)
                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                 },
-                modifier = Modifier.size(36.dp)
+                modifier = Modifier.size(48.dp)
             ) {
                 Icon(
                     Icons.Filled.Remove,
-                    contentDescription = "Decrease",
+                    contentDescription = "Decrease height",
                     modifier = Modifier.size(18.dp)
                 )
             }
@@ -494,11 +505,11 @@ fun HeightSliderPicker(
                     onHeightChange(newCm)
                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                 },
-                modifier = Modifier.size(36.dp)
+                modifier = Modifier.size(48.dp)
             ) {
                 Icon(
                     Icons.Filled.Add,
-                    contentDescription = "Increase",
+                    contentDescription = "Increase height",
                     modifier = Modifier.size(18.dp)
                 )
             }
@@ -629,6 +640,14 @@ internal fun getBMICategoryColor(bmi: Float): Color {
         else -> Color(0xFFB71C1C)
     }
 }
+
+/**
+ * Maps the preview's BMI range to a stable 0..1 marker position. Keeping this
+ * calculation separate makes the edge behaviour explicit and testable, while
+ * the canvas additionally keeps the marker radius inside the visible track.
+ */
+internal fun bmiMarkerFraction(bmi: Float): Float =
+    if (!bmi.isFinite()) 0f else ((bmi - 12f) / (50f - 12f)).coerceIn(0f, 1f)
 
 internal fun getBMICategoryLabel(bmi: Float): String {
     return when {

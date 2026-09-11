@@ -252,6 +252,13 @@ This file is the source of truth for the sequential product-development phases. 
 - **Follow-up:** Widget blood-pressure accessibility text now uses the shared
   calculator categorization, with regression coverage for mixed and severe
   readings.
+- **Follow-up:** BMI slider preview now keeps its numeric and category surfaces
+  separated at compact and large font sizes, keeps edge markers inside the
+  visible scale, exposes a spoken category summary, and uses 48 dp labelled
+  fine-tune controls. `BmiSliderPolicyTest` covers marker clamping, including
+  non-finite input.
+- **Verification:** The complete `test`, `lintRelease`, `assembleDebug`,
+  `assembleRelease` and `bundleRelease` gate is green after this follow-up.
 - **Known limitations:** Connected Room migration, Health Connect provider,
   TalkBack/large-font, OEM scheduling, signed artifact and Play/Firebase
   console checks still require owner/device access. The oldest distributed Room
