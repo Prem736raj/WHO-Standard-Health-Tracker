@@ -828,9 +828,10 @@ private fun ZoneDetailCard(
 
                     ZoneDetailRow(
                         icon = "⏱️",
-                        title = "Recommended Duration",
-                        content = zone.recommendedDuration
+                        title = "Planning note",
+                        content = "Use the talk test and your own exercise plan; duration depends on training status, health history and goals."
                     )
+
                 }
             }
 

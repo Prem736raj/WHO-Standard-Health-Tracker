@@ -7,6 +7,7 @@ import com.health.calculator.bmi.tracker.R
 import com.health.calculator.bmi.tracker.data.ai.AiCoachException
 import com.health.calculator.bmi.tracker.data.ai.AiCoachFailureReason
 import com.health.calculator.bmi.tracker.data.ai.AiPromptPolicy
+import com.health.calculator.bmi.tracker.data.ai.AiPromptValidation
 import com.health.calculator.bmi.tracker.data.ai.AiResponseSafety
 import com.health.calculator.bmi.tracker.data.ai.AiWellnessContextBuilder
 import com.health.calculator.bmi.tracker.data.ai.GeminiHelper
@@ -143,6 +144,11 @@ class AiCoachViewModel @Inject constructor(
 
     /** Returns false when the message was rejected before any network call. */
     fun sendMessage(text: String): Boolean {
+        if (!isDisclosureAccepted.value) {
+            _notice.value = "Review the AI Wellness Assistant disclosure before sending a message."
+            _canRetry.value = false
+            return false
+        }
         val validation = AiPromptPolicy.validate(
             rawText = text,
             nowMillis = System.currentTimeMillis(),
@@ -155,31 +161,74 @@ class AiCoachViewModel @Inject constructor(
             return false
         }
 
+        startRequest(validation, persistUserMessage = true)
+        return true
+    }
+
+    /**
+     * Retries the last failed request without creating a second user turn.
+     * The original user message is already in Room and in the rendered list;
+     * only the transient assistant error/loading bubble is replaced.
+     */
+    fun retryLastMessage(): Boolean {
+        if (!isDisclosureAccepted.value) {
+            _notice.value = "Review the AI Wellness Assistant disclosure before retrying."
+            _canRetry.value = false
+            return false
+        }
+        val prompt = lastFailedPrompt ?: return false
+        val validation = AiPromptPolicy.validate(
+            rawText = prompt,
+            nowMillis = System.currentTimeMillis(),
+            // A retry is an explicit recovery action and must not be blocked
+            // by the normal send throttle that protects accidental double taps.
+            lastRequestMillis = null,
+            isBusy = _isTyping.value
+        )
+        if (!validation.accepted) {
+            _notice.value = validation.message
+            return false
+        }
+        startRequest(validation, persistUserMessage = false)
+        return true
+    }
+
+    private fun startRequest(
+        validation: AiPromptValidation,
+        persistUserMessage: Boolean
+    ) {
         lastRequestMillis = System.currentTimeMillis()
         _notice.value = null
         _canRetry.value = false
-        lastFailedPrompt = null
+        if (persistUserMessage) {
+            lastFailedPrompt = null
+        }
         // Reserve the in-flight slot before waiting for the initial Room load;
         // two taps during startup must not create concurrent model requests.
         _isTyping.value = true
 
         activeRequest = viewModelScope.launch {
             messagesLoaded.await()
-            val priorMessages = _messages.value
-                .filter { !it.isLoading && it.text.isNotBlank() }
-                .takeLast(6)
-                .map { it.isUser to it.text }
-            val userMessage = ChatMessage(
-                text = validation.normalizedText,
-                isUser = true
+            val priorMessages = AiConversationTurnPolicy.priorDialogue(
+                messages = _messages.value,
+                currentPrompt = validation.normalizedText
             )
-            chatDao.insertMessage(ChatMessageEntity(text = validation.normalizedText, isUser = true))
-            
-            // Render the user's bubble immediately, then keep the streaming
-            // assistant bubble in UI state while the final response is written
-            // to Room. This keeps the conversation honest during slow streams
-            // and avoids relying on a later database emission for the bubble.
-            _messages.value = _messages.value + userMessage + ChatMessage("", isUser = false, isLoading = true)
+
+            if (persistUserMessage) {
+                val userMessage = ChatMessage(
+                    text = validation.normalizedText,
+                    isUser = true
+                )
+                chatDao.insertMessage(ChatMessageEntity(text = validation.normalizedText, isUser = true))
+
+                // Render the user's bubble immediately, then keep the streaming
+                // assistant bubble in UI state while the final response is written
+                // to Room. This keeps the conversation honest during slow streams
+                // and avoids relying on a later database emission for the bubble.
+                _messages.value = _messages.value + userMessage + ChatMessage("", isUser = false, isLoading = true)
+            } else {
+                _messages.value = AiConversationTurnPolicy.prepareRetry(_messages.value)
+            }
 
             try {
                 if (!geminiHelper.isNetworkAvailable()) {
@@ -233,10 +282,7 @@ class AiCoachViewModel @Inject constructor(
                 _isTyping.value = false
             }
         }
-        return true
     }
-
-    fun retryLastMessage(): Boolean = lastFailedPrompt?.let { sendMessage(it) } ?: false
 
     private suspend fun buildOptionalContext(): String {
         val zone = ZoneId.systemDefault()

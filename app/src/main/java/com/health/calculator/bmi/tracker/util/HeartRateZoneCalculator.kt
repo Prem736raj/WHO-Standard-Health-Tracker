@@ -16,8 +16,7 @@ data class HeartRateZone(
     val purpose: String,
     val effortDescription: String,
     val talkTest: String,
-    val icon: String,
-    val recommendedDuration: String
+    val icon: String
 )
 
 data class HeartRateZoneResult(
@@ -105,8 +104,7 @@ object HeartRateZoneCalculator {
             mhr = mhr,
             restingHR = restingHR,
             hrr = hrr,
-            useKarvonen = useKarvonen,
-            fitnessLevel = fitnessLevel
+            useKarvonen = useKarvonen
         )
 
         return HeartRateZoneResult(
@@ -125,8 +123,7 @@ object HeartRateZoneCalculator {
         mhr: Int,
         restingHR: Int?,
         hrr: Int?,
-        useKarvonen: Boolean,
-        fitnessLevel: FitnessLevel
+        useKarvonen: Boolean
     ): List<HeartRateZone> {
         // Zone percentage ranges
         data class ZoneRange(val low: Int, val high: Int)
@@ -162,12 +159,7 @@ object HeartRateZoneCalculator {
                 purpose = "Warm-up, cool-down, active recovery. Improves overall health and helps recovery from harder workouts.",
                 effortDescription = "Very easy effort. Feels comfortable and sustainable for a very long time.",
                 talkTest = "Can hold a full conversation easily",
-                icon = "🚶",
-                recommendedDuration = when (fitnessLevel) {
-                    FitnessLevel.BEGINNER -> "20-40 min"
-                    FitnessLevel.INTERMEDIATE -> "15-30 min"
-                    FitnessLevel.ADVANCED -> "10-20 min"
-                }
+                icon = "🚶"
             ),
             HeartRateZone(
                 zoneNumber = 2,
@@ -181,12 +173,7 @@ object HeartRateZoneCalculator {
                 purpose = "Comfortable aerobic work that can support an endurance base.",
                 effortDescription = "Easy, comfortable pace. You should feel like you can keep going for a long time.",
                 talkTest = "Can talk easily in full sentences",
-                icon = "🔥",
-                recommendedDuration = when (fitnessLevel) {
-                    FitnessLevel.BEGINNER -> "30-60 min"
-                    FitnessLevel.INTERMEDIATE -> "45-90 min"
-                    FitnessLevel.ADVANCED -> "60-120 min"
-                }
+                icon = "🔥"
             ),
             HeartRateZone(
                 zoneNumber = 3,
@@ -200,12 +187,7 @@ object HeartRateZoneCalculator {
                 purpose = "Improves cardiovascular fitness and endurance. Strengthens the heart and increases aerobic capacity.",
                 effortDescription = "Moderate effort. You're working but still feel in control.",
                 talkTest = "Can speak in short sentences with some effort",
-                icon = "💪",
-                recommendedDuration = when (fitnessLevel) {
-                    FitnessLevel.BEGINNER -> "15-30 min"
-                    FitnessLevel.INTERMEDIATE -> "30-60 min"
-                    FitnessLevel.ADVANCED -> "45-90 min"
-                }
+                icon = "💪"
             ),
             HeartRateZone(
                 zoneNumber = 4,
@@ -219,12 +201,7 @@ object HeartRateZoneCalculator {
                 purpose = "Increases speed, power, and anaerobic threshold. Improves performance and calorie burn.",
                 effortDescription = "Hard effort. Breathing is heavy and muscles feel fatigued.",
                 talkTest = "Can only speak a few words at a time",
-                icon = "⚡",
-                recommendedDuration = when (fitnessLevel) {
-                    FitnessLevel.BEGINNER -> "5-10 min intervals"
-                    FitnessLevel.INTERMEDIATE -> "10-20 min intervals"
-                    FitnessLevel.ADVANCED -> "20-40 min intervals"
-                }
+                icon = "⚡"
             ),
             HeartRateZone(
                 zoneNumber = 5,
@@ -238,12 +215,7 @@ object HeartRateZoneCalculator {
                 purpose = "Short, demanding intervals for experienced exercisers; intensity varies by person.",
                 effortDescription = "Very hard effort. Use the talk test and recover as needed; this is not a medical target.",
                 talkTest = "Cannot speak at all",
-                icon = "🚀",
-                recommendedDuration = when (fitnessLevel) {
-                    FitnessLevel.BEGINNER -> "30 sec - 2 min bursts"
-                    FitnessLevel.INTERMEDIATE -> "1-3 min intervals"
-                    FitnessLevel.ADVANCED -> "2-5 min intervals"
-                }
+                icon = "🚀"
             )
         )
     }

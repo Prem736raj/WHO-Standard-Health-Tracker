@@ -1,6 +1,7 @@
 package com.health.calculator.bmi.tracker.widget.core
 
 import android.widget.RemoteViews
+import com.health.calculator.bmi.tracker.data.model.BloodPressureReference
 
 /**
  * Ensures all widgets meet accessibility standards:
@@ -156,7 +157,8 @@ object WidgetAccessibilityHelper {
         systolic < 120 && diastolic < 80     -> "✓ Normal"
         systolic < 130 && diastolic < 80     -> "⚠ Elevated"
         systolic < 140 || diastolic < 90     -> "⚠ Stage 1"
-        systolic >= 180 || diastolic >= 120  -> "✗ Crisis"
+        systolic >= BloodPressureReference.SEVERE_SYSTOLIC_MMHG ||
+            diastolic >= BloodPressureReference.SEVERE_DIASTOLIC_MMHG -> "✗ Markedly elevated"
         else                                 -> "✗ Stage 2"
     }
 }

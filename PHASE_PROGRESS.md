@@ -233,3 +233,26 @@ This file is the source of truth for the sequential product-development phases. 
 - **Tests:** Re-ran reference searches to confirm the deleted artifacts and action are not referenced; the live large-widget resource remains referenced by its provider and updater.
 - **Known limitations:** The `notification`/`notifications` package split and legacy Hilt/service-locator overlap remain incremental architecture work, not release blockers. Migration history below version 13, macrobenchmark, device accessibility, Health Connect provider behavior, and Play/Firebase owner gates remain open in `docs/RELEASE_STATUS.md`.
 - **Next phase:** Maintain the documented runtime/publishing gates and avoid enabling multi-profile until profile-scoped migrations are designed and tested.
+
+## Post-audit medical, AI and release-trust hardening
+
+- **Status:** Complete locally for code-fixable items; device/provider and
+  publishing gates remain open.
+- **Major changes:** Standardized WHR measurement landmarks and one sourced
+  population reference point, removed the unsupported synthesized waist band,
+  unified the inclusive severe blood-pressure boundary, removed fixed
+  heart-rate duration prescriptions, deleted an unused BSA placeholder reader,
+  and corrected AI retry so it cannot duplicate the persisted user turn. Added
+  data-safety and device/accessibility QA documentation and corrected stale
+  public links to the canonical repository and Pages site.
+- **Tests:** Added WHR, blood-pressure, heart-rate guidance and AI conversation
+  policy tests. Full `test`, `lintRelease`, `assembleDebug`, `assembleRelease`
+  and `bundleRelease` verification is green; connected instrumentation is
+  blocked by the absence of a connected device.
+- **Known limitations:** Connected Room migration, Health Connect provider,
+  TalkBack/large-font, OEM scheduling, signed artifact and Play/Firebase
+  console checks still require owner/device access. The oldest distributed Room
+  version is not evidenced by this repository.
+- **Next phase:** Complete full local gates, commit the verified hardening set,
+  push the canonical remote, and then execute the documented device/console
+  release checklist.

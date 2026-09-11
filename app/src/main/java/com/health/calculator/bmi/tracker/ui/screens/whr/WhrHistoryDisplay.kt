@@ -181,14 +181,14 @@ fun WhrHistoryEntryCard(
                 HistoryDetailItem(
                     label = "Waist Risk",
                     value = when (entry.waistRiskLevel) {
-                        WaistRiskLevel.NORMAL -> "Normal"
-                        WaistRiskLevel.INCREASED -> "Increased"
-                        WaistRiskLevel.SUBSTANTIALLY_INCREASED -> "High"
+                        WaistRiskLevel.NORMAL -> "Below reference"
+                        WaistRiskLevel.INCREASED,
+                        WaistRiskLevel.SUBSTANTIALLY_INCREASED -> "At or above reference"
                     },
                     icon = when (entry.waistRiskLevel) {
-                        WaistRiskLevel.NORMAL -> "✅"
-                        WaistRiskLevel.INCREASED -> "⚠️"
-                        WaistRiskLevel.SUBSTANTIALLY_INCREASED -> "🔴"
+                        WaistRiskLevel.NORMAL -> "•"
+                        WaistRiskLevel.INCREASED,
+                        WaistRiskLevel.SUBSTANTIALLY_INCREASED -> "•"
                     }
                 )
             }

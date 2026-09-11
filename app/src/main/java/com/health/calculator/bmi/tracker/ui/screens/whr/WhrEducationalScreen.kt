@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.health.calculator.bmi.tracker.data.model.WhrGuideData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -1002,10 +1003,10 @@ private fun MeasurementTechniqueSection() {
                 step = 3,
                 title = "Find Waist Landmark",
                 instructions = listOf(
-                    "Place hands on hips and find the top of your hip bones (iliac crest)",
-                    "The waist is measured at the narrowest point of your torso",
-                    "This is usually just above the belly button, at or slightly above the iliac crest",
-                    "If no narrowing is visible, measure at the navel level"
+                    "Find the lowest palpable rib and the top of your hip bone (iliac crest)",
+                    WhrGuideData.waistLandmark,
+                    "Keep the tape horizontal and snug without compressing the skin",
+                    "Take the reading after a normal exhale"
                 )
             )
 
@@ -1016,8 +1017,8 @@ private fun MeasurementTechniqueSection() {
                     "Wrap the tape around your waist at the identified point",
                     "Ensure the tape is snug but not compressing the skin",
                     "The tape must be level and parallel to the floor all the way around",
-                    "Breathe normally — take the reading after a gentle exhale",
-                    "Don't hold your breath or suck in your stomach"
+                    "Breathe normally and take the reading after a normal exhale",
+                    "Do not hold your breath or pull your stomach in"
                 )
             )
 
@@ -1025,7 +1026,7 @@ private fun MeasurementTechniqueSection() {
                 step = 5,
                 title = "Find Hip Landmark",
                 instructions = listOf(
-                    "The hip is measured at the widest point of the buttocks",
+                    WhrGuideData.hipLandmark,
                     "Stand sideways in front of a mirror to identify the widest point",
                     "This is typically at the level of the greater trochanter (top of the thigh bone)"
                 )
@@ -1259,7 +1260,7 @@ private fun DontItem(text: String) {
 @Composable
 private fun CommonMistakesList() {
     val mistakes = listOf(
-        Pair("Measuring at the wrong waist point", "The waist is NOT at your belt line. It's the narrowest point of your torso, usually above the belly button. Measuring at the belt line gives a larger reading."),
+        Pair("Measuring at the wrong waist point", "Use the same anatomical landmark each time: midway between the lowest palpable rib and the top of the hip bone (iliac crest)."),
         Pair("Uneven tape placement", "If the tape is higher in the back than the front (or vice versa), your reading will be inaccurate. Always check in a mirror or ask someone to help."),
         Pair("Pulling the tape too tight", "Compressing the skin gives a falsely low reading. The tape should touch the skin all around without indenting it."),
         Pair("Measuring after eating", "Meals can temporarily increase waist circumference by 2-4 cm. Always measure before eating."),

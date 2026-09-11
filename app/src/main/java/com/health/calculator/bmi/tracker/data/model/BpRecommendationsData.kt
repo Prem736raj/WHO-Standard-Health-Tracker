@@ -80,7 +80,7 @@ object BpRecommendationsProvider {
         }
 
         val doctorAdvice = when {
-            isSeverelyElevated -> "If a careful repeat is still at or above 180/120 mmHg, or you have concerning symptoms, seek urgent medical care or local emergency services."
+            isSeverelyElevated -> "If a careful repeat is still at or above ${BloodPressureReference.SEVERE_SYSTOLIC_MMHG}/${BloodPressureReference.SEVERE_DIASTOLIC_MMHG} mmHg, or you have concerning symptoms, seek urgent medical care or local emergency services."
             isAboveReference -> "Discuss a pattern of elevated readings with a qualified healthcare professional; do not infer a diagnosis from this screen."
             category == BpCategory.HYPOTENSION -> "Discuss repeated low readings or symptoms such as dizziness or fainting with a qualified healthcare professional."
             else -> null

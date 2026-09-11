@@ -50,7 +50,7 @@ object WhrShareUtils {
             appendLine()
             appendLine("🏥 Waist Circumference Risk")
             appendLine("   Status: ${result.waistRiskLevel.label}")
-            appendLine("   Threshold: ${if (result.gender == Gender.FEMALE) "80 cm (increased) / 88 cm (high)" else "94 cm (increased) / 102 cm (high)"}")
+            appendLine("   Population reference: ${String.format("%.0f", result.waistThresholdIncreased)} cm")
             appendLine()
             result.whtr?.let {
                 appendLine("📐 Waist-to-Height Ratio")

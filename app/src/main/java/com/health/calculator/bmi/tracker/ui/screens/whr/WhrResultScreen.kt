@@ -198,7 +198,6 @@ fun WhrResultScreen(
                 waistCm = result.waistCm,
                 riskLevel = result.waistRiskLevel,
                 thresholdIncreased = result.waistThresholdIncreased,
-                thresholdHigh = result.waistThresholdHigh,
                 gender = result.gender,
                 animationProgress = animationProgress.value
             )
@@ -678,14 +677,13 @@ private fun WaistCircumferenceRiskCard(
     waistCm: Float,
     riskLevel: WaistRiskLevel,
     thresholdIncreased: Float,
-    thresholdHigh: Float,
     gender: Gender,
     animationProgress: Float
 ) {
     val riskColor = when (riskLevel) {
-        WaistRiskLevel.NORMAL -> Color(0xFF4CAF50)
-        WaistRiskLevel.INCREASED -> Color(0xFFFFA726)
-        WaistRiskLevel.SUBSTANTIALLY_INCREASED -> Color(0xFFF44336)
+        WaistRiskLevel.NORMAL -> MaterialTheme.colorScheme.primary
+        WaistRiskLevel.INCREASED,
+        WaistRiskLevel.SUBSTANTIALLY_INCREASED -> MaterialTheme.colorScheme.tertiary
     }
 
     Card(
@@ -746,7 +744,6 @@ private fun WaistCircumferenceRiskCard(
             WaistRiskBar(
                 waistCm = waistCm,
                 thresholdIncreased = thresholdIncreased,
-                thresholdHigh = thresholdHigh,
                 riskColor = riskColor,
                 progress = animationProgress
             )
@@ -758,9 +755,9 @@ private fun WaistCircumferenceRiskCard(
             ) {
                 Column {
                     Text(
-                        stringResource(R.string.txt_normal),
+                        "Below reference",
                         style = MaterialTheme.typography.labelSmall,
-                        color = Color(0xFF4CAF50),
+                        color = MaterialTheme.colorScheme.primary,
                         fontSize = 10.sp
                     )
                     Text(
@@ -772,27 +769,13 @@ private fun WaistCircumferenceRiskCard(
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        stringResource(R.string.txt_increased),
+                        "At or above reference",
                         style = MaterialTheme.typography.labelSmall,
-                        color = Color(0xFFFFA726),
+                        color = MaterialTheme.colorScheme.tertiary,
                         fontSize = 10.sp
                     )
                     Text(
-                        ">${thresholdIncreased.toInt()} cm",
-                        style = MaterialTheme.typography.bodySmall,
-                        fontSize = 10.sp,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                    )
-                }
-                Column(horizontalAlignment = Alignment.End) {
-                    Text(
-                        stringResource(R.string.txt_high),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = Color(0xFFF44336),
-                        fontSize = 10.sp
-                    )
-                    Text(
-                        ">${thresholdHigh.toInt()} cm",
+                        "≥${thresholdIncreased.toInt()} cm",
                         style = MaterialTheme.typography.bodySmall,
                         fontSize = 10.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
@@ -801,7 +784,7 @@ private fun WaistCircumferenceRiskCard(
             }
 
             Text(
-                "Selected waist reference for ${if (gender == Gender.FEMALE) "females" else "males"}",
+                "Selected population waist reference for ${if (gender == Gender.FEMALE) "women" else "men"}; this is screening context, not a diagnosis.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
                 fontSize = 10.sp
@@ -814,12 +797,11 @@ private fun WaistCircumferenceRiskCard(
 private fun WaistRiskBar(
     waistCm: Float,
     thresholdIncreased: Float,
-    thresholdHigh: Float,
     riskColor: Color,
     progress: Float
 ) {
     val minVal = 50f
-    val maxVal = thresholdHigh + 30f
+    val maxVal = thresholdIncreased + 30f
 
     Box(
         modifier = Modifier
@@ -828,27 +810,20 @@ private fun WaistRiskBar(
             .clip(RoundedCornerShape(12.dp))
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
-            val normalFraction = (thresholdIncreased - minVal) / (maxVal - minVal)
-            val increasedFraction = (thresholdHigh - thresholdIncreased) / (maxVal - minVal)
-            val highFraction = 1f - normalFraction - increasedFraction
+            val normalFraction = ((thresholdIncreased - minVal) / (maxVal - minVal)).coerceIn(0.05f, 0.95f)
+            val referenceFraction = 1f - normalFraction
 
             Box(
                 modifier = Modifier
                     .weight(normalFraction)
                     .fillMaxHeight()
-                    .background(Color(0xFF4CAF50).copy(alpha = 0.3f))
+                    .background(MaterialTheme.colorScheme.primaryContainer)
             )
             Box(
                 modifier = Modifier
-                    .weight(increasedFraction)
+                    .weight(referenceFraction)
                     .fillMaxHeight()
-                    .background(Color(0xFFFFA726).copy(alpha = 0.3f))
-            )
-            Box(
-                modifier = Modifier
-                    .weight(highFraction)
-                    .fillMaxHeight()
-                    .background(Color(0xFFF44336).copy(alpha = 0.3f))
+                    .background(MaterialTheme.colorScheme.tertiaryContainer)
             )
         }
 

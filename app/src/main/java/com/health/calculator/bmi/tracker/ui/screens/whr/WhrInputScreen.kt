@@ -128,7 +128,7 @@ fun WhrInputScreen(
                 icon = Icons.Outlined.Straighten,
                 error = inputState.waistError,
                 placeholder = if (inputState.useMetric) "e.g., 80" else "e.g., 31.5",
-                helperText = "Measure at the narrowest point above the belly button",
+                helperText = WhrGuideData.waistLandmark,
                 onInfoClick = { viewModel.toggleWaistGuide() }
             )
 
@@ -153,7 +153,7 @@ fun WhrInputScreen(
                 icon = Icons.Outlined.Straighten,
                 error = inputState.hipError,
                 placeholder = if (inputState.useMetric) "e.g., 100" else "e.g., 39.5",
-                helperText = "Measure at the widest point of the buttocks",
+                helperText = WhrGuideData.hipLandmark,
                 onInfoClick = { viewModel.toggleHipGuide() }
             )
 
@@ -425,7 +425,7 @@ private fun MeasurementGuideVisual() {
                 MeasurementLegendItem(
                     color = MaterialTheme.colorScheme.primary,
                     label = "Waist",
-                    description = "Narrowest point"
+                    description = "Rib-to-hip midpoint"
                 )
                 MeasurementLegendItem(
                     color = MaterialTheme.colorScheme.secondary,
@@ -998,12 +998,12 @@ private fun HowToMeasureExpandable(
                     HowToStep(
                         number = 3,
                         title = "Measure your waist",
-                        description = "Find the narrowest point of your torso (usually above the belly button). Wrap the tape snugly around."
+                        description = "${WhrGuideData.waistLandmark} ${WhrGuideData.waistMethod}"
                     )
                     HowToStep(
                         number = 4,
                         title = "Measure your hips",
-                        description = "Find the widest part of your buttocks. Keep the tape parallel to the floor."
+                        description = WhrGuideData.hipLandmark
                     )
                     HowToStep(
                         number = 5,

@@ -13,8 +13,8 @@ data class WhrResult(
     val whtr: Float?,
     val whtrAtRisk: Boolean?,
     val waistRiskLevel: WaistRiskLevel,
+    /** Selected population action/reference point in centimetres. */
     val waistThresholdIncreased: Float,
-    val waistThresholdHigh: Float,
     val bodyShape: BodyShape,
     val healthRisks: List<HealthRiskItem>,
     val ethnicity: Ethnicity = Ethnicity.EUROPID,
@@ -42,7 +42,19 @@ enum class WaistRiskLevel(
 ) {
     NORMAL("Below reference", "Below the selected population waist reference", 0),
     INCREASED("At or above reference", "At or above the selected population waist reference", 1),
-    SUBSTANTIALLY_INCREASED("Higher reference band", "At or above the higher waist reference used for comparison", 2)
+
+    /**
+     * Kept only so older SharedPreferences JSON can still be read. New
+     * calculations never emit a third waist band; old values are rendered as
+     * the same sourced "At or above reference" state.
+     */
+    @Deprecated("Legacy persisted value; use INCREASED")
+    SUBSTANTIALLY_INCREASED("At or above reference", "Legacy saved value mapped to the selected population waist reference", 1)
+
+    ;
+
+    val isAtOrAboveReference: Boolean
+        get() = this != NORMAL
 }
 
 enum class BodyShape(
@@ -76,12 +88,7 @@ object WhrCalculator {
         val whtr = heightCm?.let { waistCm / it }
         val whtrAtRisk = whtr?.let { it >= 0.5f }
         val waistThresholdIncreased = if (gender == Gender.MALE) ethnicity.maleWaistCm else ethnicity.femaleWaistCm
-        val waistThresholdHigh = if (gender == Gender.MALE) {
-            if (ethnicity == Ethnicity.US_ATP) 102f else waistThresholdIncreased + 8f
-        } else {
-            if (ethnicity == Ethnicity.US_ATP) 88f else waistThresholdIncreased + 8f
-        }
-        val waistRisk = classifyWaistRisk(waistCm, waistThresholdIncreased, waistThresholdHigh)
+        val waistRisk = classifyWaistRisk(waistCm, waistThresholdIncreased)
         val bodyShape = determineBodyShape(waistCm, hipCm)
 
         return WhrResult(
@@ -96,7 +103,6 @@ object WhrCalculator {
             whtrAtRisk = whtrAtRisk,
             waistRiskLevel = waistRisk,
             waistThresholdIncreased = waistThresholdIncreased,
-            waistThresholdHigh = waistThresholdHigh,
             bodyShape = bodyShape,
             healthRisks = buildHealthRisks(whrCategory, waistRisk, whtrAtRisk),
             ethnicity = ethnicity
@@ -112,11 +118,8 @@ object WhrCalculator {
         }
     }
 
-    private fun classifyWaistRisk(waistCm: Float, increased: Float, high: Float): WaistRiskLevel = when {
-        waistCm >= high -> WaistRiskLevel.SUBSTANTIALLY_INCREASED
-        waistCm >= increased -> WaistRiskLevel.INCREASED
-        else -> WaistRiskLevel.NORMAL
-    }
+    private fun classifyWaistRisk(waistCm: Float, reference: Float): WaistRiskLevel =
+        if (waistCm >= reference) WaistRiskLevel.INCREASED else WaistRiskLevel.NORMAL
 
     private fun determineBodyShape(waistCm: Float, hipCm: Float): BodyShape {
         val ratio = waistCm / hipCm
@@ -136,7 +139,7 @@ object WhrCalculator {
             icon = "ℹ️",
             title = "Use as body-shape context",
             description = "Waist-to-hip ratio and waist circumference describe body proportions. They are population-level screening measures and cannot diagnose cardiovascular disease, diabetes, hypertension, or metabolic syndrome.",
-            severity = if (whrCategory == WhrCategory.HIGH_RISK || waistRisk == WaistRiskLevel.SUBSTANTIALLY_INCREASED) RiskSeverity.MODERATE else RiskSeverity.MILD
+            severity = if (whrCategory == WhrCategory.HIGH_RISK || waistRisk.isAtOrAboveReference) RiskSeverity.MODERATE else RiskSeverity.MILD
         ),
         HealthRiskItem(
             icon = "📏",

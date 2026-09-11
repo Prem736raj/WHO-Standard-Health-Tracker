@@ -1,6 +1,6 @@
 # Release status
 
-Updated: 2026-09-09
+Updated: 2026-09-11
 
 This file records evidence that can be reproduced from the repository. It does
 not replace device, Play Console, Firebase Console, signing, or closed-test
@@ -50,3 +50,30 @@ These cannot be proven by a Windows unit/build run:
 7. Complete Play Console/Firebase owner tasks: release signing, App Check
    production registration, privacy/data-safety declarations, closed testing,
    store listing, and crash/ANR monitoring.
+
+## Post-audit medical and AI trust hardening — 2026-09-11
+
+- **Status:** Code-fixable items complete locally; device/provider validation
+  remains open.
+- **Changes:** WHR now uses one documented rib-to-iliac-crest waist landmark and
+  one selected population reference point; the unsupported synthesized `+8 cm`
+  second threshold and three-band presentation were removed while legacy enum
+  data remains readable. Blood-pressure severe-reading constants are shared by
+  categorization, recommendations and widget accessibility copy at inclusive
+  `≥180 systolic or ≥120 diastolic`. Heart-rate zones no longer present fixed
+  duration prescriptions and instead provide talk-test/planning guidance. The
+  unused BSA placeholder reader was removed. AI retry now replaces the transient
+  error bubble and reuses the persisted user turn rather than inserting a
+  duplicate user message. Public privacy/terms/support links now use the
+  canonical `Health-Metrics-Tracker` Pages/repository URL.
+- **Tests:** Added WHR landmark/reference-boundary, blood-pressure severe-edge,
+  heart-rate guidance and AI conversation-turn policy tests. The full local
+  Gradle gate is green; connected instrumentation built its APK but stopped
+  before execution on 2026-09-11 with `No connected devices!`.
+- **Owner/runtime notes:** Repository history contains an early Room version 12
+  and checked-in migrations through version 16, but no tags, releases or
+  Firebase App Distribution evidence identify the oldest distributed schema.
+  Do not invent a pre-13 migration: the release owner must confirm distribution
+  history and provide fixtures if needed. Connected migration, Health Connect,
+  accessibility, signed-artifact and Play/Firebase checks remain listed in
+  `docs/DEVICE_QA_2026-09.md` and this file.

@@ -59,11 +59,6 @@ class BSATrackingRepository(@ApplicationContext private val context: Context) {
         }
     }
 
-    fun getRecordsSorted(): List<BSARecord> {
-        // Synchronous wrapper for ViewModel init or flow-based use
-        return emptyList() // Placeholder: Better to use Flow in real app, but following prompt logic
-    }
-
     suspend fun getStatistics(): BSAStatistics? {
         val records = getRecords().sortedBy { it.timestamp }
         if (records.isEmpty()) return null

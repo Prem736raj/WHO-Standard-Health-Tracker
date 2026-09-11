@@ -21,6 +21,17 @@ enum class BpTimeOfDay(val displayName: String) {
     NIGHT("Night")
 }
 
+/**
+ * One explicit severe-reading boundary used by categorization, guidance,
+ * exports and tests. The app treats a systolic or diastolic value at or above
+ * the boundary as a markedly elevated reading that should be repeated and
+ * escalated according to symptoms and professional advice.
+ */
+object BloodPressureReference {
+    const val SEVERE_SYSTOLIC_MMHG = 180
+    const val SEVERE_DIASTOLIC_MMHG = 120
+}
+
 enum class BpCategory(
     val displayName: String,
     val description: String,
@@ -79,9 +90,9 @@ enum class BpCategory(
     ),
     GRADE_3_HYPERTENSION(
         displayName = "Severely elevated",
-        description = "180+ systolic or 120+ diastolic",
+        description = "Systolic ≥ 180 or diastolic ≥ 120",
         systolicRange = "≥ 180",
-        diastolicRange = "≥ 110",
+        diastolicRange = "≥ 120",
         sortOrder = 7
     ),
     HYPERTENSIVE_CRISIS(
@@ -136,7 +147,9 @@ object BloodPressureCalculator {
     fun categorize(systolic: Int, diastolic: Int): BpCategory {
         // A severe value in either number needs a careful repeat and prompt
         // advice; do not wait for both numbers to cross the threshold.
-        if (systolic >= 180 || diastolic >= 120) {
+        if (systolic >= BloodPressureReference.SEVERE_SYSTOLIC_MMHG ||
+            diastolic >= BloodPressureReference.SEVERE_DIASTOLIC_MMHG
+        ) {
             return BpCategory.HYPERTENSIVE_CRISIS
         }
 
@@ -164,7 +177,7 @@ object BloodPressureCalculator {
 
     private fun categorizeSystolic(systolic: Int): BpCategory {
         return when {
-            systolic >= 180 -> BpCategory.GRADE_3_HYPERTENSION
+            systolic >= BloodPressureReference.SEVERE_SYSTOLIC_MMHG -> BpCategory.GRADE_3_HYPERTENSION
             systolic >= 140 -> BpCategory.GRADE_1_HYPERTENSION
             systolic in 130..139 -> BpCategory.HIGH_NORMAL
             systolic in 120..129 -> BpCategory.NORMAL
@@ -175,7 +188,7 @@ object BloodPressureCalculator {
 
     private fun categorizeDiastolic(diastolic: Int): BpCategory {
         return when {
-            diastolic >= 120 -> BpCategory.GRADE_3_HYPERTENSION
+            diastolic >= BloodPressureReference.SEVERE_DIASTOLIC_MMHG -> BpCategory.GRADE_3_HYPERTENSION
             diastolic >= 90 -> BpCategory.GRADE_1_HYPERTENSION
             diastolic in 80..89 -> BpCategory.HIGH_NORMAL
             diastolic >= 60 -> BpCategory.OPTIMAL
@@ -198,7 +211,8 @@ object BloodPressureCalculator {
     }
 
     fun isEmergencyReading(systolic: Int, diastolic: Int): Boolean {
-        return systolic >= 180 || diastolic >= 120
+        return systolic >= BloodPressureReference.SEVERE_SYSTOLIC_MMHG ||
+            diastolic >= BloodPressureReference.SEVERE_DIASTOLIC_MMHG
     }
 
     /**

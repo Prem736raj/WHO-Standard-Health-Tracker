@@ -15,31 +15,43 @@ data class WhrMeasurementGuide(
 )
 
 object WhrGuideData {
+    /**
+     * Use one anatomical landmark everywhere in the product. The WHO report
+     * describes the waist as the midpoint between the lowest palpable rib and
+     * the top of the iliac crest; other landmark conventions describe a
+     * different protocol and are therefore intentionally avoided.
+     */
+    const val waistLandmark =
+        "Measure midway between the lowest palpable rib and the top of the hip bone (iliac crest)."
+    const val waistMethod =
+        "After a normal exhale, keep the tape horizontal and snug without compressing the skin."
+    const val hipLandmark =
+        "Measure around the widest part of the buttocks, with the tape level."
+
     val waistGuide = WhrMeasurementGuide(
         title = "How to Measure Waist",
-        description = "Measure at the narrowest point, usually just above the belly button",
+        description = "$waistLandmark $waistMethod",
         steps = listOf(
-            "Stand up straight and breathe normally",
-            "Find the narrowest part of your torso (usually above the belly button)",
-            "Wrap the tape measure around your waist at this point",
-            "Keep the tape snug but not compressing the skin",
-            "Make sure the tape is level all around",
-            "Read the measurement after a normal exhale",
-            "Don't hold your breath or suck in your stomach"
+            "Stand upright with your feet together and your abdomen relaxed",
+            "Find the lowest palpable rib and the top of the hip bone (iliac crest)",
+            "Place the tape at the midpoint between those two landmarks",
+            "Keep the tape horizontal and snug without compressing the skin",
+            "Breathe normally and take the reading after a normal exhale",
+            "Repeat the measurement once or twice and use a consistent method"
         )
     )
 
     val hipGuide = WhrMeasurementGuide(
         title = "How to Measure Hips",
-        description = "Measure at the widest point of the buttocks",
+        description = hipLandmark,
         steps = listOf(
             "Stand with feet together",
-            "Find the widest part of your buttocks/hips",
-            "Wrap the tape measure around at this widest point",
+            "Find the widest part of the buttocks",
+            "Wrap the tape around at this widest point",
             "Keep the tape level and parallel to the floor",
-            "Make sure the tape is snug but not tight",
+            "Make sure the tape is snug without compressing the skin",
             "Read the measurement while standing naturally",
-            "Take 2-3 measurements and use the average"
+            "Repeat the measurement once or twice and use a consistent method"
         )
     )
 }

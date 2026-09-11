@@ -171,7 +171,6 @@ fun IdealWeightCalculatorScreen(
                                     }
                                 },
                                 onClearAll = viewModel::clearAll,
-                                weightShakeController = rememberShakeController(), // Not used 
                                 heightShakeController = heightShakeController,
                                 ageShakeController = ageShakeController
                             )

@@ -23,7 +23,6 @@ fun IdealWeightInputSection(
     inputState: IdealWeightInputState,
     validationState: IdealWeightValidationState,
     isCalculating: Boolean,
-    onWeightUpdate: (String) -> Unit = {}, // Not actually used in IBW but for consistency if I were to use a shared component
     onHeightUpdate: (String) -> Unit,
     onHeightFeetUpdate: (String) -> Unit,
     onHeightInchesUpdate: (String) -> Unit,
@@ -32,7 +31,6 @@ fun IdealWeightInputSection(
     onToggleHeightUnit: () -> Unit,
     onCalculate: () -> Unit,
     onClearAll: () -> Unit,
-    weightShakeController: ShakeController, // Placeholders for shake
     heightShakeController: ShakeController,
     ageShakeController: ShakeController
 ) {
