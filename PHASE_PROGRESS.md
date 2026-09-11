@@ -257,6 +257,9 @@ This file is the source of truth for the sequential product-development phases. 
   visible scale, exposes a spoken category summary, and uses 48 dp labelled
   fine-tune controls. `BmiSliderPolicyTest` covers marker clamping, including
   non-finite input.
+- **Follow-up:** The BMI Learn surface now uses the shared vector/icon language
+  and semantic theme roles instead of emoji headings, risk markers and local
+  colour literals, while retaining the educational copy and disclosure.
 - **Verification:** The complete `test`, `lintRelease`, `assembleDebug`,
   `assembleRelease` and `bundleRelease` gate is green after this follow-up.
 - **Known limitations:** Connected Room migration, Health Connect provider,

@@ -73,6 +73,9 @@ These cannot be proven by a Windows unit/build run:
   wraps, expose a textual category summary to TalkBack, clamp edge markers
   inside the scale, and give weight/height fine-tune actions 48 dp targets with
   specific labels. The full local release gate remains green.
+- **Follow-up:** The BMI Learn tab now replaces emoji headings, category-risk
+  markers and local colour literals with the shared vector icon and semantic
+  palette roles, keeping the same informational content and disclaimer.
 - **Tests:** Added WHR landmark/reference-boundary, blood-pressure severe-edge,
   heart-rate guidance and AI conversation-turn policy tests. The full local
   Gradle gate is green; connected instrumentation built its APK but stopped

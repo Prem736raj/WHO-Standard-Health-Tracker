@@ -73,18 +73,20 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.health.calculator.bmi.tracker.ui.theme.CalculatorColors
+import com.health.calculator.bmi.tracker.ui.theme.FeatureColors
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
 
 // ─── Colors ───────────────────────────────────────────────────────────────────
 
-private val EducationAccent = Color(0xFF1E88E5)
-private val EducationAccentLight = Color(0xFF64B5F6)
+private val EducationAccent = CalculatorColors.BMI
+private val EducationAccentLight = FeatureColors.BmiEnd
 
 // ─── Section Data ─────────────────────────────────────────────────────────────
 
 private data class EducationSection(
     val id: String,
     val title: String,
-    val emoji: String,
     val icon: ImageVector,
     val iconColor: Color
 )
@@ -93,44 +95,38 @@ private val educationSections = listOf(
     EducationSection(
         id = "what_is_bmi",
         title = "What is BMI?",
-        emoji = "📖",
         icon = Icons.Filled.MenuBook,
-        iconColor = Color(0xFF1E88E5)
+        iconColor = HealthColors.Good
     ),
     EducationSection(
         id = "how_calculated",
         title = "How is BMI Calculated?",
-        emoji = "🧮",
         icon = Icons.Outlined.Calculate,
-        iconColor = Color(0xFF00897B)
+        iconColor = HealthColors.BelowNormal
     ),
     EducationSection(
         id = "categories",
         title = "BMI Categories",
-        emoji = "📊",
         icon = Icons.Outlined.Category,
-        iconColor = Color(0xFF7B1FA2)
+        iconColor = CalculatorColors.WaistToHip
     ),
     EducationSection(
         id = "limitations",
         title = "Limitations of BMI",
-        emoji = "⚠️",
         icon = Icons.Outlined.ReportProblem,
-        iconColor = Color(0xFFFF9800)
+        iconColor = HealthColors.Warning
     ),
     EducationSection(
         id = "tips",
         title = "Tips for Healthy Weight",
-        emoji = "💡",
         icon = Icons.Outlined.Lightbulb,
-        iconColor = Color(0xFF43A047)
+        iconColor = HealthColors.Healthy
     ),
     EducationSection(
         id = "when_doctor",
         title = "When to See a Doctor",
-        emoji = "🏥",
         icon = Icons.Filled.LocalHospital,
-        iconColor = Color(0xFFE53935)
+        iconColor = HealthColors.Danger
     )
 )
 
@@ -197,7 +193,12 @@ private fun EducationHeader() {
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = stringResource(R.string.txt_text_placeholder_24), fontSize = 22.sp)
+                Icon(
+                    imageVector = Icons.Filled.MenuBook,
+                    contentDescription = null,
+                    tint = EducationAccent,
+                    modifier = Modifier.size(24.dp)
+                )
             }
 
             Spacer(modifier = Modifier.width(14.dp))
@@ -278,7 +279,7 @@ private fun ExpandableEducationCard(
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Text(
-                    text = "${section.emoji} ${section.title}",
+                    text = section.title,
                     style = MaterialTheme.typography.titleSmall.copy(
                         fontWeight = FontWeight.SemiBold
                     ),
@@ -344,7 +345,7 @@ private fun WhatIsBmiContent() {
         )
 
         HighlightBox(
-            emoji = "🎯",
+            icon = Icons.Outlined.Info,
             text = "BMI gives you a quick snapshot of where your weight falls on a scale from underweight to obese, helping you and your doctor identify potential health risks."
         )
 
@@ -383,7 +384,7 @@ private fun HowCalculatedContent() {
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(14.dp),
             colors = CardDefaults.cardColors(
-                containerColor = Color(0xFF00897B).copy(alpha = 0.06f)
+                containerColor = HealthColors.BelowNormal.copy(alpha = 0.06f)
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         ) {
@@ -397,7 +398,7 @@ private fun HowCalculatedContent() {
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 0.5.sp
                     ),
-                    color = Color(0xFF00897B)
+                    color = HealthColors.BelowNormal
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -424,11 +425,11 @@ private fun HowCalculatedContent() {
                         Text(
                             text = buildAnnotatedString {
                                 append("BMI = ")
-                                withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFF00897B))) {
+                                withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = HealthColors.BelowNormal)) {
                                     append("weight (kg)")
                                 }
                                 append(" ÷ ")
-                                withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFF00897B))) {
+                                withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = HealthColors.BelowNormal)) {
                                     append("height (m)²")
                                 }
                             },
@@ -462,11 +463,11 @@ private fun HowCalculatedContent() {
                         Text(
                             text = buildAnnotatedString {
                                 append("BMI = ")
-                                withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFF00897B))) {
+                                withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = HealthColors.BelowNormal)) {
                                     append("weight (lbs)")
                                 }
                                 append(" ÷ ")
-                                withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFF00897B))) {
+                                withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = HealthColors.BelowNormal)) {
                                     append("height (in)²")
                                 }
                                 append(" × 703")
@@ -481,7 +482,7 @@ private fun HowCalculatedContent() {
 
         // Example
         HighlightBox(
-            emoji = "📝",
+            icon = Icons.Outlined.Calculate,
             text = "Example: A person weighing 70 kg and 1.75 m tall:\nBMI = 70 ÷ (1.75 × 1.75) = 70 ÷ 3.0625 = 22.9"
         )
 
@@ -499,19 +500,18 @@ private fun CategoriesContent() {
         val name: String,
         val range: String,
         val color: Color,
-        val risk: String,
-        val emoji: String
+        val risk: String
     )
 
     val categories = listOf(
-        CategoryRow("Severe Thinness", "< 16.0", Color(0xFFB71C1C), "Very High", "🔴"),
-        CategoryRow("Moderate Thinness", "16.0 – 16.9", Color(0xFFE53935), "High", "🟠"),
-        CategoryRow("Mild Thinness", "17.0 – 18.4", Color(0xFFFF9800), "Moderate", "🟡"),
-        CategoryRow("Normal Weight", "18.5 – 24.9", Color(0xFF43A047), "Low", "🟢"),
-        CategoryRow("Overweight", "25.0 – 29.9", Color(0xFFFFC107), "Increased", "🟡"),
-        CategoryRow("Obese Class I", "30.0 – 34.9", Color(0xFFFF9800), "High", "🟠"),
-        CategoryRow("Obese Class II", "35.0 – 39.9", Color(0xFFE53935), "Very High", "🔴"),
-        CategoryRow("Obese Class III", "≥ 40.0", Color(0xFFB71C1C), "Extremely High", "🔴")
+        CategoryRow("Severe Thinness", "< 16.0", HealthColors.DangerDark, "Very High"),
+        CategoryRow("Moderate Thinness", "16.0 – 16.9", HealthColors.Danger, "High"),
+        CategoryRow("Mild Thinness", "17.0 – 18.4", HealthColors.Warning, "Moderate"),
+        CategoryRow("Normal Weight", "18.5 – 24.9", HealthColors.Healthy, "Low"),
+        CategoryRow("Overweight", "25.0 – 29.9", HealthColors.WarningDark, "Increased"),
+        CategoryRow("Obese Class I", "30.0 – 34.9", HealthColors.Caution, "High"),
+        CategoryRow("Obese Class II", "35.0 – 39.9", HealthColors.Danger, "Very High"),
+        CategoryRow("Obese Class III", "≥ 40.0", HealthColors.DangerDark, "Extremely High")
     )
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -616,7 +616,7 @@ private fun CategoriesContent() {
 
                         // Risk level
                         Text(
-                            text = "${cat.emoji} ${cat.risk}",
+                            text = cat.risk,
                             style = MaterialTheme.typography.bodySmall.copy(
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 11.sp
@@ -631,7 +631,7 @@ private fun CategoriesContent() {
         }
 
         HighlightBox(
-            emoji = "🟢",
+            icon = Icons.Outlined.HealthAndSafety,
             text = "The \"Normal Weight\" range (18.5–24.9) is associated with the lowest risk of weight-related health problems for most adults."
         )
     }
@@ -642,39 +642,39 @@ private fun CategoriesContent() {
 @Composable
 private fun LimitationsContent() {
     data class LimitationItem(
-        val emoji: String,
+        val icon: ImageVector,
         val title: String,
         val description: String
     )
 
     val limitations = listOf(
         LimitationItem(
-            emoji = "💪",
+            icon = Icons.Outlined.HealthAndSafety,
             title = "Doesn't distinguish muscle from fat",
             description = "Athletes and muscular individuals may have a high BMI despite having low body fat. Muscle weighs more than fat per unit volume."
         ),
         LimitationItem(
-            emoji = "🦴",
+            icon = Icons.Outlined.Category,
             title = "Ignores bone density",
             description = "People with denser bones will weigh more, potentially skewing their BMI higher without being overweight."
         ),
         LimitationItem(
-            emoji = "👴",
+            icon = Icons.Outlined.Info,
             title = "Doesn't account for age",
             description = "Older adults tend to have more body fat than younger adults at the same BMI. The standard ranges may not be ideal for all age groups."
         ),
         LimitationItem(
-            emoji = "⚧️",
+            icon = Icons.Outlined.HealthAndSafety,
             title = "Same cutoffs for both sexes",
             description = "Women naturally carry more body fat than men. Using the same BMI thresholds for both may not reflect individual health accurately."
         ),
         LimitationItem(
-            emoji = "🌍",
+            icon = Icons.Outlined.Category,
             title = "Ethnic variations",
             description = "Different ethnic groups may have different body compositions and health risk levels at the same BMI. Asian populations, for example, may face higher risks at lower BMI values."
         ),
         LimitationItem(
-            emoji = "📍",
+            icon = Icons.Outlined.ReportProblem,
             title = "No fat distribution info",
             description = "BMI doesn't tell you where your body stores fat. Belly fat (visceral fat) is more dangerous than fat stored in hips and thighs, but BMI can't differentiate."
         )
@@ -694,7 +694,12 @@ private fun LimitationsContent() {
                     modifier = Modifier.padding(14.dp),
                     verticalAlignment = Alignment.Top
                 ) {
-                    Text(text = item.emoji, fontSize = 18.sp)
+                    Icon(
+                        imageVector = item.icon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
@@ -717,7 +722,7 @@ private fun LimitationsContent() {
         }
 
         HighlightBox(
-            emoji = "💡",
+            icon = Icons.Outlined.Info,
             text = "For a more complete picture of your health, combine BMI with other measurements like waist circumference, body fat percentage, and waist-to-hip ratio."
         )
     }
@@ -729,7 +734,7 @@ private fun LimitationsContent() {
 private fun TipsContent() {
     data class TipItem(
         val number: Int,
-        val emoji: String,
+        val icon: ImageVector,
         val title: String,
         val description: String,
         val color: Color
@@ -738,45 +743,45 @@ private fun TipsContent() {
     val tips = listOf(
         TipItem(
             number = 1,
-            emoji = "🥗",
+            icon = Icons.Outlined.HealthAndSafety,
             title = "Eat a balanced diet",
             description = "Focus on whole grains, fruits, vegetables, lean proteins, and healthy fats. Avoid highly processed foods and excessive sugar.",
-            color = Color(0xFF43A047)
+            color = HealthColors.Healthy
         ),
         TipItem(
             number = 2,
-            emoji = "🏃",
+            icon = Icons.Outlined.HealthAndSafety,
             title = "Stay physically active",
             description = "Aim for at least 150 minutes of moderate exercise per week. Find activities you enjoy — walking, swimming, cycling, or dancing.",
-            color = Color(0xFF1E88E5)
+            color = HealthColors.Good
         ),
         TipItem(
             number = 3,
-            emoji = "💧",
+            icon = Icons.Outlined.Info,
             title = "Stay well hydrated",
             description = "Drink plenty of water throughout the day. Sometimes thirst is mistaken for hunger. Carry a water bottle as a reminder.",
-            color = Color(0xFF0277BD)
+            color = FeatureColors.WaterDeep
         ),
         TipItem(
             number = 4,
-            emoji = "😴",
+            icon = Icons.Outlined.Info,
             title = "Get quality sleep",
             description = "Aim for 7–9 hours of sleep per night. Poor sleep disrupts hunger hormones and can lead to weight gain over time.",
-            color = Color(0xFF5C6BC0)
+            color = HealthColors.Info
         ),
         TipItem(
             number = 5,
-            emoji = "🧘",
+            icon = Icons.Outlined.HealthAndSafety,
             title = "Manage stress",
             description = "Chronic stress increases cortisol, which can promote fat storage. Try mindfulness, meditation, deep breathing, or yoga.",
-            color = Color(0xFF7B1FA2)
+            color = CalculatorColors.WaistToHip
         ),
         TipItem(
             number = 6,
-            emoji = "📝",
+            icon = Icons.Outlined.Calculate,
             title = "Track your progress",
             description = "Monitor your weight and health metrics regularly — but not obsessively. Focus on long-term trends, not daily fluctuations.",
-            color = Color(0xFFE65100)
+            color = HealthColors.Caution
         )
     )
 
@@ -819,13 +824,22 @@ private fun TipsContent() {
                     Spacer(modifier = Modifier.width(12.dp))
 
                     Column {
-                        Text(
-                            text = "${tip.emoji} ${tip.title}",
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                fontWeight = FontWeight.SemiBold
-                            ),
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = tip.icon,
+                                contentDescription = null,
+                                tint = tip.color,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = tip.title,
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    fontWeight = FontWeight.SemiBold
+                                ),
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             text = tip.description,
@@ -839,7 +853,7 @@ private fun TipsContent() {
         }
 
         HighlightBox(
-            emoji = "❤️",
+            icon = Icons.Filled.Favorite,
             text = "Remember: Health is more than a number on a scale. Focus on how you feel, your energy levels, and your overall wellbeing."
         )
     }
@@ -850,19 +864,19 @@ private fun TipsContent() {
 @Composable
 private fun WhenDoctorContent() {
     data class DoctorTrigger(
-        val emoji: String,
+        val icon: ImageVector,
         val text: String
     )
 
     val triggers = listOf(
-        DoctorTrigger("🔴", "Your BMI is below 16 (Severe Thinness) — this may indicate malnutrition or an underlying medical condition"),
-        DoctorTrigger("🔴", "Your BMI is 30 or above (Obese) — your doctor can help create a safe, effective plan"),
-        DoctorTrigger("📉", "You've experienced unexplained rapid weight loss or gain"),
-        DoctorTrigger("💊", "You're taking medications that affect your weight"),
-        DoctorTrigger("🍽️", "You have concerns about your eating habits or relationship with food"),
-        DoctorTrigger("🫀", "You have existing health conditions like diabetes, heart disease, or high blood pressure"),
-        DoctorTrigger("🤰", "You're pregnant or planning to become pregnant"),
-        DoctorTrigger("👶", "You're assessing a child's weight — pediatric BMI uses different charts")
+        DoctorTrigger(Icons.Outlined.ReportProblem, "Your BMI is below 16 (Severe Thinness) — this may indicate malnutrition or an underlying medical condition"),
+        DoctorTrigger(Icons.Outlined.ReportProblem, "Your BMI is 30 or above (Obese) — your doctor can help create a safe, effective plan"),
+        DoctorTrigger(Icons.Outlined.Info, "You've experienced unexplained rapid weight loss or gain"),
+        DoctorTrigger(Icons.Outlined.HealthAndSafety, "You're taking medications that affect your weight"),
+        DoctorTrigger(Icons.Outlined.Info, "You have concerns about your eating habits or relationship with food"),
+        DoctorTrigger(Icons.Filled.Favorite, "You have existing health conditions like diabetes, heart disease, or high blood pressure"),
+        DoctorTrigger(Icons.Outlined.HealthAndSafety, "You're pregnant or planning to become pregnant"),
+        DoctorTrigger(Icons.Outlined.Info, "You're assessing a child's weight — pediatric BMI uses different charts")
     )
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -874,7 +888,7 @@ private fun WhenDoctorContent() {
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(14.dp),
             colors = CardDefaults.cardColors(
-                containerColor = Color(0xFFE53935).copy(alpha = 0.03f)
+                containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.35f)
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         ) {
@@ -884,10 +898,13 @@ private fun WhenDoctorContent() {
             ) {
                 triggers.forEach { trigger ->
                     Row(verticalAlignment = Alignment.Top) {
-                        Text(
-                            text = trigger.emoji,
-                            fontSize = 14.sp,
-                            modifier = Modifier.padding(top = 1.dp)
+                        Icon(
+                            imageVector = trigger.icon,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier
+                                .size(18.dp)
+                                .padding(top = 1.dp)
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
@@ -904,9 +921,9 @@ private fun WhenDoctorContent() {
         // Emergency note
         Surface(
             shape = RoundedCornerShape(12.dp),
-            color = Color(0xFFE53935).copy(alpha = 0.06f),
+            color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.45f),
             border = androidx.compose.foundation.BorderStroke(
-                0.5.dp, Color(0xFFE53935).copy(alpha = 0.15f)
+                0.5.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.25f)
             )
         ) {
             Row(
@@ -916,7 +933,7 @@ private fun WhenDoctorContent() {
                 Icon(
                     imageVector = Icons.Filled.Favorite,
                     contentDescription = null,
-                    tint = Color(0xFFE53935),
+                    tint = MaterialTheme.colorScheme.error,
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(10.dp))
@@ -926,7 +943,7 @@ private fun WhenDoctorContent() {
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
-                        color = Color(0xFFE53935)
+                        color = MaterialTheme.colorScheme.error
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
@@ -955,7 +972,7 @@ private fun ContentText(text: String) {
 
 @Composable
 private fun HighlightBox(
-    emoji: String,
+    icon: ImageVector,
     text: String
 ) {
     Surface(
@@ -969,10 +986,13 @@ private fun HighlightBox(
             modifier = Modifier.padding(14.dp),
             verticalAlignment = Alignment.Top
         ) {
-            Text(
-                text = emoji,
-                fontSize = 16.sp,
-                modifier = Modifier.padding(top = 1.dp)
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = EducationAccent,
+                modifier = Modifier
+                    .size(18.dp)
+                    .padding(top = 1.dp)
             )
             Spacer(modifier = Modifier.width(10.dp))
             Text(
