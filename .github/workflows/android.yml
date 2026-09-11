@@ -43,3 +43,16 @@ jobs:
     - name: Build Release App Bundle
       run: ./gradlew bundleRelease --stacktrace
 
+    - name: Upload verification reports and artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-verification-${{ github.run_number }}
+        if-no-files-found: ignore
+        path: |
+          app/build/reports/**
+          app/build/test-results/**
+          app/build/outputs/apk/debug/*.apk
+          app/build/outputs/apk/release/*.apk
+          app/build/outputs/bundle/release/*.aab
+
