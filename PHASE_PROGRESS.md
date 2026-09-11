@@ -260,12 +260,17 @@ This file is the source of truth for the sequential product-development phases. 
 - **Follow-up:** The BMI Learn surface now uses the shared vector/icon language
   and semantic theme roles instead of emoji headings, risk markers and local
   colour literals, while retaining the educational copy and disclosure.
+- **Follow-up:** The WHR education surface now uses the shared vector/icon
+  language and semantic calculator palette instead of emoji illustrations and
+  one-off colours. Reference bands and BMI/WHR comparisons are explicitly
+  framed as informational context; unsupported individual risk multipliers,
+  fixed waist-change timelines and causal wording were removed.
 - **Verification:** The complete `test`, `lintRelease`, `assembleDebug`,
   `assembleRelease` and `bundleRelease` gate is green after this follow-up.
 - **Known limitations:** Connected Room migration, Health Connect provider,
   TalkBack/large-font, OEM scheduling, signed artifact and Play/Firebase
   console checks still require owner/device access. The oldest distributed Room
   version is not evidenced by this repository.
-- **Next phase:** Complete full local gates, commit the verified hardening set,
-  push the canonical remote, and then execute the documented device/console
-  release checklist.
+- **Next phase:** Execute the documented device/console release checklist;
+  continue migrating remaining deep educational screens only when their copy
+  or visual treatment has a verified trust or accessibility benefit.

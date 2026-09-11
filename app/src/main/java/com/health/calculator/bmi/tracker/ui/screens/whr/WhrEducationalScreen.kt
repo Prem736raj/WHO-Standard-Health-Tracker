@@ -31,6 +31,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.health.calculator.bmi.tracker.data.model.WhrGuideData
+import com.health.calculator.bmi.tracker.ui.theme.CalculatorColors
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -106,7 +108,12 @@ private fun EducationalHeader() {
                 modifier = Modifier.size(56.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    Text(stringResource(R.string.txt_text_placeholder_24), fontSize = 28.sp)
+                    Icon(
+                        imageVector = Icons.Outlined.MenuBook,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(28.dp)
+                    )
                 }
             }
             Column(modifier = Modifier.weight(1f)) {
@@ -134,7 +141,6 @@ private fun EducationalHeader() {
 private fun WhatIsWhrSection() {
     ExpandableEducationalSection(
         icon = Icons.Outlined.HelpOutline,
-        emoji = "📐",
         title = "What is Waist-to-Hip Ratio?",
         subtitle = "Understanding the basics of WHR",
         accentColor = MaterialTheme.colorScheme.primary,
@@ -157,7 +163,7 @@ private fun WhatIsWhrSection() {
             )
 
             KeyPointCard(
-                emoji = "🔬",
+                icon = Icons.Outlined.Science,
                 title = "Research Finding",
                 text = "Research finds that waist and hip measures can add population-level context beyond BMI. Associations do not predict an individual's outcome, and the measures should not be used as a diagnosis."
             )
@@ -193,7 +199,7 @@ private fun WhrReferenceTable() {
                     .padding(horizontal = 12.dp, vertical = 8.dp)
             ) {
                 Text(
-                    stringResource(R.string.txt_risk_level),
+                    "Reference context",
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold
@@ -216,9 +222,9 @@ private fun WhrReferenceTable() {
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            TableRow("Low Risk", "< 0.90", "< 0.80", Color(0xFF4CAF50))
-            TableRow("Moderate", "0.90 – 0.99", "0.80 – 0.84", Color(0xFFFFA726))
-            TableRow("High Risk", "≥ 1.00", "≥ 0.85", Color(0xFFF44336))
+            TableRow("Below reference", "< 0.90", "< 0.80", HealthColors.Healthy)
+            TableRow("Intermediate", "0.90 – 0.99", "0.80 – 0.84", HealthColors.Warning)
+            TableRow("At or above reference", "≥ 1.00", "≥ 0.85", HealthColors.Danger)
         }
     }
 }
@@ -277,14 +283,13 @@ private fun TableRow(
 private fun WhrVsBmiSection() {
     ExpandableEducationalSection(
         icon = Icons.Outlined.CompareArrows,
-        emoji = "⚖️",
         title = "WHR vs BMI",
-        subtitle = "Why using both gives the complete picture",
-        accentColor = Color(0xFF2196F3)
+        subtitle = "How two simple measures add different context",
+        accentColor = HealthColors.Good
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             InfoParagraph(
-                "BMI and WHR measure different aspects of health. BMI estimates overall body fat based on height and weight, while WHR specifically measures where your body stores fat. Using both together provides a much more complete health assessment."
+                "BMI and WHR describe different aspects of body size. BMI uses height and weight, while WHR describes waist-to-hip proportions. Looking at both may add context, but neither measure is a diagnosis or a complete health assessment."
             )
 
             // Comparison cards side by side
@@ -295,27 +300,27 @@ private fun WhrVsBmiSection() {
                 ComparisonMetricCard(
                     modifier = Modifier.weight(1f),
                     title = "BMI",
-                    emoji = "📊",
-                    color = Color(0xFF2196F3),
+                    icon = Icons.Outlined.Calculate,
+                    color = HealthColors.Good,
                     points = listOf(
                         "Overall body fat estimate",
                         "Based on height & weight",
                         "Simple and widely used",
                         "Cannot distinguish fat vs muscle",
-                        "Misses central obesity"
+                        "Does not describe fat distribution"
                     )
                 )
                 ComparisonMetricCard(
                     modifier = Modifier.weight(1f),
                     title = "WHR",
-                    emoji = "📐",
-                    color = Color(0xFF9C27B0),
+                    icon = Icons.Outlined.Straighten,
+                    color = CalculatorColors.WaistToHip,
                     points = listOf(
                         "Fat distribution pattern",
                         "Based on waist & hip",
-                        "Better for disease risk",
-                        "Identifies central obesity",
-                        "Complements BMI data"
+                        "Adds body-proportion context",
+                        "Does not identify visceral fat",
+                        "Complements, but does not replace, other data"
                     )
                 )
             }
@@ -324,20 +329,20 @@ private fun WhrVsBmiSection() {
 
             BulletList(
                 items = listOf(
-                    Pair("Normal BMI but high WHR", "You may have a normal weight but carry too much fat around your middle — this is called \"metabolically obese normal weight\" (MONW) and still poses health risks."),
-                    Pair("Athletes and muscular individuals", "BMI can overestimate body fat in muscular people. WHR helps determine if the weight is distributed healthily."),
-                    Pair("Older adults", "As we age, muscle is often replaced by fat, especially around the abdomen. WHR captures this shift even when BMI stays the same."),
-                    Pair("Post-menopausal women", "Hormonal changes cause fat redistribution toward the abdomen. WHR tracks this important change.")
+                    Pair("Normal BMI but higher WHR", "A different WHR reference category may prompt a broader conversation about measurements and goals; it does not establish a condition."),
+                    Pair("Athletes and muscular individuals", "BMI can be less representative for some muscular people. WHR adds proportion context but cannot determine whether weight is healthy."),
+                    Pair("Older adults", "Body composition can change with age even when BMI changes little. WHR is one optional measure to track alongside strength and wellbeing."),
+                    Pair("Post-menopausal women", "Body proportions may change over time. Consistent measurements can help describe trends without assigning a diagnosis.")
                 )
             )
 
             KeyPointCard(
-                emoji = "💡",
+                icon = Icons.Outlined.Lightbulb,
                 title = "Best Practice",
                 text = "BMI and WHR describe different aspects of body size and proportion. Use both as conversation starters, not as standalone risk predictions."
             )
 
-            SectionSubheading("The 4-quadrant approach")
+            SectionSubheading("A four-quadrant context view")
 
             QuadrantGrid()
         }
@@ -348,7 +353,7 @@ private fun WhrVsBmiSection() {
 private fun ComparisonMetricCard(
     modifier: Modifier = Modifier,
     title: String,
-    emoji: String,
+    icon: ImageVector,
     color: Color,
     points: List<String>
 ) {
@@ -367,7 +372,12 @@ private fun ComparisonMetricCard(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(emoji, fontSize = 16.sp)
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = color,
+                    modifier = Modifier.size(18.dp)
+                )
                 Text(
                     title,
                     style = MaterialTheme.typography.labelMedium,
@@ -406,7 +416,7 @@ private fun QuadrantGrid() {
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Text(
-                stringResource(R.string.txt_combined_bmi_whr_assessment),
+                "Combined BMI + WHR context",
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
@@ -422,14 +432,14 @@ private fun QuadrantGrid() {
                 QuadrantCell(
                     Modifier.weight(1f),
                     "Normal BMI\nNormal WHR",
-                    "✅ Lowest Risk",
-                    Color(0xFF4CAF50)
+                    "Lower reference context",
+                    HealthColors.Healthy
                 )
                 QuadrantCell(
                     Modifier.weight(1f),
                     "Normal BMI\nHigh WHR",
-                    "⚠️ Hidden Risk",
-                    Color(0xFFFFA726)
+                    "More context needed",
+                    HealthColors.Warning
                 )
             }
             Row(
@@ -439,14 +449,14 @@ private fun QuadrantGrid() {
                 QuadrantCell(
                     Modifier.weight(1f),
                     "High BMI\nNormal WHR",
-                    "⚠️ Moderate Risk",
-                    Color(0xFFFFA726)
+                    "More context needed",
+                    HealthColors.Warning
                 )
                 QuadrantCell(
                     Modifier.weight(1f),
                     "High BMI\nHigh WHR",
-                    "🔴 Highest Risk",
-                    Color(0xFFF44336)
+                    "Higher reference context",
+                    HealthColors.Danger
                 )
             }
         }
@@ -457,7 +467,7 @@ private fun QuadrantGrid() {
 private fun QuadrantCell(
     modifier: Modifier,
     label: String,
-    risk: String,
+    interpretation: String,
     color: Color
 ) {
     Card(
@@ -482,7 +492,7 @@ private fun QuadrantCell(
                 lineHeight = 14.sp
             )
             Text(
-                risk,
+                interpretation,
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
                 color = color,
@@ -501,75 +511,74 @@ private fun QuadrantCell(
 private fun CentralObesityRiskSection() {
     ExpandableEducationalSection(
         icon = Icons.Outlined.MonitorHeart,
-        emoji = "❤️🔥",
-        title = "Central Obesity and Disease Risk",
-        subtitle = "How fat distribution affects your health",
-        accentColor = Color(0xFFF44336)
+        title = "Central fat distribution and health context",
+        subtitle = "What population research can and cannot tell you",
+        accentColor = HealthColors.Danger
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             InfoParagraph(
-                "Central obesity — excess fat stored in the abdominal area — is one of the strongest predictors of chronic disease, independent of overall body weight. The location of fat matters as much as the amount."
+                "Central fat distribution has been associated with cardiometabolic outcomes in population studies. WHR alone cannot identify visceral fat, diagnose disease, or estimate an individual's personal risk."
             )
 
-            SectionSubheading("Cardiovascular Disease")
+            SectionSubheading("Cardiovascular context")
 
             DiseaseRiskCard(
-                emoji = "❤️",
+                icon = Icons.Outlined.FavoriteBorder,
                 disease = "Heart Disease & Stroke",
-                riskInfo = "Higher WHR is associated with different outcomes in population studies; it cannot predict an individual's heart-attack risk.",
-                source = "INTERHEART Study (52 countries, 27,000+ participants)",
-                color = Color(0xFFF44336),
+                riskInfo = "Higher WHR has been associated with cardiovascular outcomes in population studies; it cannot predict an individual's heart-attack or stroke risk.",
+                source = "INTERHEART Study (population research; association only)",
+                color = HealthColors.Danger,
                 details = listOf(
-                    "Central obesity increases LDL cholesterol and triglycerides",
-                    "Visceral fat promotes arterial inflammation",
-                    "High WHR is linked to 24% higher risk of stroke",
-                    "Risk exists even in people with normal overall weight"
+                    "Central fat distribution can occur alongside changes in lipids and blood pressure; an individual assessment needs more than WHR.",
+                    "Research associations do not establish that WHR causes arterial inflammation.",
+                    "Population estimates vary by study and do not translate to a personal percentage.",
+                    "People with similar body-size measures can have different health contexts."
                 )
             )
 
-            SectionSubheading("Metabolic Conditions")
+            SectionSubheading("Metabolic context")
 
             DiseaseRiskCard(
-                emoji = "🩸",
+                icon = Icons.Outlined.Info,
                 disease = "Type 2 Diabetes",
-                riskInfo = "Central obesity increases diabetes risk by 3-5x compared to lower body obesity.",
-                source = "WHO Global Report on Diabetes",
-                color = Color(0xFFFFA726),
+                riskInfo = "Higher central adiposity has been associated with type 2 diabetes in population studies; WHR is not a diagnostic test.",
+                source = "WHO Global Report on Diabetes (contextual background)",
+                color = HealthColors.Warning,
                 details = listOf(
-                    "Visceral fat interferes with insulin signaling",
-                    "Waist circumference can add context alongside BMI",
-                    "Each 5 cm increase in waist raises diabetes risk by 11%",
-                    "Waist reduction can improve insulin sensitivity within weeks"
+                    "Waist circumference can add context alongside BMI and other measurements.",
+                    "WHR cannot show how insulin, glucose, or other clinical markers are changing.",
+                    "Population associations vary with age, sex, ethnicity, and study design.",
+                    "Discuss concerning measurements or symptoms with a qualified clinician."
                 )
             )
 
             DiseaseRiskCard(
-                emoji = "⚠️",
+                icon = Icons.Outlined.Analytics,
                 disease = "Metabolic Syndrome",
-                riskInfo = "Central obesity is the primary criterion — present in over 80% of metabolic syndrome cases.",
-                source = "International Diabetes Federation",
-                color = Color(0xFF9C27B0),
+                riskInfo = "A larger waist is one criterion used in some metabolic-syndrome definitions; only a clinician can assess the full set of criteria.",
+                source = "International Diabetes Federation (definition context)",
+                color = CalculatorColors.MetabolicSyndrome,
                 details = listOf(
-                    "Defined as 3+ of: large waist, high BP, high sugar, high triglycerides, low HDL",
-                    "Doubles the risk of cardiovascular disease",
-                    "Increases diabetes risk 5-fold",
-                    "Affects approximately 25% of adults worldwide"
+                    "Definitions combine waist, blood pressure, glucose, triglycerides, and HDL; thresholds vary by guideline.",
+                    "A calculator cannot diagnose metabolic syndrome or estimate future disease.",
+                    "Population prevalence and risk estimates vary across countries and study designs.",
+                    "If you are concerned, discuss the full set of measurements with a clinician."
                 )
             )
 
-            SectionSubheading("Other Health Impacts")
+            SectionSubheading("Other areas researchers study")
 
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                MiniRiskItem("🧠", "Alzheimer's Disease", "Central obesity in midlife linked to 3x higher dementia risk in later life")
-                MiniRiskItem("🫁", "Sleep and breathing", "Body-size measures may be relevant context; they cannot screen for sleep apnea")
-                MiniRiskItem("🎗️", "Long-term health", "Associations in research do not determine an individual's cancer risk")
-                MiniRiskItem("💉", "Hypertension", "Visceral fat releases hormones that constrict blood vessels and raise blood pressure")
-                MiniRiskItem("🦴", "Joint Problems", "Excess abdominal weight places additional stress on the lower back and knees")
-                MiniRiskItem("😞", "Depression", "Studies show a bidirectional relationship between central obesity and depression")
+                MiniRiskItem(Icons.Outlined.Info, "Cognition", "Some studies examine body-size measures in midlife and later cognitive outcomes; this does not predict an individual's dementia risk.")
+                MiniRiskItem(Icons.Outlined.Info, "Sleep and breathing", "Body-size measures may be relevant context; they cannot screen for sleep apnea.")
+                MiniRiskItem(Icons.Outlined.Info, "Long-term health", "Associations with long-term outcomes do not determine an individual's cancer risk.")
+                MiniRiskItem(Icons.Outlined.FavoriteBorder, "Blood pressure", "Central adiposity and blood pressure can be associated; WHR cannot show why a reading is high.")
+                MiniRiskItem(Icons.Outlined.Info, "Joint comfort", "Extra body mass can increase mechanical load on some joints; effects vary between people.")
+                MiniRiskItem(Icons.Outlined.Info, "Mood", "Research reports associations between body size and mood; this is not a causal conclusion.")
             }
 
             KeyPointCard(
-                emoji = "📊",
+                icon = Icons.Outlined.Info,
                 title = "Key Statistic",
                 text = "Large studies have found associations between body-size measures and cardiovascular outcomes. Percentages from a population study should not be interpreted as an individual's preventable-risk score."
             )
@@ -579,7 +588,7 @@ private fun CentralObesityRiskSection() {
 
 @Composable
 private fun DiseaseRiskCard(
-    emoji: String,
+    icon: ImageVector,
     disease: String,
     riskInfo: String,
     source: String,
@@ -608,7 +617,12 @@ private fun DiseaseRiskCard(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(emoji, fontSize = 22.sp)
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = color,
+                        modifier = Modifier.size(22.dp)
+                    )
                     Text(
                         disease,
                         style = MaterialTheme.typography.bodyMedium,
@@ -671,7 +685,7 @@ private fun DiseaseRiskCard(
 }
 
 @Composable
-private fun MiniRiskItem(emoji: String, title: String, detail: String) {
+private fun MiniRiskItem(icon: ImageVector, title: String, detail: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -683,7 +697,12 @@ private fun MiniRiskItem(emoji: String, title: String, detail: String) {
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.Top
     ) {
-        Text(emoji, fontSize = 16.sp)
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(18.dp)
+        )
         Column {
             Text(
                 title,
@@ -709,50 +728,49 @@ private fun MiniRiskItem(emoji: String, title: String, detail: String) {
 private fun ReduceWaistSection() {
     ExpandableEducationalSection(
         icon = Icons.Outlined.FitnessCenter,
-        emoji = "💪",
-        title = "How to Reduce Waist Circumference",
-        subtitle = "Evidence-based strategies for a healthier waistline",
-        accentColor = Color(0xFF4CAF50)
+        title = "Ways to support a healthier waistline",
+        subtitle = "Practical, sustainable habits",
+        accentColor = HealthColors.Healthy
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             InfoParagraph(
-                "Reducing waist circumference involves targeting visceral fat through a combination of exercise, diet, and lifestyle changes. Here are the most effective strategies backed by research."
+                "Waist circumference may change as part of overall habits; no routine can target visceral fat in one area. Consider activity, nutrition, sleep, and stress support that fit your needs."
             )
 
-            SectionSubheading("🏃 Exercise Strategies")
+            SectionSubheading("Exercise strategies")
 
             NumberedStrategy(
                 number = 1,
                 title = "Aerobic Exercise (Most Effective)",
                 description = "Brisk walking, jogging, cycling or swimming can support fitness. Build toward activity that feels manageable and fits your abilities.",
                 keyFact = "Use a weekly activity target as a flexible guide, not a guaranteed waist change",
-                color = Color(0xFF4CAF50)
+                color = HealthColors.Healthy
             )
 
             NumberedStrategy(
                 number = 2,
                 title = "High-Intensity Interval Training (HIIT)",
-                description = "Alternating between intense bursts (30-60 seconds) and recovery periods. HIIT is 28% more effective at reducing abdominal fat than continuous moderate exercise.",
+                description = "Alternating between brief harder efforts and recovery periods can be an option for people who enjoy it and can exercise safely. It is not required for progress.",
                 keyFact = "Short intervals are optional; response and tolerance vary",
-                color = Color(0xFF4CAF50)
+                color = HealthColors.Healthy
             )
 
             NumberedStrategy(
                 number = 3,
                 title = "Resistance Training",
-                description = "Weight training 2-3 times per week increases muscle mass, which boosts metabolism and helps burn visceral fat even at rest.",
-                keyFact = "Combining cardio with strength training is 50% more effective than cardio alone",
-                color = Color(0xFF4CAF50)
+                description = "Strength exercises can support muscle function and everyday activity. Start gradually and choose movements that match your experience and abilities.",
+                keyFact = "Combining different activity types may support overall fitness; there is no guaranteed waist change",
+                color = HealthColors.Healthy
             )
 
-            SectionSubheading("🥗 Dietary Approaches")
+            SectionSubheading("Dietary approaches")
 
             NumberedStrategy(
                 number = 4,
                 title = "Increase Soluble Fiber",
                 description = "Oats, beans, lentils, fruit and vegetables can add fiber to a varied eating pattern. Increase gradually and consider your tolerance.",
                 keyFact = "Fiber supports overall nutrition; it does not guarantee a change in waist or visceral fat",
-                color = Color(0xFFFFA726)
+                color = HealthColors.Warning
             )
 
             NumberedStrategy(
@@ -760,7 +778,7 @@ private fun ReduceWaistSection() {
                 title = "Reduce Added Sugars & Refined Carbs",
                 description = "If desired, reduce sugary drinks and highly refined snacks in a way that still supports adequate nutrition.",
                 keyFact = "Results vary; avoid promises tied to one food change",
-                color = Color(0xFFFFA726)
+                color = HealthColors.Warning
             )
 
             NumberedStrategy(
@@ -768,7 +786,7 @@ private fun ReduceWaistSection() {
                 title = "Eat More Protein",
                 description = "Include protein from varied foods. A percentage target is optional planning context, not a prescription.",
                 keyFact = "Individual needs and responses vary",
-                color = Color(0xFFFFA726)
+                color = HealthColors.Warning
             )
 
             NumberedStrategy(
@@ -776,17 +794,17 @@ private fun ReduceWaistSection() {
                 title = "Mediterranean Diet Pattern",
                 description = "A Mediterranean-style pattern can be a flexible way to include plants, whole grains, fish or alternatives and unsaturated fats.",
                 keyFact = "Choose a sustainable pattern that fits your culture, budget and health needs",
-                color = Color(0xFFFFA726)
+                color = HealthColors.Warning
             )
 
-            SectionSubheading("🧘 Lifestyle Changes")
+            SectionSubheading("Lifestyle changes")
 
             NumberedStrategy(
                 number = 8,
                 title = "Prioritize Sleep (7-9 Hours)",
                 description = "Consistent, restorative sleep supports wellbeing and daily activity; sleep needs vary.",
-                keyFact = "People sleeping <5 hours gain 2.5x more abdominal fat over 5 years",
-                color = Color(0xFF2196F3)
+                keyFact = "Sleep needs vary; aim for a routine that leaves you rested when possible",
+                color = HealthColors.Good
             )
 
             NumberedStrategy(
@@ -794,23 +812,23 @@ private fun ReduceWaistSection() {
                 title = "Manage Stress",
                 description = "Stress support such as breathing exercises, social connection or enjoyable relaxation can help wellbeing.",
                 keyFact = "There is no guaranteed waist change from one stress-management method",
-                color = Color(0xFF2196F3)
+                color = HealthColors.Good
             )
 
             NumberedStrategy(
                 number = 10,
                 title = "Limit Alcohol Consumption",
-                description = "Excess alcohol is metabolized by the liver and converted to fat, much of it stored viscerally. Moderate or eliminate alcohol for best results.",
-                keyFact = "Reducing alcohol to ≤1 drink/day can decrease waist by 2-3 cm over 6 months",
-                color = Color(0xFF2196F3)
+                description = "If you drink alcohol, consider lower-risk guidance and alcohol-free days. Your local recommendations and personal health context matter.",
+                keyFact = "Reducing alcohol may support some people's goals; individual responses vary",
+                color = HealthColors.Good
             )
 
-            SectionSubheading("📅 Realistic Timeline")
+            SectionSubheading("What to expect over time")
 
             TimelineCard()
 
             KeyPointCard(
-                emoji = "⭐",
+                icon = Icons.Outlined.Star,
                 title = "Most Important",
                 text = "Consistency beats intensity. A sustainable routine of moderate exercise, balanced diet, good sleep, and stress management will produce lasting results. Crash diets and extreme exercise often backfire, as the body protects visceral fat during extreme restriction."
             )
@@ -908,11 +926,31 @@ private fun TimelineCard() {
                 fontWeight = FontWeight.Bold
             )
 
-            TimelineItem("Weeks 1-2", "Internal changes begin — insulin sensitivity improves, inflammation decreases. Visible changes may not be apparent yet.", "🌱")
-            TimelineItem("Weeks 3-4", "First measurable changes — expect 1-2 cm reduction in waist circumference.", "📏")
-            TimelineItem("Months 2-3", "Noticeable changes — 3-5 cm reduction with consistent effort. Clothes fit differently.", "👖")
-            TimelineItem("Months 4-6", "Significant progress — 5-10 cm total reduction possible. WHR category may improve.", "📉")
-            TimelineItem("6-12 Months", "Substantial transformation — 10+ cm reduction achievable. Risk category likely changed.", "🏆")
+            TimelineItem(
+                period = "Weeks 1-2",
+                description = "You may be building a routine; energy, comfort, and consistency can change before measurements do.",
+                icon = Icons.Outlined.Schedule
+            )
+            TimelineItem(
+                period = "Weeks 3-4",
+                description = "If you measure consistently, you may notice a trend; day-to-day values naturally fluctuate.",
+                icon = Icons.Outlined.Straighten
+            )
+            TimelineItem(
+                period = "Months 2-3",
+                description = "Sustainable changes can become easier to maintain; the size and pace of change vary.",
+                icon = Icons.Outlined.Timeline
+            )
+            TimelineItem(
+                period = "Months 4-6",
+                description = "Continue reviewing trends rather than single readings; plateaus are common.",
+                icon = Icons.Outlined.ShowChart
+            )
+            TimelineItem(
+                period = "6-12 Months",
+                description = "Use measurements alongside how you feel and other goals; seek guidance if changes are unexpected.",
+                icon = Icons.Outlined.CalendarMonth
+            )
 
             Text(
                 stringResource(R.string.txt_note_results_vary_based_on_sta),
@@ -926,13 +964,18 @@ private fun TimelineCard() {
 }
 
 @Composable
-private fun TimelineItem(period: String, description: String, emoji: String) {
+private fun TimelineItem(period: String, description: String, icon: ImageVector) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.Top
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(emoji, fontSize = 16.sp)
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(18.dp)
+            )
             Box(
                 modifier = Modifier
                     .width(2.dp)
@@ -965,17 +1008,16 @@ private fun TimelineItem(period: String, description: String, emoji: String) {
 private fun MeasurementTechniqueSection() {
     ExpandableEducationalSection(
         icon = Icons.Outlined.Straighten,
-        emoji = "📏",
         title = "Correct Measurement Technique",
         subtitle = "Step-by-step guide with do's and don'ts",
-        accentColor = Color(0xFF795548)
+        accentColor = CalculatorColors.WaistToHip
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             InfoParagraph(
-                "Accurate and consistent measurements are essential for meaningful tracking. Even small errors in technique can change your WHR by 0.05-0.10, potentially shifting your risk category."
+                "Accurate and consistent measurements make trends easier to interpret. Small differences in technique can change a ratio, so use the same landmark, tape position, and breathing pattern each time."
             )
 
-            SectionSubheading("📋 Step-by-Step Guide")
+            SectionSubheading("Step-by-step guide")
 
             MeasurementStep(
                 step = 1,
@@ -1054,19 +1096,19 @@ private fun MeasurementTechniqueSection() {
                 )
             )
 
-            SectionSubheading("⏰ Best Time to Measure")
+            SectionSubheading("Best time to measure")
 
             BestTimingCard()
 
-            SectionSubheading("✅ Do's and Don'ts")
+            SectionSubheading("Do's and don'ts")
 
             DosAndDontsCard()
 
-            SectionSubheading("⚠️ Common Mistakes")
+            SectionSubheading("Common mistakes")
 
             CommonMistakesList()
 
-            SectionSubheading("📊 Consistency Tips")
+            SectionSubheading("Consistency tips")
 
             ConsistencyTipsCard()
         }
@@ -1137,7 +1179,7 @@ private fun MeasurementStep(
 private fun BestTimingCard() {
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF2196F3).copy(alpha = 0.06f)
+            containerColor = HealthColors.Good.copy(alpha = 0.06f)
         ),
         shape = RoundedCornerShape(12.dp)
     ) {
@@ -1149,7 +1191,12 @@ private fun BestTimingCard() {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(stringResource(R.string.txt_text_placeholder_86), fontSize = 20.sp)
+                Icon(
+                    imageVector = Icons.Outlined.Schedule,
+                    contentDescription = null,
+                    tint = HealthColors.Good,
+                    modifier = Modifier.size(20.dp)
+                )
                 Text(
                     stringResource(R.string.txt_best_first_thing_in_the_mornin),
                     style = MaterialTheme.typography.bodyMedium,
@@ -1182,7 +1229,7 @@ private fun DosAndDontsCard() {
         Card(
             modifier = Modifier.weight(1f),
             colors = CardDefaults.cardColors(
-                containerColor = Color(0xFF4CAF50).copy(alpha = 0.06f)
+                containerColor = HealthColors.Healthy.copy(alpha = 0.06f)
             ),
             shape = RoundedCornerShape(10.dp)
         ) {
@@ -1194,7 +1241,7 @@ private fun DosAndDontsCard() {
                     stringResource(R.string.txt_do),
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF4CAF50)
+                    color = HealthColors.Healthy
                 )
                 DoItem("Measure at same time")
                 DoItem("Use same tape measure")
@@ -1209,7 +1256,7 @@ private fun DosAndDontsCard() {
         Card(
             modifier = Modifier.weight(1f),
             colors = CardDefaults.cardColors(
-                containerColor = Color(0xFFF44336).copy(alpha = 0.06f)
+                containerColor = HealthColors.Danger.copy(alpha = 0.06f)
             ),
             shape = RoundedCornerShape(10.dp)
         ) {
@@ -1221,7 +1268,7 @@ private fun DosAndDontsCard() {
                     stringResource(R.string.txt_don_t),
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFFF44336)
+                    color = HealthColors.Danger
                 )
                 DontItem("Suck in your stomach")
                 DontItem("Hold your breath")
@@ -1263,7 +1310,7 @@ private fun CommonMistakesList() {
         Pair("Measuring at the wrong waist point", "Use the same anatomical landmark each time: midway between the lowest palpable rib and the top of the hip bone (iliac crest)."),
         Pair("Uneven tape placement", "If the tape is higher in the back than the front (or vice versa), your reading will be inaccurate. Always check in a mirror or ask someone to help."),
         Pair("Pulling the tape too tight", "Compressing the skin gives a falsely low reading. The tape should touch the skin all around without indenting it."),
-        Pair("Measuring after eating", "Meals can temporarily increase waist circumference by 2-4 cm. Always measure before eating."),
+        Pair("Measuring after eating", "Meals can temporarily change waist circumference. When possible, measure before eating and use the same routine each time."),
         Pair("Tensing muscles while measuring", "Flexing your abs or glutes during measurement gives inaccurate results. Stay completely relaxed."),
         Pair("Using a stretched-out tape", "Old fabric tapes can stretch over time. Replace your tape annually or use a fiberglass tape.")
     )
@@ -1290,7 +1337,12 @@ private fun CommonMistakesList() {
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text(stringResource(R.string.txt_text_placeholder_21), fontSize = 12.sp)
+                            Icon(
+                                imageVector = Icons.Outlined.Warning,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.size(16.dp)
+                            )
                             Text(
                                 title,
                                 style = MaterialTheme.typography.bodySmall,
@@ -1338,22 +1390,27 @@ private fun ConsistencyTipsCard() {
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             val tips = listOf(
-                Pair("📅", "Measure on the same day each week (e.g., every Monday morning)"),
-                Pair("⏰", "Always measure at the same time of day"),
-                Pair("📏", "Use the same tape measure every time"),
-                Pair("🪞", "Stand in the same spot (use a bathroom mirror for reference)"),
-                Pair("📝", "Record immediately — don't rely on memory"),
-                Pair("🔄", "Take 2-3 readings and use the average"),
-                Pair("📊", "Track in this app for automatic trend analysis"),
-                Pair("📸", "Optional: take progress photos monthly from the same angle")
+                Icons.Outlined.CalendarMonth to "Measure on the same day each week (e.g., every Monday morning)",
+                Icons.Outlined.Schedule to "Always measure at the same time of day",
+                Icons.Outlined.Straighten to "Use the same tape measure every time",
+                Icons.Outlined.Info to "Stand in the same spot (use a bathroom mirror for reference)",
+                Icons.Outlined.EditNote to "Record immediately — don't rely on memory",
+                Icons.Outlined.Timeline to "Take 2-3 readings and use the average",
+                Icons.Outlined.Timeline to "Track in this app for automatic trend analysis",
+                Icons.Outlined.Info to "Optional: take progress photos monthly from the same angle"
             )
 
-            tips.forEach { (emoji, tip) ->
+            tips.forEach { (icon, tip) ->
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.Top
                 ) {
-                    Text(emoji, fontSize = 14.sp)
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(18.dp)
+                    )
                     Text(
                         tip,
                         style = MaterialTheme.typography.bodySmall,
@@ -1374,7 +1431,6 @@ private fun ConsistencyTipsCard() {
 @Composable
 private fun ExpandableEducationalSection(
     icon: ImageVector,
-    emoji: String,
     title: String,
     subtitle: String,
     accentColor: Color,
@@ -1405,7 +1461,12 @@ private fun ExpandableEducationalSection(
                     modifier = Modifier.size(42.dp)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        Text(emoji, fontSize = 20.sp)
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = null,
+                            tint = accentColor,
+                            modifier = Modifier.size(22.dp)
+                        )
                     }
                 }
 
@@ -1497,7 +1558,7 @@ private fun FormulaCard(formula: String, example: String) {
 }
 
 @Composable
-private fun KeyPointCard(emoji: String, title: String, text: String) {
+private fun KeyPointCard(icon: ImageVector, title: String, text: String) {
     Card(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.25f)
@@ -1512,7 +1573,12 @@ private fun KeyPointCard(emoji: String, title: String, text: String) {
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(emoji, fontSize = 16.sp)
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.tertiary,
+                    modifier = Modifier.size(18.dp)
+                )
                 Text(
                     title,
                     style = MaterialTheme.typography.labelMedium,

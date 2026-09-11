@@ -76,6 +76,10 @@ These cannot be proven by a Windows unit/build run:
 - **Follow-up:** The BMI Learn tab now replaces emoji headings, category-risk
   markers and local colour literals with the shared vector icon and semantic
   palette roles, keeping the same informational content and disclaimer.
+- **Follow-up:** The WHR education route now uses vector icons and shared
+  semantic palette roles throughout. Reference bands and BMI/WHR comparisons
+  are labeled as informational context, while unsupported individual risk
+  multipliers, fixed waist-change timelines and causal wording were removed.
 - **Tests:** Added WHR landmark/reference-boundary, blood-pressure severe-edge,
   heart-rate guidance and AI conversation-turn policy tests. The full local
   Gradle gate is green; connected instrumentation built its APK but stopped
