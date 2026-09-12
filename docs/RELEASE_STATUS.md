@@ -271,3 +271,18 @@ These cannot be proven by a Windows unit/build run:
 - **Remaining gates:** Connected-device TalkBack, large-font, theme and food
   log interaction checks, plus signing/Firebase/Play Console work, remain
   owner-only.
+
+## Calorie history visual consistency follow-up — 2026-09-12
+
+- **Status:** Code-fixable polish complete; device/accessibility validation
+  remains open.
+- **Changes:** Calorie history summary stats, calendar adherence, trend and
+  weekly comparison surfaces now use shared semantic colors. Balance, macro,
+  empty-history and detail rows render stable vector icons instead of emoji;
+  filtering, navigation, calculations and day selection are unchanged.
+- **Verification:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  passed with `GRADLE_EXIT=0`.
+- **Remaining gates:** Connected-device chart rendering, TalkBack, large-font,
+  theme contrast and history interaction checks, plus signing/Firebase/Play
+  Console work, remain owner-only.

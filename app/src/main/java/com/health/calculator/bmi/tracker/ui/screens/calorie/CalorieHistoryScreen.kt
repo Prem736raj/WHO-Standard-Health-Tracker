@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,11 +28,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.health.calculator.bmi.tracker.data.model.*
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -146,7 +149,20 @@ private fun EmptyHistoryState() {
             modifier = Modifier.fillMaxWidth().padding(40.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(stringResource(R.string.txt_text_placeholder_9), fontSize = 48.sp)
+            Surface(
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f),
+                modifier = Modifier.size(72.dp)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = Icons.Outlined.Timeline,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(34.dp)
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 stringResource(R.string.txt_no_tracking_history_yet),
@@ -183,9 +199,9 @@ private fun StatisticsSummaryCard(stats: CalorieHistoryStats) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                StatsGridItem("Avg/Day", "${"%.0f".format(stats.averageDailyCalories)} kcal", Color(0xFF2196F3))
+                StatsGridItem("Avg/Day", "${"%.0f".format(stats.averageDailyCalories)} kcal", HealthColors.Info)
                 StatsGridItem("Days Tracked", "${stats.totalDaysTracked}", MaterialTheme.colorScheme.primary)
-                StatsGridItem("On Target", "${stats.daysAtTarget} days", Color(0xFF4CAF50))
+                StatsGridItem("On Target", "${stats.daysAtTarget} days", HealthColors.Healthy)
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -194,37 +210,48 @@ private fun StatisticsSummaryCard(stats: CalorieHistoryStats) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                StatsGridItem("Streak 🔥", "${stats.currentStreak} days", Color(0xFFFF9800))
-                StatsGridItem("Best Streak", "${stats.longestStreak} days", Color(0xFF9C27B0))
-                StatsGridItem("Adherence", "${"%.0f".format(stats.adherencePercent)}%", Color(0xFF4CAF50))
+                StatsGridItem("Streak", "${stats.currentStreak} days", HealthColors.Caution)
+                StatsGridItem("Best Streak", "${stats.longestStreak} days", HealthColors.Info)
+                StatsGridItem("Adherence", "${"%.0f".format(stats.adherencePercent)}%", HealthColors.Healthy)
             }
 
             // Calorie balance
             Spacer(modifier = Modifier.height(12.dp))
             val isDeficit = stats.calorieDeficitOrSurplus < 0
             val balanceColor = when {
-                kotlin.math.abs(stats.calorieDeficitOrSurplus) < 100 -> Color(0xFF4CAF50)
-                isDeficit -> Color(0xFF2196F3)
-                else -> Color(0xFFFF9800)
+                kotlin.math.abs(stats.calorieDeficitOrSurplus) < 100 -> HealthColors.Healthy
+                isDeficit -> HealthColors.Info
+                else -> HealthColors.Caution
+            }
+            val balanceIcon = when {
+                kotlin.math.abs(stats.calorieDeficitOrSurplus) < 100 -> Icons.Outlined.CheckCircle
+                isDeficit -> Icons.Outlined.TrendingDown
+                else -> Icons.Outlined.TrendingUp
             }
             Surface(
                 shape = RoundedCornerShape(10.dp),
                 color = balanceColor.copy(alpha = 0.1f),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = when {
-                        kotlin.math.abs(stats.calorieDeficitOrSurplus) < 100 ->
-                            "✅ Your average intake is very close to target!"
-                        isDeficit ->
-                            "📉 Averaging ${"%.0f".format(-stats.calorieDeficitOrSurplus)} kcal below target per day"
-                        else ->
-                            "📈 Averaging ${"%.0f".format(stats.calorieDeficitOrSurplus)} kcal above target per day"
-                    },
-                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
-                    color = balanceColor,
-                    modifier = Modifier.padding(10.dp)
-                )
+                Row(
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Icon(balanceIcon, contentDescription = null, tint = balanceColor, modifier = Modifier.size(17.dp))
+                    Text(
+                        text = when {
+                            kotlin.math.abs(stats.calorieDeficitOrSurplus) < 100 ->
+                                "Your average intake is very close to target."
+                            isDeficit ->
+                                "Averaging ${"%.0f".format(-stats.calorieDeficitOrSurplus)} kcal below target per day"
+                            else ->
+                                "Averaging ${"%.0f".format(stats.calorieDeficitOrSurplus)} kcal above target per day"
+                        },
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+                        color = balanceColor
+                    )
+                }
             }
         }
     }
@@ -330,10 +357,10 @@ private fun CalorieCalendarCard(
                         } else {
                             val status = calendarData[day]
                             val bgColor = when (status?.statusColor) {
-                                CalorieAdherenceStatus.ON_TARGET -> Color(0xFF4CAF50)
-                                CalorieAdherenceStatus.CLOSE -> Color(0xFFFFC107)
-                                CalorieAdherenceStatus.OVER -> Color(0xFFFF5722)
-                                CalorieAdherenceStatus.UNDER -> Color(0xFF2196F3)
+                                CalorieAdherenceStatus.ON_TARGET -> HealthColors.Healthy
+                                CalorieAdherenceStatus.CLOSE -> HealthColors.Warning
+                                CalorieAdherenceStatus.OVER -> HealthColors.Caution
+                                CalorieAdherenceStatus.UNDER -> HealthColors.Info
                                 else -> Color.Transparent
                             }
                             val isToday = day == todayDay
@@ -385,10 +412,10 @@ private fun CalorieCalendarCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                CalendarLegendItem(Color(0xFF4CAF50), "On Target")
-                CalendarLegendItem(Color(0xFFFFC107), "±200 cal")
-                CalendarLegendItem(Color(0xFFFF5722), "Over")
-                CalendarLegendItem(Color(0xFF2196F3), "Under")
+                CalendarLegendItem(HealthColors.Healthy, "On Target")
+                CalendarLegendItem(HealthColors.Warning, "±200 cal")
+                CalendarLegendItem(HealthColors.Caution, "Over")
+                CalendarLegendItem(HealthColors.Info, "Under")
             }
         }
     }
@@ -473,8 +500,8 @@ private fun CalorieTrendGraph(
             val valRange = maxVal - minVal
 
             val graphColor = MaterialTheme.colorScheme.primary
-            val targetColor = Color(0xFF4CAF50)
-            val overColor = Color(0xFFFF9800)
+            val targetColor = HealthColors.Healthy
+            val overColor = HealthColors.Caution
             val gridColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
 
             Box(
@@ -567,7 +594,7 @@ private fun CalorieTrendGraph(
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(stringResource(R.string.txt_intake), style = MaterialTheme.typography.labelSmall, fontSize = 10.sp)
                 Spacer(modifier = Modifier.width(12.dp))
-                Box(modifier = Modifier.width(16.dp).height(2.dp).background(Color(0xFF4CAF50)))
+                Box(modifier = Modifier.width(16.dp).height(2.dp).background(HealthColors.Healthy))
                 Spacer(modifier = Modifier.width(4.dp))
                 Text("Target (${"%.0f".format(targetCalories)} kcal)", style = MaterialTheme.typography.labelSmall, fontSize = 10.sp)
             }
@@ -594,9 +621,9 @@ private fun WeeklySummaryCard(weeklySummaries: List<WeeklyCalorieSummary>) {
             weeklySummaries.take(4).forEachIndexed { index, week ->
                 val diff = week.averageCalories - week.targetCalories
                 val diffColor = when {
-                    kotlin.math.abs(diff) < 100 -> Color(0xFF4CAF50)
-                    diff > 0 -> Color(0xFFFF9800)
-                    else -> Color(0xFF2196F3)
+                    kotlin.math.abs(diff) < 100 -> HealthColors.Healthy
+                    diff > 0 -> HealthColors.Caution
+                    else -> HealthColors.Info
                 }
 
                 Surface(
@@ -665,28 +692,28 @@ private fun MacroTrendCard(
 
             MacroTrendRow(
                 label = "Protein",
-                emoji = "🥩",
+                icon = Icons.Outlined.Restaurant,
                 average = avgProtein,
                 target = stats.targetProtein,
-                color = Color(0xFFF44336),
+                color = HealthColors.Info,
                 unit = "g"
             )
             Spacer(modifier = Modifier.height(8.dp))
             MacroTrendRow(
                 label = "Carbs",
-                emoji = "🍞",
+                icon = Icons.Outlined.LocalDining,
                 average = avgCarbs,
                 target = stats.targetCarbs,
-                color = Color(0xFFFFEB3B),
+                color = HealthColors.Warning,
                 unit = "g"
             )
             Spacer(modifier = Modifier.height(8.dp))
             MacroTrendRow(
                 label = "Fat",
-                emoji = "🥑",
+                icon = Icons.Outlined.LocalDining,
                 average = avgFat,
                 target = stats.targetFat,
-                color = Color(0xFF4CAF50),
+                color = HealthColors.Healthy,
                 unit = "g"
             )
         }
@@ -695,7 +722,7 @@ private fun MacroTrendCard(
 
 @Composable
 private fun MacroTrendRow(
-    label: String, emoji: String, average: Double,
+    label: String, icon: ImageVector, average: Double,
     target: Double, color: Color, unit: String
 ) {
     val hasTarget = target > 0
@@ -708,7 +735,7 @@ private fun MacroTrendRow(
     val statusText = when {
         !hasTarget -> "${"%.0f".format(average)} $unit/day (no target set)"
         kotlin.math.abs(average - target) < target * 0.1 ->
-            "${"%.0f".format(average)} / ${"%.0f".format(target)} $unit ✅"
+            "${"%.0f".format(average)} / ${"%.0f".format(target)} $unit — on target"
         average < target ->
             "Avg ${"%.0f".format(average)} $unit/day (target: ${"%.0f".format(target)} $unit) — Consider increasing"
         else ->
@@ -721,7 +748,7 @@ private fun MacroTrendRow(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(emoji, fontSize = 14.sp)
+                Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(18.dp))
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(label, style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold))
             }
@@ -764,32 +791,37 @@ private fun DetailedStatsCard(stats: CalorieHistoryStats) {
             Spacer(modifier = Modifier.height(12.dp))
 
             stats.highestCalorieDay?.let { (date, cal) ->
-                StatDetailRow("🔺 Highest Day", "$date — ${"%.0f".format(cal)} kcal")
+                StatDetailRow(Icons.Outlined.TrendingUp, "Highest Day", "$date — ${"%.0f".format(cal)} kcal")
             }
             stats.lowestCalorieDay?.let { (date, cal) ->
-                StatDetailRow("🔻 Lowest Day", "$date — ${"%.0f".format(cal)} kcal")
+                StatDetailRow(Icons.Outlined.TrendingDown, "Lowest Day", "$date — ${"%.0f".format(cal)} kcal")
             }
             StatDetailRow(
-                "📅 Weekly Average",
+                Icons.Outlined.CalendarMonth,
+                "Weekly Average",
                 "${"%.0f".format(stats.weeklyAverage)} kcal/day (target: ${"%.0f".format(stats.targetCalories)} kcal)"
             )
             StatDetailRow(
-                "📦 Weekly Total",
+                Icons.Outlined.Assessment,
+                "Weekly Total",
                 "${"%.0f".format(stats.weeklyTotal)} kcal this week"
             )
             stats.mostLoggedFood?.let {
-                StatDetailRow("⭐ Most Logged Food", it)
+                StatDetailRow(Icons.Outlined.Star, "Most Logged Food", it)
             }
             StatDetailRow(
-                "🎯 Target Adherence",
+                Icons.Outlined.Flag,
+                "Target Adherence",
                 "${"%.0f".format(stats.adherencePercent)}% (${stats.daysAtTarget}/${stats.totalDaysTracked} days within ±100 kcal)"
             )
             StatDetailRow(
-                "🔥 Current Streak",
+                Icons.Outlined.Whatshot,
+                "Current Streak",
                 "${stats.currentStreak} day${if (stats.currentStreak != 1) "s" else ""} tracking consistently"
             )
             StatDetailRow(
-                "🏆 Longest Streak",
+                Icons.Outlined.EmojiEvents,
+                "Longest Streak",
                 "${stats.longestStreak} day${if (stats.longestStreak != 1) "s" else ""}"
             )
         }
@@ -797,18 +829,29 @@ private fun DetailedStatsCard(stats: CalorieHistoryStats) {
 }
 
 @Composable
-private fun StatDetailRow(label: String, value: String) {
+private fun StatDetailRow(icon: ImageVector, label: String, value: String) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
         verticalAlignment = Alignment.Top
     ) {
-        Text(
-            label,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+        Row(
             modifier = Modifier.weight(0.45f),
-            fontSize = 11.sp
-        )
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(16.dp)
+            )
+            Text(
+                label,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                fontSize = 11.sp
+            )
+        }
         Text(
             value,
             style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),

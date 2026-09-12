@@ -327,6 +327,23 @@ This file is the source of truth for the sequential product-development phases. 
 
 Updated: 2026-09-12
 
+## Follow-up — Calorie history visual consistency
+
+- **Status:** Complete locally; device/accessibility validation remains open
+- **Major changes:** Calorie history now uses semantic health colors across
+  summary stats, calendar adherence, trend charts and weekly comparisons.
+  Balance, macro, empty-history and detailed-stat surfaces use stable vector
+  icons instead of rendered emoji; the existing filters, calendar navigation,
+  trend calculations and day taps are unchanged.
+- **Tests:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  pass with `GRADLE_EXIT=0`.
+- **Known limitations:** Connected-device chart rendering, TalkBack, large
+  fonts, theme contrast and history interaction checks remain open.
+- **Next phase:** Execute the documented device/console release checklist;
+  continue deep-screen cleanup only where it improves trust, accessibility or
+  reliability.
+
 ## Follow-up — Food log visual consistency
 
 - **Status:** Complete locally; device/accessibility validation remains open
