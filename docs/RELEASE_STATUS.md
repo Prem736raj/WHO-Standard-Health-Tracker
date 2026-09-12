@@ -184,3 +184,18 @@ These cannot be proven by a Windows unit/build run:
 - **Remaining gates:** Physical-device TalkBack, large-font, theme,
   swipe-to-delete and sheet rendering checks, plus signing/Firebase/Play
   Console work, remain owner-only.
+
+## Blood-pressure trend correctness and visual follow-up — 2026-09-12
+
+- **Status:** Code-fixable polish complete; device/accessibility validation
+  remains open.
+- **Changes:** Trend charts, filters, legends, calendar colors and summary
+  cards now use a shared semantic series palette, and the trend card uses a
+  stable icon instead of the persisted emoji marker. The existing systolic
+  path is now drawn in the line chart; previously only its points were drawn.
+  Category-derived zone fills keep the interpretation colors consistent.
+- **Verification:** `test`, `lintRelease`, `assembleDebug`,
+  `assembleRelease` and `bundleRelease` passed with `GRADLE_EXIT=0`.
+- **Remaining gates:** Physical-device TalkBack, large-font, theme, chart
+  hit-testing/native-canvas rendering, plus signing/Firebase/Play Console
+  work, remain owner-only.

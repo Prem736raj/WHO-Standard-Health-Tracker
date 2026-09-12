@@ -327,6 +327,26 @@ This file is the source of truth for the sequential product-development phases. 
 
 Updated: 2026-09-12
 
+## Follow-up — Blood-pressure trend chart correctness and visual consistency
+
+- **Status:** Complete locally; device/accessibility validation remains open
+- **Major changes:** The BP trend route now uses a shared semantic series
+  palette for systolic, diastolic, pulse pressure, MAP, pulse, trend cards,
+  filters, calendar legends and summary cards. Stable icons replace the trend
+  emoji marker. The chart now draws the already-computed systolic path (it was
+  previously omitted while systolic points were still shown), and reference
+  zone fills reuse calculator category colors.
+- **Tests:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  pass with `GRADLE_EXIT=0`.
+- **Known limitations:** Chart hit testing and native-canvas rendering still
+  need TalkBack, large-font, theme and physical-device validation.
+- **Next phase:** Execute the documented device/console release checklist;
+  continue deep-screen cleanup only when it improves trust, accessibility or
+  reliability.
+
+Updated: 2026-09-12
+
 ## Follow-up — Blood-pressure history visual consistency
 
 - **Status:** Complete locally; device/accessibility validation remains open

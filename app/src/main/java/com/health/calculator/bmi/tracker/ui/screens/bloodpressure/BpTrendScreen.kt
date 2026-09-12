@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
@@ -47,11 +48,28 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.health.calculator.bmi.tracker.data.model.*
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
 import kotlinx.coroutines.launch
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
+
+/** Series colors are semantic and remain distinct when charts are viewed in either theme. */
+private object BpTrendColors {
+    val systolic = HealthColors.Danger
+    val diastolic = HealthColors.Good
+    val pulsePressure = HealthColors.Severe
+    val map = HealthColors.Healthy
+    val pulse = HealthColors.Caution
+}
+
+private fun bpTrendIcon(direction: BpTrendDirection): ImageVector = when (direction) {
+    BpTrendDirection.IMPROVING -> Icons.Filled.TrendingDown
+    BpTrendDirection.WORSENING -> Icons.Filled.TrendingUp
+    BpTrendDirection.STEADY -> Icons.Filled.TrendingFlat
+    BpTrendDirection.INSUFFICIENT -> Icons.Outlined.Analytics
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -182,19 +200,19 @@ private fun BpTrendArrowCard(statistics: BpStatistics) {
 
     val (bgColor, iconColor, icon) = when (trend) {
         BpTrendDirection.IMPROVING -> Triple(
-            Color(0xFF4CAF50).copy(alpha = 0.1f),
-            Color(0xFF4CAF50),
+            BpTrendColors.map.copy(alpha = 0.1f),
+            BpTrendColors.map,
             Icons.Filled.TrendingDown
         )
         BpTrendDirection.WORSENING -> Triple(
-            Color(0xFFF44336).copy(alpha = 0.1f),
-            Color(0xFFF44336),
+            BpTrendColors.systolic.copy(alpha = 0.1f),
+            BpTrendColors.systolic,
             Icons.Filled.TrendingUp
         )
         BpTrendDirection.STEADY -> Triple(
-            Color(0xFF2196F3).copy(alpha = 0.1f),
-            Color(0xFF2196F3),
-            Icons.Filled.TrendingUp
+            BpTrendColors.diastolic.copy(alpha = 0.1f),
+            BpTrendColors.diastolic,
+            Icons.Filled.TrendingFlat
         )
         else -> return
     }
@@ -228,12 +246,23 @@ private fun BpTrendArrowCard(statistics: BpStatistics) {
                 Icon(icon, contentDescription = null, tint = iconColor, modifier = Modifier.size(24.dp))
             }
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    "${trend.emoji} ${trend.label}",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = iconColor
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Icon(
+                        imageVector = bpTrendIcon(trend),
+                        contentDescription = null,
+                        tint = iconColor,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Text(
+                        trend.label,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = iconColor
+                    )
+                }
                 Text(
                     "SYS $sysChangeText / DIA $diaChangeText mmHg vs previous readings",
                     style = MaterialTheme.typography.bodySmall,
@@ -289,7 +318,7 @@ private fun BpGraphTab(
                         { Icon(Icons.Filled.Check, null, Modifier.size(14.dp)) }
                     } else null,
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = Color(0xFF7E57C2).copy(alpha = 0.15f)
+                        selectedContainerColor = BpTrendColors.pulsePressure.copy(alpha = 0.15f)
                     )
                 )
                 FilterChip(
@@ -300,7 +329,7 @@ private fun BpGraphTab(
                         { Icon(Icons.Filled.Check, null, Modifier.size(14.dp)) }
                     } else null,
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = Color(0xFF00897B).copy(alpha = 0.15f)
+                        selectedContainerColor = BpTrendColors.map.copy(alpha = 0.15f)
                     )
                 )
                 FilterChip(
@@ -311,7 +340,7 @@ private fun BpGraphTab(
                         { Icon(Icons.Filled.Check, null, Modifier.size(14.dp)) }
                     } else null,
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = Color(0xFFE91E63).copy(alpha = 0.15f)
+                        selectedContainerColor = BpTrendColors.pulse.copy(alpha = 0.15f)
                     )
                 )
             }
@@ -348,11 +377,11 @@ private fun BpGraphTab(
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                         modifier = Modifier.padding(vertical = 8.dp).horizontalScroll(rememberScrollState())
                     ) {
-                        LegendItem(color = Color(0xFFE53935), label = "Systolic")
-                        LegendItem(color = Color(0xFF1E88E5), label = "Diastolic")
-                        if (uiState.showPulsePressure) LegendItem(color = Color(0xFF7E57C2), label = "PP")
-                        if (uiState.showMAP) LegendItem(color = Color(0xFF00897B), label = "MAP")
-                        if (uiState.showPulse) LegendItem(color = Color(0xFFE91E63), label = "Pulse")
+                        LegendItem(color = BpTrendColors.systolic, label = "Systolic")
+                        LegendItem(color = BpTrendColors.diastolic, label = "Diastolic")
+                        if (uiState.showPulsePressure) LegendItem(color = BpTrendColors.pulsePressure, label = "PP")
+                        if (uiState.showMAP) LegendItem(color = BpTrendColors.map, label = "MAP")
+                        if (uiState.showPulse) LegendItem(color = BpTrendColors.pulse, label = "Pulse")
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -434,13 +463,13 @@ private fun BpLineChart(
     var tappedIndex by remember { mutableIntStateOf(-1) }
 
     val zoneColors = listOf(
-        Color(0xFF4CAF50).copy(alpha = 0.06f),  // Optimal <120
-        Color(0xFF8BC34A).copy(alpha = 0.06f),  // Normal 120-130
-        Color(0xFFFFC107).copy(alpha = 0.06f),  // High Normal 130-140
-        Color(0xFFFF9800).copy(alpha = 0.06f),  // Grade 1 140-160
-        Color(0xFFF44336).copy(alpha = 0.06f),  // Grade 2 160-180
-        Color(0xFFB71C1C).copy(alpha = 0.06f),  // Grade 3 180+
-    )
+        BpCategory.OPTIMAL,
+        BpCategory.NORMAL,
+        BpCategory.HIGH_NORMAL,
+        BpCategory.GRADE_1_HYPERTENSION,
+        BpCategory.GRADE_2_HYPERTENSION,
+        BpCategory.GRADE_3_HYPERTENSION
+    ).map { getBpCategoryColor(it).copy(alpha = 0.06f) }
 
     Canvas(
         modifier = modifier
@@ -567,8 +596,13 @@ private fun BpLineChart(
 
         // Draw lines
         drawPath(
+            path = sysPath,
+            color = BpTrendColors.systolic,
+            style = Stroke(width = 2.5.dp.toPx(), cap = StrokeCap.Round)
+        )
+        drawPath(
             path = diaPath,
-            color = Color(0xFF1E88E5),
+            color = BpTrendColors.diastolic,
             style = Stroke(width = 2.5.dp.toPx(), cap = StrokeCap.Round)
         )
 
@@ -590,7 +624,7 @@ private fun BpLineChart(
                 }
             }
             drawPath(
-                ppPath, Color(0xFF7E57C2),
+                ppPath, BpTrendColors.pulsePressure,
                 style = Stroke(
                     2.dp.toPx(),
                     cap = StrokeCap.Round,
@@ -604,7 +638,7 @@ private fun BpLineChart(
                 if (x > paddingLeft + animatedWidth) return@forEachIndexed
                 val ppY = valueToY(point.systolic - point.diastolic)
                 drawCircle(Color.White, 3.dp.toPx(), Offset(x, ppY))
-                drawCircle(Color(0xFF7E57C2), 2.5.dp.toPx(), Offset(x, ppY))
+                drawCircle(BpTrendColors.pulsePressure, 2.5.dp.toPx(), Offset(x, ppY))
             }
         }
 
@@ -627,7 +661,7 @@ private fun BpLineChart(
                 }
             }
             drawPath(
-                mapPath, Color(0xFF00897B),
+                mapPath, BpTrendColors.map,
                 style = Stroke(
                     2.dp.toPx(),
                     cap = StrokeCap.Round,
@@ -640,7 +674,7 @@ private fun BpLineChart(
                 if (x > paddingLeft + animatedWidth) return@forEachIndexed
                 val mapY = valueToY((point.diastolic + (point.systolic - point.diastolic) / 3.0).toInt())
                 drawCircle(Color.White, 3.dp.toPx(), Offset(x, mapY))
-                drawCircle(Color(0xFF00897B), 2.5.dp.toPx(), Offset(x, mapY))
+                drawCircle(BpTrendColors.map, 2.5.dp.toPx(), Offset(x, mapY))
             }
         }
 
@@ -665,7 +699,7 @@ private fun BpLineChart(
                 }
             }
             if (hasStarted) {
-                drawPath(pulsePath, Color(0xFFE91E63), style = Stroke(2.dp.toPx(), cap = StrokeCap.Round))
+                drawPath(pulsePath, BpTrendColors.pulse, style = Stroke(2.dp.toPx(), cap = StrokeCap.Round))
 
                 dataPoints.forEachIndexed { index, point ->
                     val x = paddingLeft + index * step
@@ -673,7 +707,7 @@ private fun BpLineChart(
                     point.pulse?.let { pulseVal ->
                         val pulseY = valueToY(pulseVal)
                         drawCircle(Color.White, 3.dp.toPx(), Offset(x, pulseY))
-                        drawCircle(Color(0xFFE91E63), 2.5.dp.toPx(), Offset(x, pulseY))
+                        drawCircle(BpTrendColors.pulse, 2.5.dp.toPx(), Offset(x, pulseY))
                     }
                 }
             }
@@ -691,11 +725,11 @@ private fun BpLineChart(
 
             // Systolic dot
             drawCircle(color = Color.White, radius = dotRadius + 1.dp.toPx(), center = Offset(x, sysY))
-            drawCircle(color = Color(0xFFE53935), radius = dotRadius, center = Offset(x, sysY))
+            drawCircle(color = BpTrendColors.systolic, radius = dotRadius, center = Offset(x, sysY))
 
             // Diastolic dot
             drawCircle(color = Color.White, radius = dotRadius + 1.dp.toPx(), center = Offset(x, diaY))
-            drawCircle(color = Color(0xFF1E88E5), radius = dotRadius, center = Offset(x, diaY))
+            drawCircle(color = BpTrendColors.diastolic, radius = dotRadius, center = Offset(x, diaY))
 
             // Selection highlight
             if (isSelected) {
@@ -844,10 +878,10 @@ private fun BpCalendarTab(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        CalendarLegendItem(color = Color(0xFF4CAF50), label = "Optimal")
-                        CalendarLegendItem(color = Color(0xFFFFC107), label = "Elevated")
-                        CalendarLegendItem(color = Color(0xFFFF9800), label = "High")
-                        CalendarLegendItem(color = Color(0xFFF44336), label = "Very High")
+                        CalendarLegendItem(color = getBpCategoryColor(BpCategory.OPTIMAL), label = "Optimal")
+                        CalendarLegendItem(color = getBpCategoryColor(BpCategory.NORMAL), label = "Elevated")
+                        CalendarLegendItem(color = getBpCategoryColor(BpCategory.HIGH_NORMAL), label = "High")
+                        CalendarLegendItem(color = getBpCategoryColor(BpCategory.GRADE_1_HYPERTENSION), label = "Very high")
                     }
                 }
             }
@@ -969,18 +1003,18 @@ private fun BpStatsTab(statistics: BpStatistics) {
                         StatBox(
                             label = "Avg Systolic",
                             value = "${statistics.avgSystolic}",
-                            color = Color(0xFFE53935)
+                            color = BpTrendColors.systolic
                         )
                         StatBox(
                             label = "Avg Diastolic",
                             value = "${statistics.avgDiastolic}",
-                            color = Color(0xFF1E88E5)
+                            color = BpTrendColors.diastolic
                         )
                         statistics.avgPulse?.let {
                             StatBox(
                                 label = "Avg Pulse",
                                 value = "$it",
-                                color = Color(0xFFE91E63)
+                                color = BpTrendColors.pulse
                             )
                         }
                     }
@@ -1015,7 +1049,7 @@ private fun BpStatsTab(statistics: BpStatistics) {
                             label = "Highest",
                             systolic = statistics.highestSystolic,
                             diastolic = statistics.highestDiastolic,
-                            color = Color(0xFFF44336),
+                            color = BpTrendColors.systolic,
                             icon = Icons.Filled.KeyboardArrowUp,
                             modifier = Modifier.weight(1f)
                         )
@@ -1023,7 +1057,7 @@ private fun BpStatsTab(statistics: BpStatistics) {
                             label = "Lowest",
                             systolic = statistics.lowestSystolic,
                             diastolic = statistics.lowestDiastolic,
-                            color = Color(0xFF4CAF50),
+                            color = BpTrendColors.map,
                             icon = Icons.Filled.KeyboardArrowDown,
                             modifier = Modifier.weight(1f)
                         )
@@ -1052,7 +1086,7 @@ private fun BpStatsTab(statistics: BpStatistics) {
                             Card(
                                 modifier = Modifier.weight(1f),
                                 colors = CardDefaults.cardColors(
-                                    containerColor = Color(0xFFFFF3E0)
+                                    containerColor = HealthColors.Warning.copy(alpha = 0.1f)
                                 ),
                                 shape = RoundedCornerShape(12.dp)
                             ) {
@@ -1079,7 +1113,7 @@ private fun BpStatsTab(statistics: BpStatistics) {
                             Card(
                                 modifier = Modifier.weight(1f),
                                 colors = CardDefaults.cardColors(
-                                    containerColor = Color(0xFFE8EAF6)
+                                    containerColor = HealthColors.Info.copy(alpha = 0.1f)
                                 ),
                                 shape = RoundedCornerShape(12.dp)
                             ) {
@@ -1420,7 +1454,7 @@ private fun BpDataPointDetailDialog(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Filled.FavoriteBorder, contentDescription = null, tint = Color(0xFFE91E63), modifier = Modifier.size(16.dp))
+                        Icon(Icons.Filled.FavoriteBorder, contentDescription = null, tint = BpTrendColors.pulse, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(4.dp))
                         Text("Pulse: $it BPM", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
                     }
