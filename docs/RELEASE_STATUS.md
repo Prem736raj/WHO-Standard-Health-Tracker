@@ -80,6 +80,10 @@ These cannot be proven by a Windows unit/build run:
   semantic palette roles throughout. Reference bands and BMI/WHR comparisons
   are labeled as informational context, while unsupported individual risk
   multipliers, fixed waist-change timelines and causal wording were removed.
+- **Follow-up:** The BSA education route now maps legacy illustration values to
+  shared vector icons and semantic palette roles. Formula history and guidance
+  avoid “gold standard” or universally-most-accurate claims and no longer give
+  unsupported precision about agreement between equations.
 - **Tests:** Added WHR landmark/reference-boundary, blood-pressure severe-edge,
   heart-rate guidance and AI conversation-turn policy tests. The full local
   Gradle gate is green; connected instrumentation built its APK but stopped

@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
@@ -26,6 +27,23 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.health.calculator.bmi.tracker.ui.theme.*
+
+/**
+ * Keeps legacy educational data readable while presenting one consistent
+ * vector icon language in the UI. The old emoji values are not rendered.
+ */
+private fun bsaEducationIcon(legacyEmoji: String): ImageVector = when (legacyEmoji) {
+    "📐", "📏" -> Icons.Outlined.Straighten
+    "🧮", "⚡" -> Icons.Outlined.Calculate
+    "🎯", "🏆" -> Icons.Outlined.Flag
+    "⚖️" -> Icons.Outlined.CompareArrows
+    "👶", "🧒", "🧑", "👤" -> Icons.Outlined.Person
+    "🏥" -> Icons.Outlined.LocalHospital
+    "🔬" -> Icons.Outlined.Science
+    "💡" -> Icons.Outlined.Lightbulb
+    "🤔", "🤷" -> Icons.Outlined.HelpOutline
+    else -> Icons.Outlined.Info
+}
 
 @Composable
 fun BSAEducationScreen(
@@ -159,7 +177,12 @@ private fun BSAEducationSection(
                         .background(accentColor.copy(alpha = 0.12f)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(icon, fontSize = 22.sp)
+                    Icon(
+                        imageVector = bsaEducationIcon(icon),
+                        contentDescription = null,
+                        tint = accentColor,
+                        modifier = Modifier.size(22.dp)
+                    )
                 }
 
                 Spacer(modifier = Modifier.width(12.dp))
@@ -299,7 +322,12 @@ private fun PerspectiveItem(emoji: String, label: String, value: String, descrip
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.width(95.dp)
     ) {
-        Text(emoji, fontSize = 28.sp)
+        Icon(
+            imageVector = bsaEducationIcon(emoji),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(28.dp)
+        )
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall,
@@ -347,8 +375,8 @@ private fun WhySoManyFormulasContent() {
         TimelineItem(
             year = "1916",
             formula = "Du Bois & Du Bois",
-            highlight = "The Original",
-            description = "Two brothers used a coating method on just 9 individuals to create the first practical BSA formula. Despite its small sample size, it became the gold standard and remains the most widely used formula over 100 years later. A remarkable achievement in medical history.",
+            highlight = "Historical reference",
+            description = "Two brothers used a coating method on a small group to create an early practical BSA formula. It remains widely cited, but the original sample size and population are important limitations.",
             color = HealthBlue
         )
 
@@ -356,7 +384,7 @@ private fun WhySoManyFormulasContent() {
             year = "1925",
             formula = "Takahira",
             highlight = "Asian Perspective",
-            description = "Developed using Japanese population data, recognizing that body proportions vary across ethnicities. One of the first formulas to address population-specific differences.",
+            description = "Developed using Japanese population data and an early recognition that body proportions vary between populations. Population fit does not guarantee individual accuracy.",
             color = HealthTeal
         )
 
@@ -364,7 +392,7 @@ private fun WhySoManyFormulasContent() {
             year = "1935",
             formula = "Boyd",
             highlight = "Expanded Data",
-            description = "Used a much larger dataset than Du Bois, improving accuracy across a wider range of body sizes. Introduced a more complex mathematical approach.",
+            description = "Used a larger dataset than Du Bois and introduced a more complex mathematical approach. Validation still depends on the population and setting.",
             color = HealthYellow
         )
 
@@ -372,7 +400,7 @@ private fun WhySoManyFormulasContent() {
             year = "1968",
             formula = "Fujimoto",
             highlight = "Japanese Population",
-            description = "Specifically designed for the Japanese population using local population measurements, providing better accuracy for East Asian body types.",
+            description = "Derived from Japanese population measurements. It is included for comparison; a population-specific equation does not guarantee better accuracy for every person.",
             color = HealthTeal
         )
 
@@ -380,7 +408,7 @@ private fun WhySoManyFormulasContent() {
             year = "1970",
             formula = "Gehan & George",
             highlight = "Large Dataset",
-            description = "Based on 401 subjects — the largest dataset at the time. Provided robust results across a wide range of body sizes from children to large adults.",
+            description = "Based on 401 subjects, a large dataset for its time. It provides another reference equation rather than a universally best method.",
             color = HealthGreen
         )
 
@@ -396,7 +424,7 @@ private fun WhySoManyFormulasContent() {
             year = "1987",
             formula = "Mosteller",
             highlight = "Simplicity",
-            description = "Created an elegantly simple formula using just a square root calculation. Easy to compute even without a calculator. Produces results very close to Du Bois for most adults.",
+            description = "Created an easy-to-compute square-root formula. It can be useful for a quick estimate, while different equations may produce different results.",
             color = HealthGreen
         )
 
@@ -404,7 +432,7 @@ private fun WhySoManyFormulasContent() {
             year = "2000",
             formula = "Shuter & Aslani",
             highlight = "CT-Based",
-            description = "Derived from body-surface measurements; different equations can produce different estimates.",
+            description = "Derived from body-surface measurements. It is included as a later reference equation; the method requested by a qualified professional should take priority in care.",
             color = MaterialTheme.colorScheme.primary
         )
 
@@ -415,16 +443,16 @@ private fun WhySoManyFormulasContent() {
             emoji = "🤔",
             title = "Why Can't We Have Just One Perfect Formula?",
             color = HealthOrange,
-            content = "No single formula works perfectly for every person because:\n\n• Body proportions vary significantly between individuals\n• Different ethnic groups have different average body shapes\n• Children have different proportions than adults\n• Very obese or very thin individuals deviate from averages\n• Each formula was derived from a specific population sample\n• Measurement techniques have improved over time\n\nThe good news? For most practical purposes, all formulas give results within about 5% of each other."
+            content = "No single formula is guaranteed to fit every person because:\n\n• Body proportions vary between individuals\n• Populations have different average body shapes\n• Children have different proportions than adults\n• People at the extremes of body size may differ from the source sample\n• Each formula was derived from a specific population and method\n• Measurement and validation approaches have changed over time\n\nCompare the method as well as the number, and follow the equation requested by a qualified professional when BSA is used in care."
         )
 
         Spacer(modifier = Modifier.height(10.dp))
 
         QuickStatRow(
             stats = listOf(
-                Pair("107+ years", "since the first formula"),
-                Pair("8+ formulas", "commonly used today"),
-                Pair("< 5%", "typical variation between them")
+                Pair("Several", "reference equations"),
+                Pair("Different", "source populations"),
+                Pair("Record", "the method used")
             )
         )
     }
@@ -525,9 +553,9 @@ private fun WhichFormulaContent() {
             emoji = "🏥",
             scenario = "General Adult Use",
             recommendation = "Du Bois & Du Bois",
-            reason = "A commonly cited historical equation. A professional may use a different method for a specific context.",
+            reason = "A commonly cited historical equation. A professional may use a different method for a specific context; treat this app result as an estimate.",
             color = HealthBlue,
-            tag = "RECOMMENDED"
+            tag = "COMMON OPTION"
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -536,7 +564,7 @@ private fun WhichFormulaContent() {
             emoji = "⚡",
             scenario = "Quick Calculation",
             recommendation = "Mosteller",
-            reason = "The simplest formula — just multiply weight by height, divide by 3600, and take the square root. Results are very close to Du Bois for most adults. Perfect when you need a quick estimate.",
+            reason = "A simple formula — multiply weight by height, divide by 3600, and take the square root. It is convenient for a quick estimate; different equations can produce different results.",
             color = HealthGreen,
             tag = "EASIEST"
         )
@@ -569,7 +597,7 @@ private fun WhichFormulaContent() {
             emoji = "🔬",
             scenario = "Research / Maximum Accuracy",
             recommendation = "Shuter & Aslani or Gehan & George",
-            reason = "Shuter & Aslani uses modern CT-based measurements for the highest anatomical accuracy. Gehan & George is based on the largest traditional dataset (401 subjects). Both are good choices for research applications.",
+            reason = "These are later reference equations with different source data. Use the equation specified by the study or qualified professional rather than assuming one is universally most accurate.",
             color = MaterialTheme.colorScheme.tertiary,
             tag = "RESEARCH"
         )
@@ -579,7 +607,7 @@ private fun WhichFormulaContent() {
         // Simple decision tree
         HighlightCard(
             emoji = "🤷",
-            title = "Still Not Sure? Use This Simple Rule:",
+            title = "Still not sure? Use this simple rule:",
             color = HealthGreen,
             content = "• For a general adult estimate → Du Bois or Mosteller\n• For a child → Ask a clinician which method they use\n• If your care team requested a formula → Use that one\n• For research or comparison → Record the formula with the result\n\nNo BSA equation is universally correct for every person. Treat the result as an estimate and follow the method requested by a qualified professional when BSA is being used in clinical care."
         )
@@ -598,7 +626,12 @@ private fun WhichFormulaContent() {
                 modifier = Modifier.padding(12.dp),
                 verticalAlignment = Alignment.Top
             ) {
-                Text(stringResource(R.string.txt_text_placeholder_1), fontSize = 16.sp)
+                Icon(
+                    imageVector = Icons.Outlined.CheckCircle,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(18.dp)
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = stringResource(R.string.txt_good_news_for_most_adults_all_),
@@ -629,7 +662,12 @@ private fun FormulaGuideCard(
     ) {
         Column(modifier = Modifier.padding(14.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(emoji, fontSize = 22.sp)
+                Icon(
+                    imageVector = bsaEducationIcon(emoji),
+                    contentDescription = null,
+                    tint = color,
+                    modifier = Modifier.size(22.dp)
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
@@ -691,7 +729,7 @@ private fun FormulaGuideCard(
 private fun BSAvsBMIContent() {
     Column {
         Paragraph(
-            text = "BSA and BMI are both calculated from your weight and height, but they measure very different things and serve entirely different purposes. Understanding the distinction helps you know when each matters."
+            text = "BSA and BMI are both calculated from weight and height, but they describe different things. Understanding the distinction helps you decide when each estimate is useful and when professional context is needed."
         )
 
         Spacer(modifier = Modifier.height(14.dp))
@@ -740,7 +778,7 @@ private fun BSAvsBMIContent() {
                 ComparisonRow("Measures", "External body surface", "Weight relative to height")
                 ComparisonRow("Unit", "m² (square meters)", "kg/m² (no unit name)")
                 ComparisonRow("Formula type", "Empirical power equations", "Simple division")
-                ComparisonRow("Main use", "Medical dosing & assessment", "Health status indicator")
+                ComparisonRow("Main use", "Clinical context", "Population screening context")
                 ComparisonRow("WHO categories", "No categories", "Underweight to Obese")
                 ComparisonRow("Typical adult", "1.6 – 2.0 m²", "18.5 – 24.9")
                 ComparisonRow("Used by", "Doctors & pharmacists", "Everyone & public health")
@@ -794,7 +832,7 @@ private fun BSAvsBMIContent() {
             emoji = "💡",
             title = "The Key Difference",
             color = HealthTeal,
-            content = "Think of it this way:\n\n• BMI tells you \"Is my weight healthy for my height?\" → It's about YOUR health status.\n\n• BSA tells doctors \"How large is this person's body?\" → It's about dosing and medical calculations.\n\nBMI is a health indicator for you to track. BSA is a medical tool your doctor uses behind the scenes. Both are calculated from weight and height, but they answer completely different questions."
+            content = "Think of it this way:\n\n• BMI provides a population reference category based on height and weight; it is not a complete health assessment.\n\n• BSA describes estimated body surface area and is mainly used as clinical context. It is not a self-dosing tool.\n\nBoth use weight and height, but they answer different questions. Record the method and discuss any result that affects care with a qualified professional."
         )
 
         Spacer(modifier = Modifier.height(14.dp))
@@ -875,7 +913,12 @@ private fun UseCaseCard(
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(emoji, fontSize = 18.sp)
+                Icon(
+                    imageVector = bsaEducationIcon(emoji),
+                    contentDescription = null,
+                    tint = color,
+                    modifier = Modifier.size(20.dp)
+                )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
                     text = title,
@@ -923,7 +966,12 @@ private fun MythBusterItem(myth: String, truth: String) {
     ) {
         Column(modifier = Modifier.padding(10.dp)) {
             Row(verticalAlignment = Alignment.Top) {
-                Text(stringResource(R.string.txt_text_placeholder_16), fontSize = 12.sp)
+                Icon(
+                    imageVector = Icons.Outlined.Warning,
+                    contentDescription = "Myth",
+                    tint = HealthRed,
+                    modifier = Modifier.size(16.dp)
+                )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
                     text = "Myth: \"$myth\"",
@@ -934,7 +982,12 @@ private fun MythBusterItem(myth: String, truth: String) {
             }
             Spacer(modifier = Modifier.height(4.dp))
             Row(verticalAlignment = Alignment.Top) {
-                Text(stringResource(R.string.txt_text_placeholder_15), fontSize = 12.sp)
+                Icon(
+                    imageVector = Icons.Outlined.CheckCircle,
+                    contentDescription = "Clarification",
+                    tint = HealthGreen,
+                    modifier = Modifier.size(16.dp)
+                )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
                     text = "Truth: $truth",
@@ -974,7 +1027,12 @@ private fun AnalygyCard(emoji: String, text: String) {
             modifier = Modifier.padding(14.dp),
             verticalAlignment = Alignment.Top
         ) {
-            Text(emoji, fontSize = 28.sp)
+            Icon(
+                imageVector = bsaEducationIcon(emoji),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(28.dp)
+            )
             Spacer(modifier = Modifier.width(12.dp))
             Text(
                 text = text,
@@ -995,7 +1053,12 @@ private fun FactItem(emoji: String, title: String, description: String) {
             .padding(vertical = 5.dp),
         verticalAlignment = Alignment.Top
     ) {
-        Text(emoji, fontSize = 20.sp, modifier = Modifier.width(30.dp))
+        Icon(
+            imageVector = bsaEducationIcon(emoji),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(24.dp).width(30.dp)
+        )
         Column {
             Text(
                 text = title,
@@ -1023,7 +1086,12 @@ private fun HighlightCard(emoji: String, title: String, color: Color, content: S
     ) {
         Column(modifier = Modifier.padding(14.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(emoji, fontSize = 20.sp)
+                Icon(
+                    imageVector = bsaEducationIcon(emoji),
+                    contentDescription = null,
+                    tint = color,
+                    modifier = Modifier.size(20.dp)
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = title,

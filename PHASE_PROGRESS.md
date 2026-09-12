@@ -265,6 +265,10 @@ This file is the source of truth for the sequential product-development phases. 
   one-off colours. Reference bands and BMI/WHR comparisons are explicitly
   framed as informational context; unsupported individual risk multipliers,
   fixed waist-change timelines and causal wording were removed.
+- **Follow-up:** The BSA education surface now maps legacy illustration data to
+  shared vector icons and semantic palette roles. Historical formula notes no
+  longer call an equation a gold standard or universally most accurate, and
+  population variation is explained without unsupported precision claims.
 - **Verification:** The complete `test`, `lintRelease`, `assembleDebug`,
   `assembleRelease` and `bundleRelease` gate is green after this follow-up.
 - **Known limitations:** Connected Room migration, Health Connect provider,
