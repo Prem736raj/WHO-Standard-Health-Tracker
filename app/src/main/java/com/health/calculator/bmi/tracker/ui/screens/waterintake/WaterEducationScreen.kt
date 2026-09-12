@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,18 +26,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.health.calculator.bmi.tracker.ui.theme.FeatureColors
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
 import kotlinx.coroutines.delay
-
-private val WaterBlueMedium = Color(0xFF2196F3)
-private val WaterBlueDark = Color(0xFF1565C0)
-private val WaterBlueSurface = Color(0xFFE3F2FD)
-private val WaterBluePale = Color(0xFFBBDEFB)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,7 +54,12 @@ fun WaterEducationScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(stringResource(R.string.txt_text_placeholder_24), fontSize = 22.sp)
+                        Icon(
+                            imageVector = Icons.Outlined.WaterDrop,
+                            contentDescription = null,
+                            tint = FeatureColors.WaterStart,
+                            modifier = Modifier.size(22.dp)
+                        )
                         Text(stringResource(R.string.txt_hydration_guide), fontWeight = FontWeight.Bold)
                     }
                 },
@@ -169,7 +173,7 @@ private fun EducationHeaderCard() {
                 .fillMaxWidth()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(WaterBlueMedium, WaterBlueDark)
+                        colors = listOf(FeatureColors.WaterStart, FeatureColors.WaterDeep)
                     ),
                     shape = RoundedCornerShape(20.dp)
                 )
@@ -180,7 +184,12 @@ private fun EducationHeaderCard() {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(stringResource(R.string.txt_text_placeholder_76), fontSize = 36.sp)
+                Icon(
+                    imageVector = Icons.Outlined.WaterDrop,
+                    contentDescription = null,
+                    tint = FeatureColors.OnWater,
+                    modifier = Modifier.size(48.dp)
+                )
                 Text(
                     "Everything You Need to\nKnow About Hydration",
                     color = Color.White,
@@ -237,7 +246,7 @@ private fun WhyHydrationMattersSection() {
     ExpandableEducationCard(
         title = "Why Hydration Matters",
         icon = "💪",
-        gradientColors = listOf(Color(0xFF1976D2), Color(0xFF0D47A1)),
+        gradientColors = listOf(FeatureColors.WaterStart, FeatureColors.WaterDeep),
         badge = "9 Benefits"
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -277,7 +286,7 @@ private fun QuickStatItem(value: String, label: String) {
             value,
             fontWeight = FontWeight.ExtraBold,
             fontSize = 22.sp,
-            color = WaterBlueMedium
+            color = FeatureColors.WaterStart
         )
         Text(
             label,
@@ -320,7 +329,12 @@ private fun BenefitRow(benefit: BenefitItem) {
                     .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Text(benefit.icon, fontSize = 20.sp)
+                Icon(
+                    imageVector = educationIcon(benefit.icon),
+                    contentDescription = null,
+                    tint = FeatureColors.WaterDeep,
+                    modifier = Modifier.size(22.dp)
+                )
             }
             Text(
                 benefit.title,
@@ -359,7 +373,7 @@ private fun HowMuchWaterSection() {
     ExpandableEducationCard(
         title = "How Much Water Do You Really Need?",
         icon = "🤔",
-        gradientColors = listOf(Color(0xFF00897B), Color(0xFF004D40)),
+        gradientColors = listOf(HealthColors.Healthy, FeatureColors.StepsDeep),
         badge = "Myth Busted"
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
@@ -375,7 +389,7 @@ private fun HowMuchWaterSection() {
             Card(
                 shape = RoundedCornerShape(12.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFFE0F2F1)
+                    containerColor = HealthColors.HealthyLight.copy(alpha = 0.75f)
                 )
             ) {
                 Column(
@@ -384,8 +398,8 @@ private fun HowMuchWaterSection() {
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    Text(stringResource(R.string.txt_general_guidelines), fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color(0xFF004D40))
-                    HorizontalDivider(color = Color(0xFF004D40).copy(alpha = 0.1f))
+                    Text(stringResource(R.string.txt_general_guidelines), fontWeight = FontWeight.Bold, fontSize = 14.sp, color = FeatureColors.StepsDeep)
+                    HorizontalDivider(color = FeatureColors.StepsDeep.copy(alpha = 0.16f))
 
                     GuidelineRow("📚", "National Academies reference", "Adequate intake includes food and beverages; healthy adults vary by sex, climate, activity, and diet")
                     GuidelineRow("⚖️", "Use the app as a starting point", "There is no universal weight-based prescription. Adjust for thirst and professional advice")
@@ -414,8 +428,13 @@ private fun HowMuchWaterSection() {
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.Top
                 ) {
-                    Text(icon, fontSize = 16.sp)
-                    Text(text, fontSize = 13.sp, lineHeight = 18.sp,
+                    Icon(
+                        imageVector = educationIcon(icon),
+                        contentDescription = null,
+                        tint = FeatureColors.WaterDeep,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Text(cleanLegacyMarker(text), fontSize = 13.sp, lineHeight = 18.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
@@ -449,26 +468,36 @@ private fun MythBustCard(myth: String, reality: String) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(stringResource(R.string.txt_text_placeholder_16), fontSize = 18.sp)
-                Text(stringResource(R.string.txt_myth), fontWeight = FontWeight.ExtraBold, fontSize = 14.sp, color = Color(0xFFE65100))
+                Icon(
+                    imageVector = Icons.Outlined.Warning,
+                    contentDescription = null,
+                    tint = HealthColors.Caution,
+                    modifier = Modifier.size(20.dp)
+                )
+                Text(stringResource(R.string.txt_myth), fontWeight = FontWeight.ExtraBold, fontSize = 14.sp, color = HealthColors.Caution)
             }
             Text(
                 myth,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFFBF360C),
+                color = HealthColors.Caution,
                 fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
             )
 
-            HorizontalDivider(color = Color(0xFFE65100).copy(alpha = 0.2f))
+            HorizontalDivider(color = HealthColors.Caution.copy(alpha = 0.24f))
 
             Row(
                 verticalAlignment = Alignment.Top,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(stringResource(R.string.txt_text_placeholder_15), fontSize = 18.sp)
+                Icon(
+                    imageVector = Icons.Outlined.CheckCircle,
+                    contentDescription = null,
+                    tint = HealthColors.Healthy,
+                    modifier = Modifier.size(20.dp)
+                )
                 Column {
-                    Text(stringResource(R.string.txt_reality), fontWeight = FontWeight.ExtraBold, fontSize = 14.sp, color = Color(0xFF2E7D32))
+                    Text(stringResource(R.string.txt_reality), fontWeight = FontWeight.ExtraBold, fontSize = 14.sp, color = HealthColors.Healthy)
                     Spacer(Modifier.height(4.dp))
                     Text(
                         reality,
@@ -489,7 +518,12 @@ private fun GuidelineRow(icon: String, title: String, detail: String) {
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.Top
     ) {
-        Text(icon, fontSize = 16.sp)
+        Icon(
+            imageVector = educationIcon(icon),
+            contentDescription = null,
+            tint = FeatureColors.WaterDeep,
+            modifier = Modifier.size(18.dp)
+        )
         Column {
             Text(title, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
             Text(detail, fontSize = 12.sp, lineHeight = 16.sp,
@@ -505,7 +539,7 @@ private fun OverhydrationSection() {
     ExpandableEducationCard(
         title = "Signs of Overhydration",
         icon = "⚠️",
-        gradientColors = listOf(Color(0xFFF57C00), Color(0xFFE65100)),
+        gradientColors = listOf(HealthColors.Caution, HealthColors.Danger),
         badge = "Important"
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
@@ -513,7 +547,7 @@ private fun OverhydrationSection() {
             Card(
                 shape = RoundedCornerShape(12.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFFFFF3E0)
+                    containerColor = HealthColors.CautionLight.copy(alpha = 0.75f)
                 )
             ) {
                 Row(
@@ -521,13 +555,18 @@ private fun OverhydrationSection() {
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.Top
                 ) {
-                    Text(stringResource(R.string.txt_text_placeholder_21), fontSize = 20.sp)
+                    Icon(
+                        imageVector = Icons.Outlined.Warning,
+                        contentDescription = null,
+                        tint = HealthColors.Caution,
+                        modifier = Modifier.size(22.dp)
+                    )
                     Text(
                         stringResource(R.string.txt_yes_you_can_drink_too_much_wat) +
                                 "It's most common in endurance athletes and people who drink excessive amounts quickly.",
                         fontSize = 13.sp,
                         lineHeight = 19.sp,
-                        color = Color(0xFFBF360C)
+                        color = HealthColors.Caution
                     )
                 }
             }
@@ -558,17 +597,22 @@ private fun OverhydrationSection() {
             symptoms.forEach { (iconLabel, description) ->
                 val (icon, name) = iconLabel
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            Color(0xFFFFF8E1).copy(alpha = 0.5f),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                            HealthColors.WarningLight.copy(alpha = 0.45f),
                             RoundedCornerShape(8.dp)
                         )
                         .padding(10.dp),
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(icon, fontSize = 18.sp)
+                    Icon(
+                        imageVector = educationIcon(icon),
+                        contentDescription = null,
+                        tint = HealthColors.Caution,
+                        modifier = Modifier.size(20.dp)
+                    )
                     Column(modifier = Modifier.weight(1f)) {
                         Text(name, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
                         Text(description, fontSize = 11.sp,
@@ -594,8 +638,13 @@ private fun OverhydrationSection() {
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.Top
                 ) {
-                    Text(icon, fontSize = 16.sp)
-                    Text(text, fontSize = 13.sp, lineHeight = 18.sp,
+                    Icon(
+                        imageVector = educationIcon(icon),
+                        contentDescription = null,
+                        tint = HealthColors.Caution,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Text(cleanLegacyMarker(text), fontSize = 13.sp, lineHeight = 18.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f))
                 }
             }
@@ -616,7 +665,7 @@ private fun ExerciseHydrationSection() {
     ExpandableEducationCard(
         title = "Hydration and Exercise",
         icon = "🏋️",
-        gradientColors = listOf(Color(0xFF43A047), Color(0xFF1B5E20)),
+        gradientColors = listOf(HealthColors.Healthy, FeatureColors.WeightDeep),
         badge = "Active Guide"
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
@@ -626,9 +675,9 @@ private fun ExerciseHydrationSection() {
             // Before
             ExercisePhaseCard(
                 phase = "BEFORE",
-                emoji = "🔜",
+                marker = "🔜",
                 timeframe = "2-3 hours before exercise",
-                color = Color(0xFF1565C0),
+                color = FeatureColors.WaterDeep,
                 recommendations = listOf(
                     "💧 Drink 400-600ml (2-3 cups) of water",
                     "⏰ 15-20 minutes before: drink another 200-300ml",
@@ -640,9 +689,9 @@ private fun ExerciseHydrationSection() {
             // During
             ExercisePhaseCard(
                 phase = "DURING",
-                emoji = "🏃",
+                marker = "🏃",
                 timeframe = "During exercise",
-                color = Color(0xFF2E7D32),
+                color = HealthColors.Healthy,
                 recommendations = listOf(
                     "💧 Drink 150-250ml every 15-20 minutes",
                     "⏱️ For workouts over 60 min: consider sports drinks",
@@ -655,9 +704,9 @@ private fun ExerciseHydrationSection() {
             // After
             ExercisePhaseCard(
                 phase = "AFTER",
-                emoji = "🏁",
+                marker = "🏁",
                 timeframe = "Post-exercise recovery",
-                color = Color(0xFFE65100),
+                color = HealthColors.Caution,
                 recommendations = listOf(
                     "⚖️ Drink 1.25-1.5L for every 1kg of body weight lost",
                     "⏰ Rehydrate gradually over 2-4 hours",
@@ -670,7 +719,7 @@ private fun ExerciseHydrationSection() {
             // Electrolytes section
             Card(
                 shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF1F8E9))
+                colors = CardDefaults.cardColors(containerColor = HealthColors.HealthyLight.copy(alpha = 0.7f))
             ) {
                 Column(
                     modifier = Modifier
@@ -678,8 +727,8 @@ private fun ExerciseHydrationSection() {
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    Text(stringResource(R.string.txt_electrolytes_exercise), fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color(0xFF33691E))
-                    HorizontalDivider(color = Color(0xFF33691E).copy(alpha = 0.1f))
+                    Text(stringResource(R.string.txt_electrolytes_exercise), fontWeight = FontWeight.Bold, fontSize = 14.sp, color = FeatureColors.WeightDeep)
+                    HorizontalDivider(color = FeatureColors.WeightDeep.copy(alpha = 0.16f))
 
                     Text(
                         stringResource(R.string.txt_for_workouts_lasting_over_60_m) +
@@ -702,7 +751,12 @@ private fun ExerciseHydrationSection() {
                             verticalAlignment = Alignment.Top,
                             modifier = Modifier.padding(start = 4.dp)
                         ) {
-                            Text(icon, fontSize = 16.sp)
+                            Icon(
+                                imageVector = educationIcon(icon),
+                                contentDescription = null,
+                                tint = HealthColors.Healthy,
+                                modifier = Modifier.size(18.dp)
+                            )
                             Column {
                                 Text(name, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
                                 Text(desc, fontSize = 12.sp,
@@ -726,7 +780,7 @@ private fun ExerciseHydrationSection() {
 @Composable
 private fun ExercisePhaseCard(
     phase: String,
-    emoji: String,
+    marker: String,
     timeframe: String,
     color: Color,
     recommendations: List<String>
@@ -752,12 +806,23 @@ private fun ExercisePhaseCard(
                         .background(color, RoundedCornerShape(6.dp))
                         .padding(horizontal = 10.dp, vertical = 4.dp)
                 ) {
-                    Text(
-                        "$emoji $phase",
-                        color = Color.White,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 12.sp
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Icon(
+                            imageVector = educationIcon(marker),
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Text(
+                            phase,
+                            color = Color.White,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 12.sp
+                        )
+                    }
                 }
                 Text(
                     timeframe,
@@ -768,7 +833,7 @@ private fun ExercisePhaseCard(
 
             recommendations.forEach { rec ->
                 Text(
-                    rec,
+                    cleanLegacyMarker(rec),
                     fontSize = 13.sp,
                     lineHeight = 18.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
@@ -786,7 +851,7 @@ private fun SpecialNeedsSection() {
     ExpandableEducationCard(
         title = "Special Hydration Needs",
         icon = "🩺",
-        gradientColors = listOf(Color(0xFF7B1FA2), Color(0xFF4A148C)),
+        gradientColors = listOf(HealthColors.Severe, FeatureColors.BpDeep),
         badge = "5 Categories"
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
@@ -799,9 +864,9 @@ private fun SpecialNeedsSection() {
 
             // Pregnancy
             SpecialNeedCard(
-                emoji = "🤰",
+                marker = "🤰",
                 title = "Pregnancy",
-                color = Color(0xFFE91E63),
+                color = HealthColors.Severe,
                 additionalMl = "Context +300ml/day",
                 details = listOf(
                     "The app's +300ml is a planning reference, not a prescription",
@@ -815,9 +880,9 @@ private fun SpecialNeedsSection() {
 
             // Breastfeeding
             SpecialNeedCard(
-                emoji = "🤱",
+                marker = "🤱",
                 title = "Breastfeeding",
-                color = Color(0xFF9C27B0),
+                color = FeatureColors.BpDeep,
                 additionalMl = "Context +700ml/day",
                 details = listOf(
                     "The app's +700ml is a planning reference, not a prescription",
@@ -830,9 +895,9 @@ private fun SpecialNeedsSection() {
 
             // Illness/Fever
             SpecialNeedCard(
-                emoji = "🤒",
+                marker = "🤒",
                 title = "Illness & Fever",
-                color = Color(0xFFF44336),
+                color = HealthColors.Danger,
                 additionalMl = "No fixed target",
                 details = listOf(
                     "Fever, vomiting and diarrhea can change fluid needs",
@@ -845,9 +910,9 @@ private fun SpecialNeedsSection() {
 
             // High Altitude
             SpecialNeedCard(
-                emoji = "🏔️",
+                marker = "🏔️",
                 title = "High Altitude",
-                color = Color(0xFF1565C0),
+                color = FeatureColors.WaterDeep,
                 additionalMl = "Context varies",
                 details = listOf(
                     "Altitude, humidity and activity can change fluid needs",
@@ -860,9 +925,9 @@ private fun SpecialNeedsSection() {
 
             // Hot Climate
             SpecialNeedCard(
-                emoji = "🌡️",
+                marker = "🌡️",
                 title = "Hot & Humid Climate",
-                color = Color(0xFFFF6F00),
+                color = HealthColors.Caution,
                 additionalMl = "Context varies",
                 details = listOf(
                     "Heat and sweat can change fluid needs substantially",
@@ -885,7 +950,7 @@ private fun SpecialNeedsSection() {
 
 @Composable
 private fun SpecialNeedCard(
-    emoji: String,
+    marker: String,
     title: String,
     color: Color,
     additionalMl: String,
@@ -919,7 +984,12 @@ private fun SpecialNeedCard(
                         .background(color.copy(alpha = 0.15f), CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(emoji, fontSize = 22.sp)
+                    Icon(
+                        imageVector = educationIcon(marker),
+                        contentDescription = null,
+                        tint = color,
+                        modifier = Modifier.size(24.dp)
+                    )
                 }
                 Column(modifier = Modifier.weight(1f)) {
                     Text(title, fontWeight = FontWeight.Bold, fontSize = 15.sp)
@@ -959,7 +1029,12 @@ private fun SpecialNeedCard(
                             verticalAlignment = Alignment.Top,
                             modifier = Modifier.padding(start = 4.dp)
                         ) {
-                            Text(stringResource(R.string.txt_text_placeholder_3), color = color, fontWeight = FontWeight.Bold)
+                            Icon(
+                                imageVector = Icons.Outlined.CheckCircle,
+                                contentDescription = null,
+                                tint = color,
+                                modifier = Modifier.size(16.dp)
+                            )
                             Text(
                                 detail, fontSize = 13.sp, lineHeight = 18.sp,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
@@ -1013,7 +1088,12 @@ private fun ExpandableEducationCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(icon, fontSize = 28.sp)
+                Icon(
+                    imageVector = educationIcon(icon),
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(30.dp)
+                )
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         title,
@@ -1063,7 +1143,7 @@ private fun InfoTipCard(title: String, text: String) {
     Card(
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = WaterBlueSurface
+            containerColor = FeatureColors.WaterStart.copy(alpha = 0.1f)
         )
     ) {
         Row(
@@ -1073,11 +1153,22 @@ private fun InfoTipCard(title: String, text: String) {
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.Top
         ) {
-            Column {
-                Text(title, fontWeight = FontWeight.Bold, fontSize = 13.sp, color = WaterBlueDark)
+            Icon(
+                imageVector = educationIcon(title),
+                contentDescription = null,
+                tint = FeatureColors.WaterDeep,
+                modifier = Modifier.size(20.dp)
+            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    cleanLegacyMarker(title),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 13.sp,
+                    color = FeatureColors.WaterDeep
+                )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text,
+                    cleanLegacyMarker(text),
                     fontSize = 12.sp,
                     lineHeight = 18.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
@@ -1127,3 +1218,35 @@ private fun MedicalDisclaimerCard() {
         }
     }
 }
+
+/**
+ * Maps legacy persisted/content markers to the app's stable icon language.
+ * Marker strings remain in the content model so older saved data stays
+ * compatible, but they are never rendered as platform-dependent emoji.
+ */
+private fun educationIcon(marker: String): ImageVector = when {
+    marker.contains("💧") || marker.contains("🫧") -> Icons.Outlined.WaterDrop
+    marker.contains("⚡") -> Icons.Outlined.Bolt
+    marker.contains("✨") -> Icons.Outlined.AutoAwesome
+    marker.contains("🫀") -> Icons.Outlined.MonitorHeart
+    marker.contains("🧠") -> Icons.Outlined.Lightbulb
+    marker.contains("🫁") || marker.contains("🛡️") -> Icons.Outlined.HealthAndSafety
+    marker.contains("🦴") -> Icons.Outlined.Accessibility
+    marker.contains("🌡") -> Icons.Outlined.Thermostat
+    marker.contains("🫘") || marker.contains("🍌") || marker.contains("🥛") || marker.contains("🍉") || marker.contains("🍊") || marker.contains("🥗") || marker.contains("🍲") || marker.contains("☕") || marker.contains("🍺") -> Icons.Outlined.Restaurant
+    marker.contains("🏃") || marker.contains("🏋️") || marker.contains("💪") -> Icons.Outlined.FitnessCenter
+    marker.contains("☀️") || marker.contains("🌅") -> Icons.Outlined.WbSunny
+    marker.contains("🏔") || marker.contains("✈️") -> Icons.Outlined.DirectionsWalk
+    marker.contains("🤒") || marker.contains("🤢") || marker.contains("🤰") || marker.contains("🤱") || marker.contains("🩺") -> Icons.Outlined.HealthAndSafety
+    marker.contains("⏰") || marker.contains("⏱️") || marker.contains("😴") -> Icons.Outlined.Schedule
+    marker.contains("💡") -> Icons.Outlined.Lightbulb
+    marker.contains("⚠️") || marker.contains("🚨") || marker.contains("🛑") -> Icons.Outlined.Warning
+    marker.contains("🔬") -> Icons.Outlined.Science
+    marker.contains("🔜") || marker.contains("🏁") || marker.contains("📏") || marker.contains("⚖️") -> Icons.Outlined.Flag
+    else -> Icons.Outlined.Info
+}
+
+private val LeadingEducationMarker = Regex("^[\\p{So}\\p{Sk}\\p{M}\\p{Cf}\\s]+")
+
+private fun cleanLegacyMarker(value: String): String =
+    value.replaceFirst(LeadingEducationMarker, "").trim()

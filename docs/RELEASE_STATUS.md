@@ -391,3 +391,18 @@ These cannot be proven by a Windows unit/build run:
 - **Remaining gates:** Connected-device bottle rendering, bottom actions,
   TalkBack, large-font and light/dark theme checks, plus signing/Firebase/Play
   Console work, remain owner-only.
+
+## Hydration education visual consistency follow-up — 2026-09-13
+
+- **Status:** Code-fixable polish complete; device/accessibility validation
+  remains open.
+- **Changes:** Hydration guide sections, benefits, guidelines, myth/reality,
+  overhydration, exercise and special-needs cards use shared semantic colors and
+  stable vector icons. Legacy marker strings remain compatible but are not
+  rendered as emoji; copy, safety guidance and disclaimer behavior remain.
+- **Verification:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  passed with `GRADLE_EXIT=0`.
+- **Remaining gates:** Connected-device expandable-content rendering, TalkBack,
+  large-font and theme checks, plus signing/Firebase/Play Console work, remain
+  owner-only.

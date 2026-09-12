@@ -327,6 +327,25 @@ This file is the source of truth for the sequential product-development phases. 
 
 Updated: 2026-09-12
 
+## Follow-up — Hydration education visual consistency
+
+- **Status:** Complete locally; device/accessibility validation remains open
+- **Major changes:** The hydration guide now uses shared water/health semantic
+  tokens and stable Material icons for section headers, benefit rows, guideline
+  callouts, myth/reality cards, exercise phases and special-needs cards.
+  Legacy marker strings remain data-compatible but are stripped from rendered
+  explanatory text. Educational copy, safety notes and disclaimer behavior are
+  preserved.
+- **Tests:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  pass with `GRADLE_EXIT=0`.
+- **Known limitations:** Guidance remains informational and should not be read
+  as a personalized fluid prescription. Connected-device TalkBack, large-font,
+  theme and expandable-content checks remain open.
+- **Next phase:** Execute the documented device/console release checklist;
+  continue deep-screen cleanup only when it improves trust, accessibility or
+  reliability.
+
 ## Follow-up — Water intake result visual consistency
 
 - **Status:** Complete locally; device/accessibility validation remains open
