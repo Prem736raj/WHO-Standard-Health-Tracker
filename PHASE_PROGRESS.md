@@ -305,4 +305,24 @@ This file is the source of truth for the sequential product-development phases. 
   migrate another deep screen only when a verified trust, accessibility or
   reliability benefit is identified.
 
+## Follow-up — VO₂ max estimate visual and wording cleanup
+
+- **Status:** Complete locally; device/accessibility validation remains open
+- **Major changes:** The VO₂ max surface now uses stable heart, chart, timer,
+  assignment and recovery icons instead of rendered emoji and replaces local
+  color literals with shared semantic health colors. Copy now consistently
+  calls the value an informational VO₂ max estimate; the former fitness-age
+  wording and recovery certainty were softened, and legacy strings remain
+  compatible for stored data. Unused classification visuals also use the same
+  icon/palette language if they are reintroduced later.
+- **Tests:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  pass with `GRADLE_EXIT=0`.
+- **Known limitations:** This estimate remains a heart-rate-ratio proxy, not a
+  laboratory VO₂ max test. TalkBack, large-font and physical-device rendering
+  checks remain open.
+- **Next phase:** Execute the documented device/console release checklist;
+  continue deep-screen cleanup only where it improves trust, accessibility or
+  reliability.
+
 Updated: 2026-09-12

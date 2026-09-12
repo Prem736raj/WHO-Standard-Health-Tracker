@@ -115,3 +115,17 @@ These cannot be proven by a Windows unit/build run:
 - **Remaining gates:** Run TalkBack, large-font, light/dark theme and chart
   rendering checks on a connected device; signing, Firebase and Play Console
   tasks remain owner-only.
+
+## VO₂ max estimate visual and wording follow-up — 2026-09-12
+
+- **Status:** Code-fixable polish complete; device/accessibility validation
+  remains open.
+- **Changes:** The VO₂ max surface uses stable heart, chart, timer,
+  assignment and recovery icons rather than emoji, and shared semantic health
+  colors replace local literals. User-facing copy now consistently describes
+  an informational VO₂ max estimate; fitness-age and recovery wording avoid
+  unsupported certainty while legacy resource/model values remain compatible.
+- **Verification:** `test`, `lintRelease`, `assembleDebug`,
+  `assembleRelease` and `bundleRelease` passed with `GRADLE_EXIT=0`.
+- **Remaining gates:** Physical-device TalkBack, large-font, theme and route
+  rendering checks, plus signing/Firebase/Play Console work, remain owner-only.

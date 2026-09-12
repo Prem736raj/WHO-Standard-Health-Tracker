@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,6 +25,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -31,6 +33,26 @@ import androidx.compose.ui.unit.sp
 import com.health.calculator.bmi.tracker.util.VO2MaxCalculator
 import com.health.calculator.bmi.tracker.util.VO2MaxResult
 import com.health.calculator.bmi.tracker.util.RecoveryHRGuideline
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
+
+/** Keep legacy labels for stored results, but render stable icons in the UI. */
+private fun vo2Icon(legacyLabel: String): ImageVector = when {
+    legacyLabel.contains("🫁") -> Icons.Outlined.MonitorHeart
+    legacyLabel.contains("📅") -> Icons.Outlined.CalendarMonth
+    legacyLabel.contains("📊") || legacyLabel.contains("📈") -> Icons.Outlined.ShowChart
+    legacyLabel.contains("🏃") -> Icons.Outlined.DirectionsWalk
+    legacyLabel.contains("⚡") -> Icons.Outlined.Speed
+    legacyLabel.contains("😴") -> Icons.Outlined.Schedule
+    legacyLabel.contains("⏱") -> Icons.Outlined.Schedule
+    legacyLabel.contains("📝") -> Icons.Outlined.Assignment
+    legacyLabel.contains("🏆") -> Icons.Outlined.EmojiEvents
+    legacyLabel.contains("💪") -> Icons.Outlined.FitnessCenter
+    legacyLabel.contains("🌟") -> Icons.Outlined.Star
+    legacyLabel.contains("👍") -> Icons.Outlined.CheckCircle
+    legacyLabel.contains("⚠") -> Icons.Outlined.Warning
+    legacyLabel.contains("💡") -> Icons.Outlined.Lightbulb
+    else -> Icons.Outlined.MonitorHeart
+}
 
 // ============================================================
 // MAIN VO2 MAX SECTION
@@ -50,7 +72,12 @@ fun VO2MaxSection(
     ) {
         // Section header
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.txt_text_placeholder_63), fontSize = 22.sp)
+            Icon(
+                imageVector = Icons.Outlined.MonitorHeart,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(24.dp)
+            )
             Spacer(modifier = Modifier.width(8.dp))
             Column {
                 Text(
@@ -99,7 +126,12 @@ private fun NoRestingHRCard() {
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(stringResource(R.string.txt_text_placeholder_63), fontSize = 40.sp)
+            Icon(
+                imageVector = Icons.Outlined.MonitorHeart,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(42.dp)
+            )
             Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = stringResource(R.string.txt_resting_heart_rate_required),
@@ -108,7 +140,7 @@ private fun NoRestingHRCard() {
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = stringResource(R.string.txt_to_estimate_your_vo_max_and_fi) +
+                text = stringResource(R.string.txt_to_estimate_your_vo_max) +
                         "Go back and select the Karvonen formula, or enter your resting HR to unlock this feature.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
@@ -118,18 +150,23 @@ private fun NoRestingHRCard() {
             Spacer(modifier = Modifier.height(14.dp))
             Surface(
                 shape = RoundedCornerShape(10.dp),
-                color = Color(0xFF2196F3).copy(alpha = 0.1f)
+                color = HealthColors.Good.copy(alpha = 0.12f)
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(stringResource(R.string.txt_text_placeholder_1), fontSize = 14.sp)
+                    Icon(
+                        imageVector = Icons.Outlined.Lightbulb,
+                        contentDescription = null,
+                        tint = HealthColors.Good,
+                        modifier = Modifier.size(18.dp)
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = stringResource(R.string.txt_tip_measure_your_pulse_first_t),
                         style = MaterialTheme.typography.labelSmall,
-                        color = Color(0xFF2196F3),
+                        color = HealthColors.Good,
                         lineHeight = 14.sp
                     )
                 }
@@ -229,9 +266,14 @@ private fun VO2MaxResultCard(result: VO2MaxResult) {
 }
 
 @Composable
-private fun StatBubble(emoji: String, value: String, label: String) {
+private fun StatBubble(legacyIcon: String, value: String, label: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = emoji, fontSize = 16.sp)
+        Icon(
+            imageVector = vo2Icon(legacyIcon),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(20.dp)
+        )
         Text(
             text = value,
             style = MaterialTheme.typography.bodyMedium,
@@ -262,9 +304,9 @@ private fun FitnessAgeCard(result: VO2MaxResult) {
     val isYounger = ageDiff < -1
     val isOlder = ageDiff > 1
     val accentColor = when {
-        isYounger -> Color(0xFF4CAF50)
-        isOlder -> Color(0xFFFF9800)
-        else -> Color(0xFF2196F3)
+        isYounger -> HealthColors.Healthy
+        isOlder -> HealthColors.Caution
+        else -> HealthColors.Good
     }
 
     Card(
@@ -298,7 +340,7 @@ private fun FitnessAgeCard(result: VO2MaxResult) {
                 AgeColumn(
                     label = "Actual Age",
                     age = result.actualAge,
-                    emoji = "📅",
+                    legacyIcon = "📅",
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     isHighlighted = false
                 )
@@ -332,7 +374,7 @@ private fun FitnessAgeCard(result: VO2MaxResult) {
                 AgeColumn(
                     label = "Reference age",
                     age = animatedFitnessAge,
-                    emoji = "📊",
+                    legacyIcon = "📊",
                     color = accentColor,
                     isHighlighted = true
                 )
@@ -364,12 +406,17 @@ private fun FitnessAgeCard(result: VO2MaxResult) {
 private fun AgeColumn(
     label: String,
     age: Int,
-    emoji: String,
+    legacyIcon: String,
     color: Color,
     isHighlighted: Boolean
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = emoji, fontSize = if (isHighlighted) 28.sp else 22.sp)
+        Icon(
+            imageVector = vo2Icon(legacyIcon),
+            contentDescription = null,
+            tint = color,
+            modifier = Modifier.size(if (isHighlighted) 28.dp else 22.dp)
+        )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = "$age",
@@ -401,13 +448,13 @@ private fun AgeColumn(
 @Composable
 private fun VO2ClassificationGauge(result: VO2MaxResult) {
     val categories = listOf(
-        "Poor" to Color(0xFFF44336),
-        "Below Avg" to Color(0xFFFF9800),
-        "Average" to Color(0xFFFFC107),
-        "Above Avg" to Color(0xFF8BC34A),
-        "Good" to Color(0xFF4CAF50),
-        "Excellent" to Color(0xFF2196F3),
-        "Superior" to Color(0xFF1565C0)
+        "Poor" to HealthColors.Danger,
+        "Below Avg" to HealthColors.Caution,
+        "Average" to HealthColors.Warning,
+        "Above Avg" to HealthColors.Healthy,
+        "Good" to HealthColors.Healthy,
+        "Excellent" to HealthColors.Good,
+        "Superior" to HealthColors.Info
     )
 
     val currentIndex = categories.indexOfFirst {
@@ -455,11 +502,11 @@ private fun VO2ClassificationGauge(result: VO2MaxResult) {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         if (isCurrent) {
-                            Text(
-                                text = stringResource(R.string.txt_text_placeholder_62),
-                                fontSize = 10.sp,
-                                color = color,
-                                fontWeight = FontWeight.Bold
+                            Icon(
+                                imageVector = Icons.Filled.ArrowDropDown,
+                                contentDescription = "Current reference band",
+                                tint = color,
+                                modifier = Modifier.size(18.dp)
                             )
                         }
 
@@ -518,7 +565,7 @@ private fun VO2ImprovementSection(result: VO2MaxResult) {
             .clickable { isExpanded = !isExpanded },
         shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF4CAF50).copy(alpha = 0.05f)
+            containerColor = HealthColors.Healthy.copy(alpha = 0.06f)
         )
     ) {
         Column(
@@ -532,7 +579,12 @@ private fun VO2ImprovementSection(result: VO2MaxResult) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(stringResource(R.string.txt_text_placeholder_4), fontSize = 20.sp)
+                    Icon(
+                        imageVector = Icons.Outlined.ShowChart,
+                        contentDescription = null,
+                        tint = HealthColors.Healthy,
+                        modifier = Modifier.size(22.dp)
+                    )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         text = "Using this estimate responsibly",
@@ -561,7 +613,7 @@ private fun VO2ImprovementSection(result: VO2MaxResult) {
                     label = "Current",
                     value = "%.1f".format(result.vo2Max),
                     unit = "ml/kg/min",
-                    emoji = "📊",
+                    legacyIcon = "📊",
                     color = result.classification.color
                 )
 
@@ -582,7 +634,7 @@ private fun VO2ImprovementSection(result: VO2MaxResult) {
                     label = "Repeat to track",
                     value = "—",
                     unit = "same conditions",
-                    emoji = "📝",
+                    legacyIcon = "📝",
                     color = MaterialTheme.colorScheme.primary
                 )
             }
@@ -638,7 +690,7 @@ private fun VO2ImprovementSection(result: VO2MaxResult) {
 
                     tips.forEach { (emoji, title, description) ->
                         ImprovementTipRow(
-                            emoji = emoji,
+                            legacyIcon = emoji,
                             title = title,
                             description = description
                         )
@@ -667,7 +719,7 @@ private fun ProjectionCard(
     label: String,
     value: String,
     unit: String,
-    emoji: String,
+    legacyIcon: String,
     color: Color
 ) {
     Card(
@@ -680,7 +732,12 @@ private fun ProjectionCard(
             modifier = Modifier.padding(14.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = emoji, fontSize = 18.sp)
+            Icon(
+                imageVector = vo2Icon(legacyIcon),
+                contentDescription = null,
+                tint = color,
+                modifier = Modifier.size(20.dp)
+            )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = value,
@@ -705,9 +762,14 @@ private fun ProjectionCard(
 }
 
 @Composable
-private fun ImprovementTipRow(emoji: String, title: String, description: String) {
+private fun ImprovementTipRow(legacyIcon: String, title: String, description: String) {
     Row(verticalAlignment = Alignment.Top) {
-        Text(text = emoji, fontSize = 18.sp)
+        Icon(
+            imageVector = vo2Icon(legacyIcon),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(20.dp)
+        )
         Spacer(modifier = Modifier.width(10.dp))
         Column {
             Text(
@@ -755,7 +817,12 @@ private fun RecoveryHeartRateSection() {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(stringResource(R.string.txt_text_placeholder_27), fontSize = 20.sp)
+                    Icon(
+                        imageVector = Icons.Outlined.Schedule,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(22.dp)
+                    )
                     Spacer(modifier = Modifier.width(10.dp))
                     Column {
                         Text(
@@ -791,7 +858,12 @@ private fun RecoveryHeartRateSection() {
                     modifier = Modifier.padding(12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(stringResource(R.string.txt_text_placeholder_1), fontSize = 14.sp)
+                    Icon(
+                        imageVector = Icons.Outlined.Lightbulb,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(18.dp)
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = stringResource(R.string.txt_a_healthy_heart_should_drop_20),
@@ -927,7 +999,12 @@ private fun RecoveryGuidelineRow(guideline: RecoveryHRGuideline) {
             .padding(10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = guideline.emoji, fontSize = 16.sp)
+        Icon(
+            imageVector = vo2Icon(guideline.emoji),
+            contentDescription = null,
+            tint = guideline.color,
+            modifier = Modifier.size(20.dp)
+        )
         Spacer(modifier = Modifier.width(10.dp))
         Column(modifier = Modifier.weight(1f)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
