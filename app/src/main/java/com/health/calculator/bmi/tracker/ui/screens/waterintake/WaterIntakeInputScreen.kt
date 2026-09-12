@@ -52,10 +52,7 @@ import com.health.calculator.bmi.tracker.data.model.ClimateType
 import com.health.calculator.bmi.tracker.data.model.HealthStatus
 import com.health.calculator.bmi.tracker.data.calculator.ReproductiveHealthPolicy
 import com.health.calculator.bmi.tracker.data.model.WaterActivityLevel
-
-// Water-themed colors
-private val WaterBlueMedium = Color(0xFF2196F3)
-private val WaterBlueDark = Color(0xFF1565C0)
+import com.health.calculator.bmi.tracker.ui.theme.FeatureColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -274,8 +271,8 @@ private fun WaterHeaderCard(waterDropOffset: Float) {
                 .background(
                     brush = Brush.linearGradient(
                         colors = listOf(
-                            WaterBlueMedium,
-                            WaterBlueDark
+                            FeatureColors.WaterStart,
+                            FeatureColors.WaterDeep
                         )
                     ),
                     shape = RoundedCornerShape(20.dp)
@@ -654,8 +651,8 @@ private fun CalculateButton(onClick: () -> Unit) {
             .shadow(
                 elevation = 8.dp,
                 shape = RoundedCornerShape(16.dp),
-                ambientColor = WaterBlueMedium.copy(alpha = 0.3f),
-                spotColor = WaterBlueMedium.copy(alpha = 0.3f)
+                ambientColor = FeatureColors.WaterStart.copy(alpha = 0.3f),
+                spotColor = FeatureColors.WaterStart.copy(alpha = 0.3f)
             ),
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.buttonColors(
@@ -729,7 +726,7 @@ private fun SelectableChipCard(
     content: @Composable () -> Unit
 ) {
     val borderColor by animateColorAsState(
-        targetValue = if (selected) WaterBlueMedium else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+        targetValue = if (selected) FeatureColors.WaterStart else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
         animationSpec = tween(300),
         label = "border_color"
     )
@@ -776,7 +773,7 @@ private fun SelectableOptionRow(
         label = "option_bg"
     )
     val borderColor by animateColorAsState(
-        targetValue = if (selected) WaterBlueMedium else MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
+        targetValue = if (selected) FeatureColors.WaterStart else MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
         animationSpec = tween(300),
         label = "option_border"
     )

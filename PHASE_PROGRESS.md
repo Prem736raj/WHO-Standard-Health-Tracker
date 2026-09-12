@@ -327,6 +327,24 @@ This file is the source of truth for the sequential product-development phases. 
 
 Updated: 2026-09-12
 
+## Follow-up — Water intake input visual consistency
+
+- **Status:** Complete locally; device/accessibility validation remains open
+- **Major changes:** The daily water-needs input route now uses shared water
+  feature tokens for its hero gradient, selection borders and button shadow;
+  existing metric/imperial inputs, profile autofill, validation and navigation
+  behavior are unchanged. The route keeps the stable vector/icon language and
+  readable theme surfaces used by the rest of the hydration flow.
+- **Tests:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  pass with `GRADLE_EXIT=0`.
+- **Known limitations:** The calculator still needs connected-device checks for
+  keyboard/scroll behavior, large fonts, TalkBack, theme contrast and result
+  navigation.
+- **Next phase:** Execute the documented device/console release checklist;
+  continue deep-screen cleanup only when it improves trust, accessibility or
+  reliability.
+
 ## Follow-up — Water reminder settings visual consistency
 
 - **Status:** Complete locally; device/accessibility validation remains open
