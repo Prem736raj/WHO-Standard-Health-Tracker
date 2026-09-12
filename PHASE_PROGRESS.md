@@ -327,6 +327,24 @@ This file is the source of truth for the sequential product-development phases. 
 
 Updated: 2026-09-12
 
+## Follow-up — Meal-planning visual consistency
+
+- **Status:** Complete locally; device/accessibility validation remains open
+- **Major changes:** Meal planning now uses shared semantic palette tokens for
+  meal distribution, macros, fasting windows, workout nutrition and ideas.
+  Fasting, workout, meal and food-idea markers render as stable vector icons;
+  legacy emoji fields remain only in the data model for compatibility. Timeline
+  semantics and all planning controls are unchanged.
+- **Tests:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  pass with `GRADLE_EXIT=0`.
+- **Known limitations:** Intermittent-fasting and workout guidance remains
+  informational; connected-device accessibility, large-font and interaction
+  checks are still required.
+- **Next phase:** Execute the documented device/console release checklist;
+  continue deep-screen cleanup only where it improves trust, accessibility or
+  reliability.
+
 ## Follow-up — Calorie history visual consistency
 
 - **Status:** Complete locally; device/accessibility validation remains open

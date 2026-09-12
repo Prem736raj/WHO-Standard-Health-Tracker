@@ -286,3 +286,18 @@ These cannot be proven by a Windows unit/build run:
 - **Remaining gates:** Connected-device chart rendering, TalkBack, large-font,
   theme contrast and history interaction checks, plus signing/Firebase/Play
   Console work, remain owner-only.
+
+## Meal-planning visual consistency follow-up — 2026-09-12
+
+- **Status:** Code-fixable polish complete; device/accessibility validation
+  remains open.
+- **Changes:** Meal distribution, macro rows, intermittent-fasting cards,
+  timeline, workout nutrition and meal ideas now use shared semantic colors and
+  stable vector icons instead of rendered emoji. Legacy marker fields and all
+  meal-planning behavior remain compatible.
+- **Verification:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  passed with `GRADLE_EXIT=0`.
+- **Remaining gates:** Connected-device TalkBack, large-font, theme and
+  interaction checks, plus signing/Firebase/Play Console work, remain
+  owner-only.

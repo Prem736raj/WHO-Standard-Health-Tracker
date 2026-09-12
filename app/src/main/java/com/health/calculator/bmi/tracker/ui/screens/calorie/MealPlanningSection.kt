@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,11 +24,13 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.health.calculator.bmi.tracker.data.model.*
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
 
 @Composable
 fun MealPlanningSection(
@@ -168,12 +171,12 @@ private fun MealDistributionCard(
 ) {
     var showCustom by remember { mutableStateOf(false) }
     val mealColors = listOf(
-        Color(0xFFFF9800), // Breakfast
-        Color(0xFF4CAF50), // Lunch
-        Color(0xFF2196F3), // Dinner
-        Color(0xFF9C27B0), // Snack 1
-        Color(0xFFE91E63), // Snack 2
-        Color(0xFF00BCD4)  // Extra
+        HealthColors.Caution, // Breakfast
+        HealthColors.Healthy, // Lunch
+        HealthColors.Info, // Dinner
+        HealthColors.Severe, // Snack 1
+        HealthColors.Danger, // Snack 2
+        HealthColors.BelowNormal // Extra
     )
 
     Card(
@@ -209,7 +212,7 @@ private fun MealDistributionCard(
                     .clip(RoundedCornerShape(12.dp))
             ) {
                 mealPlan.meals.forEachIndexed { index, meal ->
-                    val color = mealColors.getOrElse(index) { Color.Gray }
+                    val color = mealColors.getOrElse(index) { MaterialTheme.colorScheme.outline }
                     Box(
                         modifier = Modifier
                             .fillMaxHeight()
@@ -223,7 +226,7 @@ private fun MealDistributionCard(
 
             // Meal breakdown
             mealPlan.meals.forEachIndexed { index, meal ->
-                val color = mealColors.getOrElse(index) { Color.Gray }
+                val color = mealColors.getOrElse(index) { MaterialTheme.colorScheme.outline }
                 MealRowItem(
                     meal = meal,
                     color = color,
@@ -313,9 +316,9 @@ private fun MealRowItem(
                 .padding(start = 18.dp, top = 4.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            MacroMiniChip("P", "${"%.0f".format(meal.proteinGrams)}g", Color(0xFFF44336))
-            MacroMiniChip("C", "${"%.0f".format(meal.carbGrams)}g", Color(0xFFFFEB3B))
-            MacroMiniChip("F", "${"%.0f".format(meal.fatGrams)}g", Color(0xFF4CAF50))
+            MacroMiniChip("P", "${"%.0f".format(meal.proteinGrams)}g", HealthColors.Info)
+            MacroMiniChip("C", "${"%.0f".format(meal.carbGrams)}g", HealthColors.Warning)
+            MacroMiniChip("F", "${"%.0f".format(meal.fatGrams)}g", HealthColors.Healthy)
         }
 
         // Custom slider
@@ -378,10 +381,10 @@ private fun IntermittentFastingCard(
     onWindowStartChanged: (Int) -> Unit
 ) {
     val ifOptions = listOf(
-        Triple("none", "No Fasting", "🍽️"),
-        Triple("16:8", "16:8", "⏰"),
-        Triple("18:6", "18:6", "🕐"),
-        Triple("20:4", "20:4", "⌛")
+        Triple("none", "No Fasting", Icons.Outlined.LocalDining),
+        Triple("16:8", "16:8", Icons.Outlined.Schedule),
+        Triple("18:6", "18:6", Icons.Outlined.AccessTime),
+        Triple("20:4", "20:4", Icons.Outlined.Schedule)
     )
 
     Card(
@@ -411,14 +414,14 @@ private fun IntermittentFastingCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                ifOptions.forEach { (type, label, emoji) ->
+                ifOptions.forEach { (type, label, icon) ->
                     val isSelected = ifType == type
                     FilterChip(
                         selected = isSelected,
                         onClick = { onTypeChanged(type) },
                         label = {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(emoji, fontSize = 12.sp)
+                                Icon(icon, contentDescription = null, modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(label, fontSize = 11.sp)
                             }
@@ -484,11 +487,11 @@ private fun IntermittentFastingCard(
                                     .padding(10.dp),
                                 horizontalArrangement = Arrangement.SpaceEvenly
                             ) {
-                                IFInfoChip("🍽️ Eating", "${it.eatingHours}h", Color(0xFF4CAF50))
-                                IFInfoChip("😴 Fasting", "${it.fastingHours}h", Color(0xFFFF9800))
+                                IFInfoChip(Icons.Outlined.LocalDining, "Eating", "${it.eatingHours}h", HealthColors.Healthy)
+                                IFInfoChip(Icons.Outlined.Schedule, "Fasting", "${it.fastingHours}h", HealthColors.Caution)
                                 val endDisplay = if (it.windowEndHour > 12) "${it.windowEndHour - 12} PM" 
                                     else "${it.windowEndHour} ${if (it.windowEndHour == 12) "PM" else "AM"}"
-                                IFInfoChip("⏰ Ends", endDisplay, Color(0xFF2196F3))
+                                IFInfoChip(Icons.Outlined.AccessTime, "Ends", endDisplay, HealthColors.Info)
                             }
                         }
                     }
@@ -499,9 +502,12 @@ private fun IntermittentFastingCard(
 }
 
 @Composable
-private fun IFInfoChip(label: String, value: String, color: Color) {
+private fun IFInfoChip(icon: ImageVector, label: String, value: String, color: Color) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(label, style = MaterialTheme.typography.labelSmall, fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(3.dp)) {
+            Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(14.dp))
+            Text(label, style = MaterialTheme.typography.labelSmall, fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
+        }
         Text(value, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold), color = color)
     }
 }
@@ -528,8 +534,11 @@ private fun IFTimelineVisual(ifPlan: IntermittentFastingPlan) {
                     .fillMaxWidth()
                     .height(50.dp)
             ) {
-                val fastingColor = Color(0xFFFF9800).copy(alpha = 0.3f)
-                val eatingColor = Color(0xFF4CAF50).copy(alpha = 0.5f)
+                val fastingColor = HealthColors.Caution.copy(alpha = 0.3f)
+                val eatingColor = HealthColors.Healthy.copy(alpha = 0.5f)
+                val mealMarkerColor = HealthColors.Info
+                val surfaceColor = MaterialTheme.colorScheme.surface
+                val outlineColor = MaterialTheme.colorScheme.outline
 
                 Canvas(modifier = Modifier.fillMaxSize()) {
                     val width = size.width
@@ -552,7 +561,7 @@ private fun IFTimelineVisual(ifPlan: IntermittentFastingPlan) {
                     for (hour in 0..24 step 6) {
                         val x = hour * hourWidth
                         drawLine(
-                            color = Color.Gray.copy(alpha = 0.5f),
+                            color = outlineColor.copy(alpha = 0.5f),
                             start = Offset(x, 0f),
                             end = Offset(x, height),
                             strokeWidth = 1.dp.toPx(),
@@ -565,12 +574,12 @@ private fun IFTimelineVisual(ifPlan: IntermittentFastingPlan) {
                         val mealHour = parseHourFromTime(meal.suggestedTime)
                         val mealX = mealHour * hourWidth
                         drawCircle(
-                            color = Color(0xFF2196F3),
+                            color = mealMarkerColor,
                             radius = 8.dp.toPx(),
                             center = Offset(mealX, height / 2)
                         )
                         drawCircle(
-                            color = Color.White,
+                            color = surfaceColor,
                             radius = 4.dp.toPx(),
                             center = Offset(mealX, height / 2)
                         )
@@ -600,16 +609,16 @@ private fun IFTimelineVisual(ifPlan: IntermittentFastingPlan) {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                LegendItem("Fasting", Color(0xFFFF9800).copy(alpha = 0.3f))
+                LegendItem("Fasting", HealthColors.Caution.copy(alpha = 0.3f))
                 Spacer(modifier = Modifier.width(16.dp))
-                LegendItem("Eating", Color(0xFF4CAF50).copy(alpha = 0.5f))
+                LegendItem("Eating", HealthColors.Healthy.copy(alpha = 0.5f))
                 Spacer(modifier = Modifier.width(16.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(
                         modifier = Modifier
                             .size(8.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFF2196F3))
+                            .background(HealthColors.Info)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(stringResource(R.string.txt_meal), style = MaterialTheme.typography.labelSmall, fontSize = 10.sp)
@@ -716,15 +725,21 @@ private fun WorkoutNutritionCard(
                     ) {
                         workoutTimes.forEach { time ->
                             val isSelected = workoutTime == time
-                            val emoji = when (time) {
-                                "Morning" -> "🌅"
-                                "Afternoon" -> "☀️"
-                                else -> "🌙"
+                            val timeIcon = when (time) {
+                                "Morning" -> Icons.Outlined.WbSunny
+                                "Afternoon" -> Icons.Outlined.WbSunny
+                                else -> Icons.Outlined.NightsStay
                             }
                             FilterChip(
                                 selected = isSelected,
                                 onClick = { onTimeChanged(time) },
-                                label = { Text("$emoji $time", fontSize = 11.sp) },
+                                label = {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(timeIcon, contentDescription = null, modifier = Modifier.size(16.dp))
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text(time, fontSize = 11.sp)
+                                    }
+                                },
                                 modifier = Modifier.weight(1f),
                                 shape = RoundedCornerShape(8.dp)
                             )
@@ -741,8 +756,8 @@ private fun WorkoutNutritionCard(
                                 label = "Pre-Workout",
                                 timing = wn.preWorkoutTiming,
                                 meal = meal,
-                                color = Color(0xFFFF9800),
-                                emoji = "⚡"
+                                color = HealthColors.Caution,
+                                icon = Icons.Outlined.Bolt
                             )
                         }
 
@@ -754,8 +769,8 @@ private fun WorkoutNutritionCard(
                                 label = "Post-Workout",
                                 timing = wn.postWorkoutTiming,
                                 meal = meal,
-                                color = Color(0xFF4CAF50),
-                                emoji = "💪"
+                                color = HealthColors.Healthy,
+                                icon = Icons.Outlined.FitnessCenter
                             )
                         }
                     }
@@ -771,7 +786,7 @@ private fun WorkoutMealCard(
     timing: String,
     meal: MealSlot,
     color: Color,
-    emoji: String
+    icon: ImageVector
 ) {
     Surface(
         shape = RoundedCornerShape(12.dp),
@@ -784,7 +799,7 @@ private fun WorkoutMealCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(emoji, fontSize = 20.sp)
+                    Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(22.dp))
                     Spacer(modifier = Modifier.width(8.dp))
                     Column {
                         Text(
@@ -822,9 +837,9 @@ private fun WorkoutMealCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                MacroMiniChip("P", "${"%.0f".format(meal.proteinGrams)}g", Color(0xFFF44336))
-                MacroMiniChip("C", "${"%.0f".format(meal.carbGrams)}g", Color(0xFFFFEB3B))
-                MacroMiniChip("F", "${"%.0f".format(meal.fatGrams)}g", Color(0xFF4CAF50))
+                MacroMiniChip("P", "${"%.0f".format(meal.proteinGrams)}g", HealthColors.Info)
+                MacroMiniChip("C", "${"%.0f".format(meal.carbGrams)}g", HealthColors.Warning)
+                MacroMiniChip("F", "${"%.0f".format(meal.fatGrams)}g", HealthColors.Healthy)
             }
 
             // Meal ideas
@@ -836,12 +851,21 @@ private fun WorkoutMealCard(
                 fontSize = 10.sp
             )
             meal.mealIdeas.take(2).forEach { idea ->
-                Text(
-                    "• ${idea.emoji} ${idea.description}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                    fontSize = 11.sp
-                )
+                Row(verticalAlignment = Alignment.Top) {
+                    Icon(
+                        imageVector = foodIdeaIcon(idea.emoji),
+                        contentDescription = null,
+                        tint = color,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        idea.description,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                        fontSize = 11.sp
+                    )
+                }
             }
         }
     }
@@ -861,7 +885,7 @@ private fun MealIdeasSection(mealPlan: MealPlan) {
                 Icon(
                     Icons.Default.Lightbulb,
                     contentDescription = null,
-                    tint = Color(0xFFFFEB3B),
+                    tint = HealthColors.Warning,
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -927,9 +951,14 @@ private fun MealIdeasSection(mealPlan: MealPlan) {
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(vertical = 4.dp),
-                                        verticalAlignment = Alignment.CenterVertically
+                                        verticalAlignment = Alignment.Top
                                     ) {
-                                        Text(idea.emoji, fontSize = 16.sp)
+                                        Icon(
+                                            imageVector = foodIdeaIcon(idea.emoji),
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.size(18.dp)
+                                        )
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Column(modifier = Modifier.weight(1f)) {
                                             Text(
@@ -957,4 +986,15 @@ private fun MealIdeasSection(mealPlan: MealPlan) {
             }
         }
     }
+}
+
+/** Keep legacy meal-idea markers in the data model, but use one vector icon
+ * family for rendered planning surfaces. */
+private fun foodIdeaIcon(marker: String): ImageVector = when (marker) {
+    "⚡" -> Icons.Outlined.Bolt
+    "🌅", "☀️" -> Icons.Outlined.WbSunny
+    "🌙" -> Icons.Outlined.NightsStay
+    "⏰", "🕐", "⌛" -> Icons.Outlined.Schedule
+    "🍗", "🐟", "🥚", "🥩" -> Icons.Outlined.Restaurant
+    else -> Icons.Outlined.LocalDining
 }
