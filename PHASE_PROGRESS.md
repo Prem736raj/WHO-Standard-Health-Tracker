@@ -269,6 +269,11 @@ This file is the source of truth for the sequential product-development phases. 
   shared vector icons and semantic palette roles. Historical formula notes no
   longer call an equation a gold standard or universally most accurate, and
   population variation is explained without unsupported precision claims.
+- **Follow-up:** The WHO exercise-guidelines surface now renders zone, goal,
+  session, and progress visuals with vector icons and shared semantic colours.
+  Its progress ring exposes a spoken summary, destructive session removal is a
+  48 dp target, and decorative emoji markers were removed from the rendered
+  experience.
 - **Verification:** The complete `test`, `lintRelease`, `assembleDebug`,
   `assembleRelease` and `bundleRelease` gate is green after this follow-up.
 - **Known limitations:** Connected Room migration, Health Connect provider,

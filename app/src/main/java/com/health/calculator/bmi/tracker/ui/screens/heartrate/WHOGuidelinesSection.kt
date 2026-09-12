@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,12 +22,33 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.progressBarRangeInfo
+import androidx.compose.ui.semantics.semantics
 import com.health.calculator.bmi.tracker.util.*
 import com.health.calculator.bmi.tracker.ui.components.FitnessLevel
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
+
+/**
+ * Zone and goal models still carry legacy emoji labels for persistence and
+ * generated copy. Render a stable vector icon instead so this surface keeps
+ * the same visual language as the rest of the app.
+ */
+private fun heartRateGuidelineIcon(legacyLabel: String): ImageVector = when {
+    legacyLabel.contains("🟢") || legacyLabel.contains("🌱") -> Icons.Outlined.CheckCircle
+    legacyLabel.contains("🔴") || legacyLabel.contains("🏃") -> Icons.Outlined.FavoriteBorder
+    legacyLabel.contains("⏱") -> Icons.Outlined.Schedule
+    legacyLabel.contains("😴") -> Icons.Outlined.Schedule
+    legacyLabel.contains("📊") -> Icons.Outlined.Analytics
+    legacyLabel.contains("📅") -> Icons.Outlined.CalendarMonth
+    else -> Icons.Outlined.FavoriteBorder
+}
 
 // ============================================================
 // MAIN WHO GUIDELINES SECTION
@@ -53,7 +75,12 @@ fun WHOGuidelinesSection(
     ) {
         // Section Header
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.txt_text_placeholder_64), fontSize = 22.sp)
+            Icon(
+                imageVector = Icons.Outlined.FavoriteBorder,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(24.dp)
+            )
             Spacer(modifier = Modifier.width(8.dp))
             Column {
                 Text(
@@ -100,7 +127,7 @@ private fun WHOGuidelineCard(guideline: WHOGuideline) {
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF1565C0).copy(alpha = 0.06f)
+            containerColor = HealthColors.Good.copy(alpha = 0.06f)
         )
     ) {
         Column(
@@ -112,15 +139,26 @@ private fun WHOGuidelineCard(guideline: WHOGuideline) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Surface(
                     shape = RoundedCornerShape(8.dp),
-                    color = Color(0xFF1565C0).copy(alpha = 0.12f)
+                    color = HealthColors.Good.copy(alpha = 0.12f)
                 ) {
-                    Text(
-                        text = "📋 ${guideline.ageGroup} (${guideline.ageRange})",
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF1565C0),
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
-                    )
+                    Row(
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.CalendarMonth,
+                            contentDescription = null,
+                            tint = HealthColors.Good,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Text(
+                            text = "${guideline.ageGroup} (${guideline.ageRange})",
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = HealthColors.Good
+                        )
+                    }
                 }
             }
 
@@ -137,7 +175,12 @@ private fun WHOGuidelineCard(guideline: WHOGuideline) {
                     modifier = Modifier.padding(12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(stringResource(R.string.txt_text_placeholder_1), fontSize = 18.sp)
+                    Icon(
+                        imageVector = Icons.Outlined.Info,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         text = guideline.keyMessage,
@@ -160,7 +203,7 @@ private fun WHOGuidelineCard(guideline: WHOGuideline) {
                     label = "Moderate",
                     value = "${guideline.moderateMinPerWeek.first}-${guideline.moderateMinPerWeek.last}",
                     unit = "min/week",
-                    color = Color(0xFF4CAF50),
+                    color = HealthColors.Healthy,
                     modifier = Modifier.weight(1f)
                 )
                 Text(
@@ -175,7 +218,7 @@ private fun WHOGuidelineCard(guideline: WHOGuideline) {
                     label = "Vigorous",
                     value = "${guideline.vigorousMinPerWeek.first}-${guideline.vigorousMinPerWeek.last}",
                     unit = "min/week",
-                    color = Color(0xFFE53935),
+                    color = HealthColors.Danger,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -196,7 +239,7 @@ private fun WHOGuidelineCard(guideline: WHOGuideline) {
                     ) {
                         Text(
                             text = stringResource(R.string.txt_text_placeholder_3),
-                            color = Color(0xFF1565C0),
+                            color = HealthColors.Good,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(end = 8.dp, top = 1.dp)
                         )
@@ -217,7 +260,7 @@ private fun WHOGuidelineCard(guideline: WHOGuideline) {
                         Text(
                             text = if (showAllRecs) "Show less" else "Show all recommendations",
                             style = MaterialTheme.typography.labelSmall,
-                            color = Color(0xFF1565C0)
+                            color = HealthColors.Good
                         )
                     }
                 }
@@ -248,7 +291,12 @@ private fun TargetCard(
                 .padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = emoji, fontSize = 18.sp)
+            Icon(
+                imageVector = heartRateGuidelineIcon(emoji),
+                contentDescription = null,
+                tint = color,
+                modifier = Modifier.size(20.dp)
+            )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = label,
@@ -300,7 +348,7 @@ private fun ZoneIntensityMappingCard(zones: List<HeartRateZone>) {
             IntensityGroup(
                 label = "Moderate Intensity",
                 emoji = "🟢",
-                color = Color(0xFF4CAF50),
+                color = HealthColors.Healthy,
                 zones = zones.filter { it.zoneNumber in 1..3 },
                 description = "Counts toward 150-300 min/week target"
             )
@@ -317,7 +365,7 @@ private fun ZoneIntensityMappingCard(zones: List<HeartRateZone>) {
             IntensityGroup(
                 label = "Vigorous Intensity",
                 emoji = "🔴",
-                color = Color(0xFFE53935),
+                color = HealthColors.Danger,
                 zones = zones.filter { it.zoneNumber in 4..5 },
                 description = "1 min vigorous = 2 min moderate equivalent"
             )
@@ -335,7 +383,12 @@ private fun IntensityGroup(
 ) {
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = emoji, fontSize = 16.sp)
+            Icon(
+                imageVector = heartRateGuidelineIcon(emoji),
+                contentDescription = null,
+                tint = color,
+                modifier = Modifier.size(18.dp)
+            )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = label,
@@ -418,7 +471,12 @@ private fun WeeklyPlanCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = plan.goalEmoji, fontSize = 22.sp)
+                    Icon(
+                        imageVector = heartRateGuidelineIcon(plan.goalEmoji),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(24.dp)
+                    )
                     Spacer(modifier = Modifier.width(10.dp))
                     Column {
                         Text(
@@ -475,14 +533,14 @@ private fun WeeklyPlanCard(
             // WHO compliance
             Surface(
                 shape = RoundedCornerShape(8.dp),
-                color = if (plan.meetsWHOGuideline) Color(0xFF4CAF50).copy(alpha = 0.1f)
-                else Color(0xFFFF9800).copy(alpha = 0.1f)
+                color = if (plan.meetsWHOGuideline) HealthColors.Healthy.copy(alpha = 0.1f)
+                else HealthColors.Warning.copy(alpha = 0.1f)
             ) {
                 Text(
                     text = plan.whoComplianceNote,
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Medium,
-                    color = if (plan.meetsWHOGuideline) Color(0xFF4CAF50) else Color(0xFFFF9800),
+                    color = if (plan.meetsWHOGuideline) HealthColors.Healthy else HealthColors.Warning,
                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
                 )
             }
@@ -531,7 +589,12 @@ private fun WeeklyPlanCard(
 @Composable
 private fun MiniStat(value: String, label: String, emoji: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = emoji, fontSize = 14.sp)
+        Icon(
+            imageVector = heartRateGuidelineIcon(emoji),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(18.dp)
+        )
         Text(
             text = value,
             style = MaterialTheme.typography.titleSmall,
@@ -565,10 +628,11 @@ private fun DayPlanRow(day: WeeklyPlanDay) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Day name
-            Text(
-                text = day.emoji,
-                fontSize = 18.sp,
-                modifier = Modifier.width(30.dp)
+            Icon(
+                imageVector = heartRateGuidelineIcon(day.emoji),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(22.dp).width(30.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
 
@@ -725,17 +789,17 @@ fun WeeklyExerciseTracker(
                 Spacer(modifier = Modifier.height(12.dp))
                 Surface(
                     shape = RoundedCornerShape(8.dp),
-                    color = if (progress >= 1f) Color(0xFF4CAF50).copy(alpha = 0.1f)
-                    else Color(0xFF2196F3).copy(alpha = 0.1f)
+                    color = if (progress >= 1f) HealthColors.Healthy.copy(alpha = 0.1f)
+                    else HealthColors.Good.copy(alpha = 0.1f)
                 ) {
                     Text(
                         text = if (progress >= 1f)
-                            "🎉 You've met the WHO weekly exercise target!"
+                            "You've met the WHO weekly exercise target."
                         else
-                            "📈 ${targetMin - totalEquivalent} more moderate-equivalent minutes to reach WHO target",
+                            "${targetMin - totalEquivalent} more moderate-equivalent minutes to reach the WHO target",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Medium,
-                        color = if (progress >= 1f) Color(0xFF4CAF50) else Color(0xFF2196F3),
+                        color = if (progress >= 1f) HealthColors.Healthy else HealthColors.Good,
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
                     )
                 }
@@ -798,15 +862,18 @@ private fun WeeklyProgressRing(
     )
 
     val ringColor = when {
-        progress >= 1f -> Color(0xFF4CAF50)
-        progress >= 0.6f -> Color(0xFF8BC34A)
-        progress >= 0.3f -> Color(0xFFFFC107)
-        else -> Color(0xFFBDBDBD)
+        progress >= 1f -> HealthColors.Healthy
+        progress >= 0.6f -> HealthColors.Good
+        progress >= 0.3f -> HealthColors.Warning
+        else -> MaterialTheme.colorScheme.outline
     }
 
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier
+        modifier = modifier.semantics {
+            contentDescription = "Weekly exercise progress: ${(progress * 100).toInt().coerceAtMost(100)} percent, $totalMin of $targetMin minutes"
+            progressBarRangeInfo = ProgressBarRangeInfo(progress.coerceIn(0f, 1f), 0f..1f)
+        }
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val strokeWidth = 10.dp.toPx()
@@ -846,7 +913,12 @@ private fun WeeklyProgressRing(
 @Composable
 private fun TrackerStat(emoji: String, label: String, value: String, target: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(text = emoji, fontSize = 14.sp)
+        Icon(
+            imageVector = heartRateGuidelineIcon(emoji),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(18.dp)
+        )
         Spacer(modifier = Modifier.width(6.dp))
         Text(
             text = label,
@@ -880,7 +952,12 @@ private fun LoggedSessionRow(
             .padding(horizontal = 10.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = session.intensity.emoji, fontSize = 14.sp)
+        Icon(
+            imageVector = heartRateGuidelineIcon(session.intensity.emoji),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(18.dp)
+        )
         Spacer(modifier = Modifier.width(8.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
@@ -905,7 +982,7 @@ private fun LoggedSessionRow(
         Spacer(modifier = Modifier.width(4.dp))
         IconButton(
             onClick = onDelete,
-            modifier = Modifier.size(28.dp)
+            modifier = Modifier.size(48.dp)
         ) {
             Icon(
                 Icons.Default.Close,
@@ -986,13 +1063,15 @@ fun ExerciseLogDialog(
                         FilterChip(
                             selected = selectedZone == index,
                             onClick = { selectedZone = index },
-                            label = {
+                                    label = {
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    Text(
-                                        text = zone.icon,
-                                        fontSize = 12.sp
+                                    Icon(
+                                        imageVector = heartRateGuidelineIcon(zone.icon),
+                                        contentDescription = null,
+                                        tint = zone.color,
+                                        modifier = Modifier.size(16.dp)
                                     )
                                     Text(
                                         text = "Z${zone.zoneNumber}",
@@ -1020,10 +1099,15 @@ fun ExerciseLogDialog(
                             modifier = Modifier.padding(8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(text = zone.icon, fontSize = 14.sp)
+                            Icon(
+                                imageVector = heartRateGuidelineIcon(zone.icon),
+                                contentDescription = null,
+                                tint = zone.color,
+                                modifier = Modifier.size(18.dp)
+                            )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "${zone.zoneName} • ${zone.bpmLow}-${zone.bpmHigh} BPM • ${intensity.emoji} ${intensity.label}",
+                                text = "${zone.zoneName} • ${zone.bpmLow}-${zone.bpmHigh} BPM • ${intensity.label}",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = zone.color
                             )

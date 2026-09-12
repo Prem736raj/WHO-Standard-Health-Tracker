@@ -84,6 +84,10 @@ These cannot be proven by a Windows unit/build run:
   shared vector icons and semantic palette roles. Formula history and guidance
   avoid “gold standard” or universally-most-accurate claims and no longer give
   unsupported precision about agreement between equations.
+- **Follow-up:** The WHO exercise-guidelines surface now uses vector icons and
+  shared semantic colours for zones, goals, sessions, and progress. The weekly
+  progress ring has a spoken summary and session removal uses a 48 dp target;
+  decorative emoji markers are no longer rendered.
 - **Tests:** Added WHR landmark/reference-boundary, blood-pressure severe-edge,
   heart-rate guidance and AI conversation-turn policy tests. The full local
   Gradle gate is green; connected instrumentation built its APK but stopped
