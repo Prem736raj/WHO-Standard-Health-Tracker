@@ -327,6 +327,26 @@ This file is the source of truth for the sequential product-development phases. 
 
 Updated: 2026-09-12
 
+## Follow-up — Home water card visual consistency
+
+- **Status:** Complete locally; device/accessibility validation remains open
+- **Major changes:** The home hydration card now uses vector water/progress,
+  completion and streak icons instead of emoji placeholders. Its goal and
+  success treatments use the shared semantic hydration palette, and quick-add
+  labels are plain, locale-friendly measurements. Progress animation, goal
+  completion, streak display and quick logging behavior remain unchanged.
+- **Tests:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  pass with `GRADLE_EXIT=0`.
+- **Known limitations:** Home rendering, contrast at large font sizes,
+  TalkBack descriptions and dark/light theme behavior still need a connected
+  device check.
+- **Next phase:** Execute the documented device/console release checklist;
+  continue deep-screen cleanup only when it improves trust, accessibility or
+  reliability.
+
+Updated: 2026-09-12
+
 ## Follow-up — Blood-pressure reminder and export visual consistency
 
 - **Status:** Complete locally; device/accessibility validation remains open

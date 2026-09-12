@@ -13,6 +13,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.WaterDrop
+import androidx.compose.material.icons.outlined.Whatshot
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,19 +28,21 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
 import kotlinx.coroutines.delay
 import kotlin.math.cos
 import kotlin.math.sin
 
-private val WaterBlueLight = Color(0xFF64B5F6)
-private val WaterBlueMedium = Color(0xFF2196F3)
-private val WaterBlueDark = Color(0xFF1565C0)
+private val WaterBlueLight = HealthColors.GoodDark
+private val WaterBlueMedium = HealthColors.Good
+private val WaterBlueDark = HealthColors.Good.copy(alpha = 0.9f)
 
 @Composable
 fun WaterHomeCard(
@@ -99,7 +104,7 @@ fun WaterHomeCard(
                 .background(
                     brush = Brush.linearGradient(
                         colors = if (isGoalMet)
-                            listOf(Color(0xFF4CAF50), Color(0xFF2E7D32))
+                            listOf(HealthColors.Healthy, HealthColors.HealthyDark)
                         else
                             listOf(WaterBlueMedium, WaterBlueDark)
                     ),
@@ -121,9 +126,11 @@ fun WaterHomeCard(
                         percentage = animatedPercentage,
                         isGoalMet = isGoalMet
                     )
-                    Text(
-                        text = getGlassIcon(animatedPercentage),
-                        fontSize = 28.sp
+                    Icon(
+                        imageVector = getWaterProgressIcon(animatedPercentage, isGoalMet),
+                        contentDescription = "Water progress",
+                        tint = Color.White,
+                        modifier = Modifier.size(28.dp)
                     )
                 }
 
@@ -143,7 +150,12 @@ fun WaterHomeCard(
                             fontSize = 14.sp
                         )
                         if (isGoalMet) {
-                            Text(stringResource(R.string.txt_text_placeholder_25), fontSize = 14.sp, color = Color.White)
+                            Icon(
+                                imageVector = Icons.Outlined.CheckCircle,
+                                contentDescription = "Goal achieved",
+                                tint = Color.White,
+                                modifier = Modifier.size(16.dp)
+                            )
                         }
                     }
 
@@ -173,7 +185,12 @@ fun WaterHomeCard(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(4.dp)
                             ) {
-                                Text(stringResource(R.string.txt_text_placeholder_6), fontSize = 12.sp)
+                                Icon(
+                                    imageVector = Icons.Outlined.Whatshot,
+                                    contentDescription = "Streak",
+                                    tint = Color.White.copy(alpha = 0.9f),
+                                    modifier = Modifier.size(14.dp)
+                                )
                                 Text(
                                     "$streakDays day${if (streakDays > 1) "s" else ""}",
                                     color = Color.White.copy(alpha = 0.8f),
@@ -185,11 +202,11 @@ fun WaterHomeCard(
 
                     // Dynamic status message
                     val statusMessage = when {
-                        isGoalMet -> "🎉 Goal achieved!"
-                        percentage >= 75 -> "💪 Almost there!"
-                        percentage >= 50 -> "👍 Halfway done"
-                        percentage >= 25 -> "💧 Keep drinking"
-                        else -> "🌅 Start hydrating"
+                        isGoalMet -> "Goal achieved!"
+                        percentage >= 75 -> "Almost there!"
+                        percentage >= 50 -> "Halfway done"
+                        percentage >= 25 -> "Keep drinking"
+                        else -> "Start hydrating"
                     }
                     Text(
                         text = statusMessage,
@@ -228,9 +245,9 @@ fun WaterHomeCard(
                             onDismissRequest = { showQuickAddMenu = false }
                         ) {
                             listOf(
-                                100 to "💧 Sip (100ml)",
-                                250 to "🥛 Glass (250ml)",
-                                500 to "🍶 Bottle (500ml)"
+                                100 to "Sip • 100 ml",
+                                250 to "Glass • 250 ml",
+                                500 to "Bottle • 500 ml"
                             ).forEach { (amount, label) ->
                                 DropdownMenuItem(
                                     text = { Text(label) },
@@ -267,7 +284,7 @@ fun WaterHomeCard(
                 ) {
                     Card(
                         shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFF4CAF50)),
+                        colors = CardDefaults.cardColors(containerColor = HealthColors.Healthy),
                         elevation = CardDefaults.cardElevation(8.dp)
                     ) {
                         Text(
@@ -291,7 +308,7 @@ private fun MiniWaterProgressRing(
     val sweepAngle = (percentage / 100f * 360f).coerceAtMost(360f)
 
     val ringColor = when {
-        isGoalMet -> Color(0xFF81C784)
+        isGoalMet -> HealthColors.HealthyDark
         percentage >= 75 -> WaterBlueLight
         percentage >= 50 -> WaterBlueMedium
         else -> Color.White.copy(alpha = 0.5f)
@@ -338,16 +355,10 @@ private fun MiniWaterProgressRing(
 /**
  * Returns different glass/water icons based on progress percentage
  */
-private fun getGlassIcon(percentage: Float): String {
-    return when {
-        percentage >= 100 -> "🥳"
-        percentage >= 87.5f -> "🥛"
-        percentage >= 75f -> "🥛"
-        percentage >= 62.5f -> "🥛"
-        percentage >= 50f -> "🥤"
-        percentage >= 37.5f -> "🥤"
-        percentage >= 25f -> "🫗"
-        percentage >= 12.5f -> "🫗"
-        else -> "🪣"
+private fun getWaterProgressIcon(percentage: Float, isGoalMet: Boolean): ImageVector {
+    return if (isGoalMet || percentage >= 100f) {
+        Icons.Outlined.CheckCircle
+    } else {
+        Icons.Outlined.WaterDrop
     }
 }

@@ -213,3 +213,17 @@ These cannot be proven by a Windows unit/build run:
 - **Remaining gates:** Notification-denial, file-sharing, TalkBack, large-font,
   theme and route rendering checks, plus signing/Firebase/Play Console work,
   remain owner-only.
+
+## Home water card visual follow-up — 2026-09-12
+
+- **Status:** Code-fixable polish complete; device/accessibility validation
+  remains open.
+- **Changes:** Hydration progress, completion and streak markers now use stable
+  vector icons; shared semantic hydration colors replace local literals and
+  quick-add labels use plain measurements without emoji. Progress, goal,
+  streak and quick-log behavior remain unchanged.
+- **Verification:** `test`, `lintRelease`, `assembleDebug`,
+  `assembleRelease` and `bundleRelease` passed with `GRADLE_EXIT=0`.
+- **Remaining gates:** Connected-device home rendering, contrast at large
+  font sizes, TalkBack descriptions, theme checks, and signing/Firebase/Play
+  Console work remain owner-only.
