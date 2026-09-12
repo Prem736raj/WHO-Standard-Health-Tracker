@@ -327,6 +327,26 @@ This file is the source of truth for the sequential product-development phases. 
 
 Updated: 2026-09-12
 
+## Follow-up — Calorie result visual and wording consistency
+
+- **Status:** Complete locally; device/accessibility validation remains open
+- **Major changes:** Calorie results now use a shared semantic palette for
+  targets, BMR/TDEE, macro breakdowns, projections, warnings and actions.
+  Emoji center/projection markers were replaced with stable Material icons;
+  the educational toggle and quick result copy are plain, calm labels. Weight
+  change projections now say “may” to make their planning-estimate nature
+  explicit; calculation values and safety-floor handling are unchanged.
+- **Tests:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  pass with `GRADLE_EXIT=0`.
+- **Known limitations:** Calculator result rendering, large-font wrapping,
+  TalkBack labels and dark/light contrast still need a connected-device check.
+- **Next phase:** Execute the documented device/console release checklist;
+  continue deep-screen cleanup only when it improves trust, accessibility or
+  reliability.
+
+Updated: 2026-09-12
+
 ## Follow-up — Home water card visual consistency
 
 - **Status:** Complete locally; device/accessibility validation remains open

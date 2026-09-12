@@ -227,3 +227,18 @@ These cannot be proven by a Windows unit/build run:
 - **Remaining gates:** Connected-device home rendering, contrast at large
   font sizes, TalkBack descriptions, theme checks, and signing/Firebase/Play
   Console work remain owner-only.
+
+## Calorie result visual and wording follow-up — 2026-09-12
+
+- **Status:** Code-fixable polish complete; device/accessibility validation
+  remains open.
+- **Changes:** Calorie result targets, BMR/TDEE, macro charts, projections,
+  warnings and actions use shared semantic colors and stable Material icons
+  instead of emoji. Projection language now clearly frames weight change as a
+  planning estimate (“may”), while formulas, values and safety-floor behavior
+  remain unchanged.
+- **Verification:** `test`, `lintRelease`, `assembleDebug`,
+  `assembleRelease` and `bundleRelease` passed with `GRADLE_EXIT=0`.
+- **Remaining gates:** Connected-device result rendering, large-font wrapping,
+  TalkBack labels, theme contrast, and signing/Firebase/Play Console work
+  remain owner-only.

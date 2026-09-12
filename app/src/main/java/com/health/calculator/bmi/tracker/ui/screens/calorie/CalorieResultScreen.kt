@@ -14,6 +14,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.DateRange
+import androidx.compose.material.icons.outlined.Flag
+import androidx.compose.material.icons.outlined.LocalFireDepartment
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -40,6 +45,16 @@ import kotlin.math.abs
 import com.health.calculator.bmi.tracker.ui.components.CalorieCalculatorCrossLinks
 import com.health.calculator.bmi.tracker.util.CalorieEdgeCaseHandler
 import com.health.calculator.bmi.tracker.ui.components.CalorieSafetyWarningCard
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
+
+private object CalorieVisualColors {
+    val protein = HealthColors.Severe
+    val carbohydrates = HealthColors.Good
+    val fat = HealthColors.Caution
+    val deficit = HealthColors.Caution
+    val surplus = HealthColors.Good
+    val onTarget = HealthColors.Healthy
+}
 
 @Composable
 fun CalorieResultScreen(
@@ -268,7 +283,7 @@ fun CalorieResultScreen(
             Icon(Icons.Default.MenuBook, null, Modifier.size(16.dp))
             Spacer(modifier = Modifier.width(6.dp))
             Text(
-                if (showEducational) "Hide Calorie Guide" else "📚 Learn About Calories",
+                if (showEducational) "Hide Calorie Guide" else "Learn About Calories",
                 style = MaterialTheme.typography.labelMedium
             )
         }
@@ -305,8 +320,8 @@ fun CalorieProgressRing(
     
     val color = when {
         progress <= 0.9f -> MaterialTheme.colorScheme.primary
-        progress <= 1.0f -> Color(0xFF4CAF50)
-        else -> Color(0xFFF44336)
+        progress <= 1.0f -> CalorieVisualColors.onTarget
+        else -> HealthColors.Danger
     }
 
     Box(contentAlignment = Alignment.Center, modifier = modifier) {
@@ -370,7 +385,7 @@ fun AnimatedMacroDonutChart(
             
             // Protein
             drawArc(
-                color = Color(0xFF9C27B0),
+                color = CalorieVisualColors.protein,
                 startAngle = -90f,
                 sweepAngle = animatedP * 360f,
                 useCenter = false,
@@ -378,7 +393,7 @@ fun AnimatedMacroDonutChart(
             )
             // Carbs
             drawArc(
-                color = Color(0xFF2196F3),
+                color = CalorieVisualColors.carbohydrates,
                 startAngle = -90f + (animatedP * 360f),
                 sweepAngle = animatedC * 360f,
                 useCenter = false,
@@ -386,7 +401,7 @@ fun AnimatedMacroDonutChart(
             )
             // Fat
             drawArc(
-                color = Color(0xFFFF9800),
+                color = CalorieVisualColors.fat,
                 startAngle = -90f + ((animatedP + animatedC) * 360f),
                 sweepAngle = animatedF * 360f,
                 useCenter = false,
@@ -449,7 +464,7 @@ private fun SafetyWarningCard(result: CalorieResult) {
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFF44336).copy(alpha = 0.1f)
+            containerColor = HealthColors.Danger.copy(alpha = 0.1f)
         )
     ) {
         Row(
@@ -459,7 +474,7 @@ private fun SafetyWarningCard(result: CalorieResult) {
             Icon(
                 Icons.Default.Warning,
                 contentDescription = null,
-                tint = Color(0xFFF44336),
+                tint = HealthColors.Danger,
                 modifier = Modifier.size(24.dp)
             )
             Spacer(modifier = Modifier.width(10.dp))
@@ -467,20 +482,20 @@ private fun SafetyWarningCard(result: CalorieResult) {
                 Text(
                     text = stringResource(R.string.txt_calorie_intake_below_recommend),
                     style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                    color = Color(0xFFF44336)
+                    color = HealthColors.Danger
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "Your goal of ${"%.0f".format(result.goalCalories)} kcal/day is below the recommended minimum of ${"%.0f".format(result.minimumCalories)} kcal/day for ${result.gender.lowercase()}s. We've adjusted your target to ${"%.0f".format(result.safeGoalCalories)} kcal/day for safety.",
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFFF44336).copy(alpha = 0.85f),
+                    color = HealthColors.Danger.copy(alpha = 0.9f),
                     lineHeight = 18.sp
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = stringResource(R.string.txt_consider_a_less_aggressive_app),
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFFF44336).copy(alpha = 0.7f),
+                    color = HealthColors.Danger.copy(alpha = 0.8f),
                     fontSize = 11.sp
                 )
             }
@@ -492,9 +507,9 @@ private fun SafetyWarningCard(result: CalorieResult) {
 private fun PrimaryCalorieCard(result: CalorieResult) {
     val displayCalories = result.safeGoalCalories
     val goalColor = when {
-        result.isDeficit -> Color(0xFFFF9800)
-        result.isSurplus -> Color(0xFF2196F3)
-        else -> Color(0xFF4CAF50)
+        result.isDeficit -> CalorieVisualColors.deficit
+        result.isSurplus -> CalorieVisualColors.surplus
+        else -> CalorieVisualColors.onTarget
     }
 
     val animatedCalories by animateFloatAsState(
@@ -550,7 +565,12 @@ private fun PrimaryCalorieCard(result: CalorieResult) {
                 }
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(stringResource(R.string.txt_text_placeholder_6), fontSize = 20.sp)
+                    Icon(
+                        imageVector = Icons.Outlined.LocalFireDepartment,
+                        contentDescription = "Daily calorie target",
+                        tint = goalColor,
+                        modifier = Modifier.size(22.dp)
+                    )
                     Text(
                         text = "${"%.0f".format(animatedCalories)}",
                         style = MaterialTheme.typography.displayMedium.copy(
@@ -571,12 +591,12 @@ private fun PrimaryCalorieCard(result: CalorieResult) {
             if (result.isBelowMinimum) {
                 Surface(
                     shape = RoundedCornerShape(6.dp),
-                    color = Color(0xFFF44336).copy(alpha = 0.12f)
+                    color = HealthColors.Danger.copy(alpha = 0.12f)
                 ) {
                     Text(
                         text = "Adjusted from ${"%.0f".format(result.goalCalories)} to ${"%.0f".format(result.safeGoalCalories)} kcal (safety floor)",
                         style = MaterialTheme.typography.labelSmall,
-                        color = Color(0xFFF44336),
+                        color = HealthColors.Danger,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                         fontSize = 10.sp
                     )
@@ -616,7 +636,7 @@ private fun TdeeBmrCard(result: CalorieResult) {
                 value = "${"%.0f".format(result.usedBmr)}",
                 unit = "kcal/day",
                 subtitle = "At complete rest",
-                color = Color(0xFF9C27B0)
+                color = CalorieVisualColors.protein
             )
             Box(
                 modifier = Modifier
@@ -629,7 +649,7 @@ private fun TdeeBmrCard(result: CalorieResult) {
                 value = "${"%.0f".format(result.tdee)}",
                 unit = "kcal/day",
                 subtitle = "Maintenance",
-                color = Color(0xFF4CAF50)
+                color = CalorieVisualColors.onTarget
             )
             Box(
                 modifier = Modifier
@@ -671,9 +691,9 @@ private fun EnergyBreakdownCard(result: CalorieResult) {
     val actAnim by animateFloatAsState(targetValue = result.activityPercent, animationSpec = tween(1200, 400), label = "act")
     val tefAnim by animateFloatAsState(targetValue = result.tefPercent, animationSpec = tween(1200, 600), label = "tef")
 
-    val bmrColor = Color(0xFF9C27B0)
-    val actColor = Color(0xFF2196F3)
-    val tefColor = Color(0xFFFF9800)
+    val bmrColor = CalorieVisualColors.protein
+    val actColor = CalorieVisualColors.carbohydrates
+    val tefColor = CalorieVisualColors.fat
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -756,7 +776,7 @@ private fun BreakdownLegendItem(
 @Composable
 private fun ProjectedOutcomeCard(result: CalorieResult) {
     val action = if (result.isDeficit) "lose" else "gain"
-    val projColor = if (result.isDeficit) Color(0xFFFF9800) else Color(0xFF2196F3)
+    val projColor = if (result.isDeficit) CalorieVisualColors.deficit else CalorieVisualColors.surplus
 
     val weeklyKg = result.weeklyChangeDisplay
     val monthlyKg = result.monthlyChangeKg
@@ -785,16 +805,16 @@ private fun ProjectedOutcomeCard(result: CalorieResult) {
             ) {
                 Column(modifier = Modifier.padding(12.dp)) {
                     Text(
-                        text = "At ${"%.0f".format(result.safeGoalCalories)} kcal/day, you'll $action approximately:",
+                        text = "At ${"%.0f".format(result.safeGoalCalories)} kcal/day, you may $action approximately:",
                         style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                        ProjectionItem(value = "${"%.2f".format(weeklyKg)} kg", period = "per week", emoji = "📅")
-                        ProjectionItem(value = "${"%.1f".format(monthlyKg)} kg", period = "per month", emoji = "📆")
-                        ProjectionItem(value = "${"%.1f".format(monthlyKg * 3)} kg", period = "in 3 months", emoji = "🎯")
+                        ProjectionItem(value = "${"%.2f".format(weeklyKg)} kg", period = "per week", icon = Icons.Outlined.CalendarMonth)
+                        ProjectionItem(value = "${"%.1f".format(monthlyKg)} kg", period = "per month", icon = Icons.Outlined.DateRange)
+                        ProjectionItem(value = "${"%.1f".format(monthlyKg * 3)} kg", period = "in 3 months", icon = Icons.Outlined.Flag)
                     }
                 }
             }
@@ -804,14 +824,14 @@ private fun ProjectedOutcomeCard(result: CalorieResult) {
             if (result.isDeficit && abs(result.goalAdjustment) >= 1000) {
                 Surface(
                     shape = RoundedCornerShape(8.dp),
-                    color = Color(0xFFFF9800).copy(alpha = 0.1f)
+                    color = CalorieVisualColors.deficit.copy(alpha = 0.1f)
                 ) {
                     Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Info, null, Modifier.size(14.dp), tint = Color(0xFFFF9800))
+                        Icon(Icons.Default.Info, null, Modifier.size(14.dp), tint = CalorieVisualColors.deficit)
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             stringResource(R.string.txt_aggressive_weight_loss_1_kg_we),
-                            style = MaterialTheme.typography.bodySmall, color = Color(0xFFFF9800).copy(alpha = 0.8f), fontSize = 10.sp, lineHeight = 14.sp
+                            style = MaterialTheme.typography.bodySmall, color = CalorieVisualColors.deficit.copy(alpha = 0.9f), fontSize = 10.sp, lineHeight = 14.sp
                         )
                     }
                 }
@@ -821,9 +841,14 @@ private fun ProjectedOutcomeCard(result: CalorieResult) {
 }
 
 @Composable
-private fun ProjectionItem(value: String, period: String, emoji: String) {
+private fun ProjectionItem(value: String, period: String, icon: androidx.compose.ui.graphics.vector.ImageVector) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(emoji, fontSize = 18.sp)
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(20.dp)
+        )
         Spacer(modifier = Modifier.height(4.dp))
         Text(value, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onSurface)
         Text(period, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f), fontSize = 9.sp)
@@ -899,8 +924,8 @@ private fun ActionButtons(
                 onClick = onSave, modifier = Modifier.weight(1f), enabled = !isSaved,
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isSaved) Color(0xFF4CAF50) else MaterialTheme.colorScheme.primary,
-                    disabledContainerColor = Color(0xFF4CAF50)
+                    containerColor = if (isSaved) CalorieVisualColors.onTarget else MaterialTheme.colorScheme.primary,
+                    disabledContainerColor = CalorieVisualColors.onTarget
                 )
             ) {
                 Icon(if (isSaved) Icons.Default.Check else Icons.Default.Save, null, Modifier.size(18.dp))
@@ -919,7 +944,7 @@ private fun ActionButtons(
             modifier = Modifier.fillMaxWidth().height(50.dp),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF4CAF50)
+                containerColor = CalorieVisualColors.onTarget
             )
         ) {
             Icon(Icons.Default.Restaurant, null, Modifier.size(18.dp))
