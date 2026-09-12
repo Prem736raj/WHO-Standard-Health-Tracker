@@ -199,3 +199,17 @@ These cannot be proven by a Windows unit/build run:
 - **Remaining gates:** Physical-device TalkBack, large-font, theme, chart
   hit-testing/native-canvas rendering, plus signing/Firebase/Play Console
   work, remain owner-only.
+
+## Blood-pressure reminder and export visual follow-up — 2026-09-12
+
+- **Status:** Code-fixable polish complete; device/accessibility validation
+  remains open.
+- **Changes:** Reminder and export surfaces use shared semantic colors for
+  appointment, PDF, spreadsheet, clinician-report, text-share and image-share
+  actions. Enabled reminder time rows provide a 48 dp minimum target; existing
+  permission, scheduling and export behavior is preserved.
+- **Verification:** `test`, `lintRelease`, `assembleDebug`,
+  `assembleRelease` and `bundleRelease` passed with `GRADLE_EXIT=0`.
+- **Remaining gates:** Notification-denial, file-sharing, TalkBack, large-font,
+  theme and route rendering checks, plus signing/Firebase/Play Console work,
+  remain owner-only.

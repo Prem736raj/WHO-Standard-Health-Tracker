@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -105,7 +106,7 @@ fun BpExportScreen(
             // PDF Report
             ExportOptionCard(
                 icon = Icons.Outlined.PictureAsPdf,
-                iconColor = Color(0xFFE53935),
+                iconColor = HealthColors.Danger,
                 title = "PDF Report",
                 description = "Complete report with all readings, averages, and distribution. Perfect for personal records.",
                 buttonText = "Generate PDF",
@@ -120,7 +121,7 @@ fun BpExportScreen(
             // CSV Export
             ExportOptionCard(
                 icon = Icons.Outlined.TableChart,
-                iconColor = Color(0xFF4CAF50),
+                iconColor = HealthColors.Healthy,
                 title = "CSV Spreadsheet",
                 description = "Raw data in spreadsheet format. Import into Excel, Google Sheets, or other tools.",
                 buttonText = "Export CSV",
@@ -143,7 +144,7 @@ fun BpExportScreen(
 
             ExportOptionCard(
                 icon = Icons.Outlined.LocalHospital,
-                iconColor = Color(0xFF1E88E5),
+                iconColor = HealthColors.Good,
                 title = "Doctor-Ready Report",
                 description = "Professional medical report with last 30 readings, morning/evening averages, medication status, and clinical formatting. Print-friendly layout.",
                 buttonText = "Generate Doctor Report",
@@ -159,7 +160,7 @@ fun BpExportScreen(
             // Doctor report info
             Card(
                 colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFFE3F2FD).copy(alpha = 0.5f)
+                    containerColor = HealthColors.Good.copy(alpha = 0.08f)
                 ),
                 shape = RoundedCornerShape(12.dp)
             ) {
@@ -171,13 +172,13 @@ fun BpExportScreen(
                     Icon(
                         Icons.Outlined.Info,
                         contentDescription = null,
-                        tint = Color(0xFF1565C0),
+                        tint = HealthColors.Good,
                         modifier = Modifier.size(18.dp).padding(top = 2.dp)
                     )
                     Text(
                         stringResource(R.string.txt_the_doctor_report_includes_you),
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF1565C0).copy(alpha = 0.8f)
+                        color = HealthColors.Good.copy(alpha = 0.9f)
                     )
                 }
             }
@@ -195,7 +196,7 @@ fun BpExportScreen(
                 // Share as text
                 ExportOptionCard(
                     icon = Icons.Outlined.TextSnippet,
-                    iconColor = Color(0xFF7B1FA2),
+                    iconColor = HealthColors.Severe,
                     title = "Share as Text",
                     description = "Share your latest reading (${uiState.latestReadingText}) as formatted text message.",
                     buttonText = "Share Text",
@@ -210,7 +211,7 @@ fun BpExportScreen(
                 // Share as image
                 ExportOptionCard(
                     icon = Icons.Outlined.Image,
-                    iconColor = Color(0xFFFF6F00),
+                    iconColor = HealthColors.Caution,
                     title = "Share as Image",
                     description = "Share your latest reading as a beautifully styled card image.",
                     buttonText = "Share Image",

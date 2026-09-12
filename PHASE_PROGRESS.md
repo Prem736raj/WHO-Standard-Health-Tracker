@@ -327,6 +327,24 @@ This file is the source of truth for the sequential product-development phases. 
 
 Updated: 2026-09-12
 
+## Follow-up — Blood-pressure reminder and export visual consistency
+
+- **Status:** Complete locally; device/accessibility validation remains open
+- **Major changes:** Reminder and export routes now use shared semantic colors
+  for appointment, PDF, spreadsheet, clinician-report, text-share and
+  image-share actions. Enabled reminder time rows have a 48 dp minimum target;
+  notification permission timing, scheduling and export behavior are unchanged.
+- **Tests:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  pass with `GRADLE_EXIT=0`.
+- **Known limitations:** Notification denial, exported-file opening/sharing,
+  TalkBack, large-font, theme and route rendering still require device testing.
+- **Next phase:** Execute the documented device/console release checklist;
+  continue deep-screen cleanup only when it improves trust, accessibility or
+  reliability.
+
+Updated: 2026-09-12
+
 ## Follow-up — Blood-pressure trend chart correctness and visual consistency
 
 - **Status:** Complete locally; device/accessibility validation remains open
