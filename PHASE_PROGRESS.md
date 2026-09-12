@@ -327,6 +327,24 @@ This file is the source of truth for the sequential product-development phases. 
 
 Updated: 2026-09-12
 
+## Follow-up — Hydration tracking visual consistency
+
+- **Status:** Complete locally; device/accessibility validation remains open
+- **Major changes:** The daily water tracker now uses shared water and health
+  palette tokens for progress, rings, quick actions, glass indicators, logs,
+  score and dialogs. Goal completion, score, achievements, tools and the
+  celebration overlay use vector icons instead of rendered emoji; logging,
+  undo, reminders, sharing and persistence behavior are unchanged.
+- **Tests:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  pass with `GRADLE_EXIT=0`.
+- **Known limitations:** Health guidance and scores remain informational.
+  Connected-device TalkBack, large-font, theme and hydration interaction
+  checks are still required.
+- **Next phase:** Execute the documented device/console release checklist;
+  continue deep-screen cleanup only when it improves trust, accessibility or
+  reliability.
+
 ## Follow-up — Meal-planning visual consistency
 
 - **Status:** Complete locally; device/accessibility validation remains open

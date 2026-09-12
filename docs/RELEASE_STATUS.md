@@ -301,3 +301,19 @@ These cannot be proven by a Windows unit/build run:
 - **Remaining gates:** Connected-device TalkBack, large-font, theme and
   interaction checks, plus signing/Firebase/Play Console work, remain
   owner-only.
+
+## Hydration tracking visual consistency follow-up — 2026-09-12
+
+- **Status:** Code-fixable polish complete; device/accessibility validation
+  remains open.
+- **Changes:** Daily hydration progress, goal completion, quick-add actions,
+  glass indicators, logs, score, achievements, tools and celebration surfaces
+  now use shared palette tokens and stable vector icons instead of rendered
+  emoji. Logging, undo, sharing, reminders and persistence behavior remain
+  unchanged.
+- **Verification:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  passed with `GRADLE_EXIT=0`.
+- **Remaining gates:** Connected-device TalkBack, large-font, theme and
+  hydration interaction checks, plus signing/Firebase/Play Console work,
+  remain owner-only.

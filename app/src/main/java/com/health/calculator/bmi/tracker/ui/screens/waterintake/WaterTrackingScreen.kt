@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -33,9 +34,9 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -56,15 +57,8 @@ import com.health.calculator.bmi.tracker.ui.screens.waterintake.components.Water
 
 import com.health.calculator.bmi.tracker.ui.screens.waterintake.components.HydrationPlantCard
 import com.health.calculator.bmi.tracker.ui.screens.waterintake.components.PlantDetailDialog
+import com.health.calculator.bmi.tracker.ui.theme.FeatureColors
 import com.health.calculator.bmi.tracker.ui.theme.HealthColors
-
-// Water-themed colors
-private val WaterBlueLight = Color(0xFF64B5F6)
-private val WaterBlueMedium = Color(0xFF2196F3)
-private val WaterBluePale = Color(0xFFBBDEFB)
-private val WaterCyan = Color(0xFF00BCD4)
-private val GoalGreen = Color(0xFF4CAF50)
-private val GoalGold = Color(0xFFFFD700)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -154,7 +148,7 @@ fun WaterTrackingScreen(
                         Icon(
                             Icons.Default.Science,
                             "Hydration Tools",
-                            tint = WaterBlueMedium
+                            tint = FeatureColors.WaterDeep
                         )
                     }
                     IconButton(onClick = {
@@ -164,7 +158,7 @@ fun WaterTrackingScreen(
                         Icon(
                             Icons.Default.BarChart,
                             "History & Trends",
-                            tint = WaterBlueMedium
+                            tint = FeatureColors.WaterDeep
                         )
                     }
                     IconButton(onClick = {
@@ -180,7 +174,7 @@ fun WaterTrackingScreen(
                         Icon(
                             Icons.Default.Share,
                             "Share progress",
-                            tint = WaterBlueMedium
+                            tint = FeatureColors.WaterDeep
                         )
                     }
                     IconButton(onClick = {
@@ -190,7 +184,7 @@ fun WaterTrackingScreen(
                         Icon(
                             Icons.Default.Notifications,
                             "Reminder Settings",
-                            tint = WaterBlueMedium
+                            tint = FeatureColors.WaterDeep
                         )
                     }
                 },
@@ -526,11 +520,11 @@ private fun ProgressRingCard(
     )
 
     val ringColor = when {
-        goalReached -> GoalGreen
-        percentage >= 75 -> WaterBlueMedium
-        percentage >= 50 -> WaterBlueLight
-        percentage >= 25 -> WaterBluePale
-        else -> WaterBluePale
+        goalReached -> HealthColors.Healthy
+        percentage >= 75 -> FeatureColors.WaterDeep
+        percentage >= 50 -> FeatureColors.WaterStart
+        percentage >= 25 -> FeatureColors.WaterEnd
+        else -> FeatureColors.WaterEnd
     }
 
     Card(
@@ -561,6 +555,8 @@ private fun ProgressRingCard(
                 modifier = Modifier.size(220.dp),
                 contentAlignment = Alignment.Center
             ) {
+                val ringTrackColor = MaterialTheme.colorScheme.outline
+                val ringSurfaceColor = MaterialTheme.colorScheme.surface
                 Canvas(modifier = Modifier.fillMaxSize()) {
                     val strokeWidth = 20f
                     val radius = (size.minDimension - strokeWidth) / 2
@@ -568,7 +564,7 @@ private fun ProgressRingCard(
 
                     // Background ring
                     drawCircle(
-                        color = Color.Gray.copy(alpha = 0.1f),
+                        color = ringTrackColor.copy(alpha = 0.18f),
                         radius = radius,
                         center = center,
                         style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
@@ -605,7 +601,7 @@ private fun ProgressRingCard(
                             center = Offset(dotX, dotY)
                         )
                         drawCircle(
-                            color = Color.White,
+                            color = ringSurfaceColor,
                             radius = strokeWidth * 0.3f,
                             center = Offset(dotX, dotY)
                         )
@@ -615,7 +611,12 @@ private fun ProgressRingCard(
                 // Center content
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     if (goalReached) {
-                        Text(stringResource(R.string.txt_text_placeholder_65), fontSize = 28.sp)
+                        Icon(
+                            imageVector = Icons.Outlined.CheckCircle,
+                            contentDescription = null,
+                            tint = HealthColors.Healthy,
+                            modifier = Modifier.size(30.dp)
+                        )
                         Spacer(Modifier.height(4.dp))
                     }
 
@@ -623,7 +624,7 @@ private fun ProgressRingCard(
                         text = "${animatedPercentage.toInt()}%",
                         fontSize = 42.sp,
                         fontWeight = FontWeight.ExtraBold,
-                        color = if (goalReached) GoalGreen else MaterialTheme.colorScheme.primary
+                        color = if (goalReached) HealthColors.Healthy else MaterialTheme.colorScheme.primary
                     )
 
                     val currentL = currentMl / 1000f
@@ -640,7 +641,7 @@ private fun ProgressRingCard(
                             text = stringResource(R.string.txt_goal_reached),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = GoalGreen
+                            color = HealthColors.Healthy
                         )
                     } else {
                         val remainingMl = goalMl - currentMl
@@ -937,6 +938,7 @@ private fun GlassIndicator(
             .scale(bounceScale),
         contentAlignment = Alignment.Center
     ) {
+        val outlineColor = MaterialTheme.colorScheme.outline
         Canvas(modifier = Modifier.fillMaxSize()) {
             val glassWidth = size.width * 0.7f
             val glassHeight = size.height * 0.8f
@@ -945,8 +947,8 @@ private fun GlassIndicator(
 
             // Glass outline
             drawRoundRect(
-                color = if (animatedFill > 0f) WaterBlueMedium.copy(alpha = 0.3f)
-                else Color.Gray.copy(alpha = 0.2f),
+                color = if (animatedFill > 0f) FeatureColors.WaterDeep.copy(alpha = 0.3f)
+                else outlineColor.copy(alpha = 0.2f),
                 topLeft = Offset(left, top),
                 size = Size(glassWidth, glassHeight),
                 cornerRadius = androidx.compose.ui.geometry.CornerRadius(4f),
@@ -959,8 +961,8 @@ private fun GlassIndicator(
                 drawRoundRect(
                     brush = Brush.verticalGradient(
                         colors = listOf(
-                            WaterBlueLight.copy(alpha = 0.7f),
-                            WaterBlueMedium.copy(alpha = 0.9f)
+                            FeatureColors.WaterEnd.copy(alpha = 0.7f),
+                            FeatureColors.WaterDeep.copy(alpha = 0.9f)
                         ),
                         startY = top + glassHeight - fillHeight,
                         endY = top + glassHeight
@@ -1139,17 +1141,26 @@ private fun EmptyLogState() {
 private fun CelebrationOverlay() {
     val infiniteTransition = rememberInfiniteTransition(label = "celebration")
 
-    // Floating emojis animation
-    val emojis = listOf("🎉", "💧", "⭐", "🎊", "💪", "✨", "🌊", "🏆")
+    // Floating vector markers keep the celebration lightweight and legible.
+    val celebrationIcons = listOf(
+        Icons.Outlined.EmojiEvents,
+        Icons.Outlined.WaterDrop,
+        Icons.Outlined.Star,
+        Icons.Outlined.CheckCircle,
+        Icons.Outlined.FitnessCenter,
+        Icons.Outlined.AutoAwesome,
+        Icons.Outlined.WaterDrop,
+        Icons.Outlined.EmojiEvents
+    )
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.3f)),
+            .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.3f)),
         contentAlignment = Alignment.Center
     ) {
-        // Floating emojis
-        emojis.forEachIndexed { index, emoji ->
+        // Floating icons
+        celebrationIcons.forEachIndexed { index, icon ->
             val offsetY by infiniteTransition.animateFloat(
                 initialValue = 600f,
                 targetValue = -200f,
@@ -1161,24 +1172,27 @@ private fun CelebrationOverlay() {
                     ),
                     repeatMode = RepeatMode.Restart
                 ),
-                label = "emoji_y_$index"
+                label = "icon_y_$index"
             )
             val offsetX = ((index * 47) % 300) - 150
 
-            Text(
-                text = emoji,
-                fontSize = 28.sp,
-                modifier = Modifier.offset(
-                    x = offsetX.dp,
-                    y = offsetY.dp
-                )
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = if (index % 2 == 0) HealthColors.Warning else FeatureColors.WaterDeep,
+                modifier = Modifier
+                    .size(28.dp)
+                    .offset(
+                        x = offsetX.dp,
+                        y = offsetY.dp
+                    )
             )
         }
 
         // Center card
         Card(
             shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(16.dp)
         ) {
             Column(
@@ -1186,23 +1200,28 @@ private fun CelebrationOverlay() {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(stringResource(R.string.txt_text_placeholder_65), fontSize = 56.sp)
+                Icon(
+                    imageVector = Icons.Outlined.CheckCircle,
+                    contentDescription = null,
+                    tint = HealthColors.Healthy,
+                    modifier = Modifier.size(56.dp)
+                )
                 Text(
                     text = stringResource(R.string.txt_amazing),
                     fontSize = 24.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    color = GoalGreen
+                    color = HealthColors.Healthy
                 )
                 Text(
                     text = "You've met your\nhydration goal today!",
                     fontSize = 15.sp,
                     textAlign = TextAlign.Center,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     text = stringResource(R.string.txt_great_job_staying_hydrated),
                     fontSize = 13.sp,
-                    color = GoalGold,
+                    color = HealthColors.Warning,
                     fontWeight = FontWeight.SemiBold
                 )
             }
@@ -1247,7 +1266,7 @@ private fun CustomAmountDialog(
                         error = null
                     },
                     label = { Text(stringResource(R.string.txt_amount)) },
-                    suffix = { Text(stringResource(R.string.txt_ml), color = WaterBlueMedium) },
+                    suffix = { Text(stringResource(R.string.txt_ml), color = FeatureColors.WaterDeep) },
                     keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
                         keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
                     ),
@@ -1296,7 +1315,7 @@ private fun CustomAmountDialog(
                         onConfirm(ml)
                     }
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = WaterBlueMedium),
+                colors = ButtonDefaults.buttonColors(containerColor = FeatureColors.WaterDeep),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text(stringResource(R.string.txt_add))
@@ -1370,7 +1389,12 @@ private fun StreakAndScoreMiniCard(
 
             // Score
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(todayScore?.gradeEmoji ?: "😟", fontSize = 24.sp)
+                Icon(
+                    imageVector = hydrationGradeIcon(todayScore?.grade),
+                    contentDescription = null,
+                    tint = hydrationGradeColor(todayScore?.grade),
+                    modifier = Modifier.size(24.dp)
+                )
                 Text(
                     todayScore?.grade ?: "F",
                     fontWeight = FontWeight.ExtraBold,
@@ -1389,7 +1413,12 @@ private fun StreakAndScoreMiniCard(
 
             // Achievements button
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(stringResource(R.string.txt_text_placeholder_2), fontSize = 24.sp)
+                Icon(
+                    imageVector = Icons.Outlined.EmojiEvents,
+                    contentDescription = null,
+                    tint = HealthColors.Warning,
+                    modifier = Modifier.size(24.dp)
+                )
                 Text(
                     stringResource(R.string.txt_view),
                     fontWeight = FontWeight.Bold,
@@ -1425,7 +1454,12 @@ fun ToolsQuickAccessCard(onClick: () -> Unit) {
                     .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Text(stringResource(R.string.txt_text_placeholder_23), fontSize = 24.sp)
+                Icon(
+                    imageVector = Icons.Outlined.Science,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(24.dp)
+                )
             }
             Column(modifier = Modifier.weight(1f)) {
                 Text(stringResource(R.string.txt_hydration_tools), fontWeight = FontWeight.Bold, fontSize = 16.sp)
@@ -1438,4 +1472,16 @@ fun ToolsQuickAccessCard(onClick: () -> Unit) {
             )
         }
     }
+}
+
+private fun hydrationGradeIcon(grade: String?): ImageVector = when (grade?.uppercase()) {
+    "A", "B" -> Icons.Outlined.CheckCircle
+    "C" -> Icons.Outlined.Info
+    else -> Icons.Outlined.Warning
+}
+
+private fun hydrationGradeColor(grade: String?): androidx.compose.ui.graphics.Color = when (grade?.uppercase()) {
+    "A", "B" -> HealthColors.Healthy
+    "C" -> HealthColors.Warning
+    else -> HealthColors.Danger
 }
