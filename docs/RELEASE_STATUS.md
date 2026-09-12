@@ -318,6 +318,21 @@ These cannot be proven by a Windows unit/build run:
   hydration interaction checks, plus signing/Firebase/Play Console work,
   remain owner-only.
 
+## Water history visual consistency follow-up — 2026-09-13
+
+- **Status:** Code-fixable polish complete; device/accessibility validation
+  remains open.
+- **Changes:** Calendar, trends, weekly report, streak, statistics and record
+  surfaces use shared semantic colors and stable vector icons instead of
+  rendered emoji. Theme-aware empty/zero-intake states and chart colors improve
+  contrast while preserving history, filtering and persistence behavior.
+- **Verification:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  passed with `GRADLE_EXIT=0`.
+- **Remaining gates:** Connected-device TalkBack, large-font, theme, chart and
+  calendar interaction checks, plus signing/Firebase/Play Console work, remain
+  owner-only.
+
 ## Hydration achievements visual consistency follow-up — 2026-09-12
 
 - **Status:** Code-fixable polish complete; device/accessibility validation

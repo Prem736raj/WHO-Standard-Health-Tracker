@@ -327,6 +327,24 @@ This file is the source of truth for the sequential product-development phases. 
 
 Updated: 2026-09-12
 
+## Follow-up — Water history visual consistency
+
+- **Status:** Complete locally; device/accessibility validation remains open
+- **Major changes:** Calendar, trend, weekly-report, streak, statistics and
+  personal-record surfaces now use shared water/health semantic tokens and
+  stable Material icons. Legacy emoji marker resources are no longer rendered;
+  persisted data and history interactions remain compatible. Empty, future-day
+  and zero-intake states use theme-aware surfaces for readable contrast.
+- **Tests:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  pass with `GRADLE_EXIT=0`.
+- **Known limitations:** Water history is informational and does not establish
+  a clinical hydration target. Connected-device TalkBack, large-font, theme,
+  chart rendering and calendar interaction checks remain open.
+- **Next phase:** Execute the documented device/console release checklist;
+  continue deep-screen cleanup only when it improves trust, accessibility or
+  reliability.
+
 ## Follow-up — Hydration achievements visual consistency
 
 - **Status:** Complete locally; device/accessibility validation remains open

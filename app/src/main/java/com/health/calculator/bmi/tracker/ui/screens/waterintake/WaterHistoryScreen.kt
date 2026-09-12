@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.TrendingDown
 import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -42,17 +43,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.vector.ImageVector
+import com.health.calculator.bmi.tracker.ui.theme.FeatureColors
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
 import java.text.SimpleDateFormat
 import java.util.*
-
-private val WaterBlueLight = Color(0xFF64B5F6)
-private val WaterBlueMedium = Color(0xFF2196F3)
-private val WaterBlueDark = Color(0xFF1565C0)
-private val WaterBluePale = Color(0xFFBBDEFB)
-private val GoalGreen = Color(0xFF4CAF50)
-private val GoalYellow = Color(0xFFFFC107)
-private val GoalOrange = Color(0xFFFF9800)
-private val GoalRed = Color(0xFFF44336)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -82,7 +77,12 @@ fun WaterHistoryScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(stringResource(R.string.txt_text_placeholder_9), fontSize = 22.sp)
+                        Icon(
+                            imageVector = Icons.Outlined.WaterDrop,
+                            contentDescription = null,
+                            tint = FeatureColors.WaterStart,
+                            modifier = Modifier.size(22.dp)
+                        )
                         Text(stringResource(R.string.txt_water_history), fontWeight = FontWeight.Bold)
                     }
                 },
@@ -109,25 +109,25 @@ fun WaterHistoryScreen(
             TabRow(
                 selectedTabIndex = selectedTab,
                 containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = WaterBlueMedium
+                contentColor = FeatureColors.WaterStart
             ) {
                 Tab(
                     selected = selectedTab == 0,
                     onClick = { selectedTab = 0 },
                     text = { Text(stringResource(R.string.txt_calendar), fontSize = 13.sp) },
-                    icon = { Text(stringResource(R.string.txt_text_placeholder_47), fontSize = 16.sp) }
+                    icon = { Icon(Icons.Outlined.CalendarMonth, contentDescription = null, modifier = Modifier.size(18.dp)) }
                 )
                 Tab(
                     selected = selectedTab == 1,
                     onClick = { selectedTab = 1 },
                     text = { Text(stringResource(R.string.txt_trends), fontSize = 13.sp) },
-                    icon = { Text(stringResource(R.string.txt_text_placeholder_4), fontSize = 16.sp) }
+                    icon = { Icon(Icons.Outlined.ShowChart, contentDescription = null, modifier = Modifier.size(18.dp)) }
                 )
                 Tab(
                     selected = selectedTab == 2,
                     onClick = { selectedTab = 2 },
                     text = { Text(stringResource(R.string.txt_stats), fontSize = 13.sp) },
-                    icon = { Text(stringResource(R.string.txt_text_placeholder_2), fontSize = 16.sp) }
+                    icon = { Icon(Icons.Outlined.Assessment, contentDescription = null, modifier = Modifier.size(18.dp)) }
                 )
             }
 
@@ -331,20 +331,20 @@ private fun CalendarDayCell(
 
     val bgColor = when {
         isFuture -> Color.Transparent
-        data == null || data.totalMl == 0 -> Color.Gray.copy(alpha = 0.08f)
-        percentage >= 100 -> GoalGreen.copy(alpha = 0.2f)
-        percentage >= 75 -> GoalYellow.copy(alpha = 0.2f)
-        percentage >= 50 -> GoalOrange.copy(alpha = 0.2f)
-        else -> GoalRed.copy(alpha = 0.2f)
+        data == null || data.totalMl == 0 -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f)
+        percentage >= 100 -> HealthColors.Healthy.copy(alpha = 0.2f)
+        percentage >= 75 -> HealthColors.Warning.copy(alpha = 0.2f)
+        percentage >= 50 -> HealthColors.Caution.copy(alpha = 0.2f)
+        else -> HealthColors.Danger.copy(alpha = 0.2f)
     }
 
     val dotColor = when {
         isFuture -> Color.Transparent
         data == null || data.totalMl == 0 -> Color.Transparent
-        percentage >= 100 -> GoalGreen
-        percentage >= 75 -> GoalYellow
-        percentage >= 50 -> GoalOrange
-        else -> GoalRed
+        percentage >= 100 -> HealthColors.Healthy
+        percentage >= 75 -> HealthColors.Warning
+        percentage >= 50 -> HealthColors.Caution
+        else -> HealthColors.Danger
     }
 
     Box(
@@ -354,7 +354,7 @@ private fun CalendarDayCell(
             .clip(RoundedCornerShape(8.dp))
             .background(bgColor)
             .then(
-                if (isToday) Modifier.border(2.dp, WaterBlueMedium, RoundedCornerShape(8.dp))
+                if (isToday) Modifier.border(2.dp, FeatureColors.WaterStart, RoundedCornerShape(8.dp))
                 else Modifier
             )
             .clickable(enabled = !isFuture && data != null) { onClick() },
@@ -399,11 +399,11 @@ private fun CalendarLegend() {
                 .padding(12.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            LegendItem("100%+", GoalGreen)
-            LegendItem("75%+", GoalYellow)
-            LegendItem("50%+", GoalOrange)
-            LegendItem("<50%", GoalRed)
-            LegendItem("None", Color.Gray.copy(alpha = 0.3f))
+            LegendItem("100%+", HealthColors.Healthy)
+            LegendItem("75%+", HealthColors.Warning)
+            LegendItem("50%+", HealthColors.Caution)
+            LegendItem("<50%", HealthColors.Danger)
+            LegendItem("None", MaterialTheme.colorScheme.outline.copy(alpha = 0.45f))
         }
     }
 }
@@ -453,10 +453,10 @@ private fun SelectedDayDetailCard(dayInfo: SelectedDayInfo, goalMl: Int) {
                     color = MaterialTheme.colorScheme.primary
                 )
                 val statusColor = when {
-                    percentage >= 100 -> GoalGreen
-                    percentage >= 75 -> GoalYellow
-                    percentage >= 50 -> GoalOrange
-                    else -> GoalRed
+                    percentage >= 100 -> HealthColors.Healthy
+                    percentage >= 75 -> HealthColors.Warning
+                    percentage >= 50 -> HealthColors.Caution
+                    else -> HealthColors.Danger
                 }
                 Text(
                     text = "$percentage%",
@@ -474,10 +474,10 @@ private fun SelectedDayDetailCard(dayInfo: SelectedDayInfo, goalMl: Int) {
                     .height(8.dp)
                     .clip(RoundedCornerShape(4.dp)),
                 color = when {
-                    percentage >= 100 -> GoalGreen
-                    percentage >= 75 -> GoalYellow
-                    percentage >= 50 -> GoalOrange
-                    else -> GoalRed
+                    percentage >= 100 -> HealthColors.Healthy
+                    percentage >= 75 -> HealthColors.Warning
+                    percentage >= 50 -> HealthColors.Caution
+                    else -> HealthColors.Danger
                 },
                 trackColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
             )
@@ -503,13 +503,11 @@ private fun SelectedDayDetailCard(dayInfo: SelectedDayInfo, goalMl: Int) {
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Text(
-                                when {
-                                    entry.amountMl >= 500 -> "🍶"
-                                    entry.amountMl >= 250 -> "🥛"
-                                    else -> "💧"
-                                },
-                                fontSize = 16.sp
+                            Icon(
+                                imageVector = Icons.Outlined.WaterDrop,
+                                contentDescription = null,
+                                tint = FeatureColors.WaterStart,
+                                modifier = Modifier.size(if (entry.amountMl >= 500) 20.dp else 18.dp)
                             )
                             Text(
                                 "+${entry.amountMl}ml",
@@ -628,6 +626,7 @@ private fun BarChartCard(
             if (active.isNotEmpty()) active.sumOf { it.second } / active.size else 0
         }
     } else 0
+    val emptyBarColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)
 
     // Animation
     val animProgress by animateFloatAsState(
@@ -652,7 +651,12 @@ private fun BarChartCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(stringResource(R.string.txt_text_placeholder_9), fontSize = 18.sp)
+                Icon(
+                    imageVector = Icons.Outlined.ShowChart,
+                    contentDescription = null,
+                    tint = FeatureColors.WaterStart,
+                    modifier = Modifier.size(20.dp)
+                )
                 Text(stringResource(R.string.txt_daily_intake), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
             }
 
@@ -673,7 +677,7 @@ private fun BarChartCard(
                 // Goal line
                 val goalY = chartHeight * (1f - goalMl.toFloat() / maxMl)
                 drawLine(
-                    color = GoalGreen.copy(alpha = 0.6f),
+                    color = HealthColors.Healthy.copy(alpha = 0.7f),
                     start = Offset(0f, goalY),
                     end = Offset(chartWidth, goalY),
                     strokeWidth = 2f,
@@ -687,7 +691,7 @@ private fun BarChartCard(
                         chartWidth - 50f,
                         goalY - 8f,
                         android.graphics.Paint().apply {
-                            color = GoalGreen.copy(alpha = 0.8f).toArgb()
+                            color = HealthColors.Healthy.copy(alpha = 0.9f).toArgb()
                             textSize = 24f
                             isAntiAlias = true
                         }
@@ -698,7 +702,7 @@ private fun BarChartCard(
                 if (avgMl > 0) {
                     val avgY = chartHeight * (1f - avgMl.toFloat() / maxMl)
                     drawLine(
-                        color = WaterBlueMedium.copy(alpha = 0.5f),
+                        color = FeatureColors.WaterStart.copy(alpha = 0.65f),
                         start = Offset(0f, avgY),
                         end = Offset(chartWidth, avgY),
                         strokeWidth = 2f,
@@ -716,11 +720,11 @@ private fun BarChartCard(
                     val percentage = if (goalMl > 0) ml.toFloat() / goalMl * 100 else 0f
 
                     val barColor = when {
-                        ml == 0 -> Color.Gray.copy(alpha = 0.15f)
-                        percentage >= 100 -> GoalGreen
-                        percentage >= 75 -> GoalYellow
-                        percentage >= 50 -> GoalOrange
-                        else -> GoalRed.copy(alpha = 0.7f)
+                        ml == 0 -> emptyBarColor
+                        percentage >= 100 -> HealthColors.Healthy
+                        percentage >= 75 -> HealthColors.Warning
+                        percentage >= 50 -> HealthColors.Caution
+                        else -> HealthColors.Danger.copy(alpha = 0.8f)
                     }
 
                     drawRoundRect(
@@ -754,8 +758,8 @@ private fun BarChartCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
             ) {
-                ChartLegendItem("Goal", GoalGreen)
-                ChartLegendItem("Average", WaterBlueMedium)
+                ChartLegendItem("Goal", HealthColors.Healthy)
+                ChartLegendItem("Average", FeatureColors.WaterStart)
             }
         }
     }
@@ -790,7 +794,7 @@ private fun WeeklyReportCard(report: WeeklyReport) {
                 .fillMaxWidth()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(WaterBlueMedium, WaterBlueDark)
+                        colors = listOf(FeatureColors.WaterStart, FeatureColors.WaterDeep)
                     ),
                     shape = RoundedCornerShape(16.dp)
                 )
@@ -813,17 +817,17 @@ private fun WeeklyReportCard(report: WeeklyReport) {
                     WeeklyStatItem(
                         label = "Average",
                         value = "${report.averageMl}ml",
-                        icon = "📊"
+                        icon = Icons.Outlined.ShowChart
                     )
                     WeeklyStatItem(
                         label = "Goal Met",
                         value = "${report.daysGoalMet}/7",
-                        icon = "✅"
+                        icon = Icons.Outlined.CheckCircle
                     )
                     WeeklyStatItem(
                         label = "Total",
                         value = "${String.format(Locale.US, "%.1f", report.totalLiters)}L",
-                        icon = "💧"
+                        icon = Icons.Outlined.WaterDrop
                     )
                 }
 
@@ -840,9 +844,9 @@ private fun WeeklyReportCard(report: WeeklyReport) {
                         TrendDirection.STEADY -> Icons.Filled.TrendingFlat
                     }
                     val trendColor = when (report.trend) {
-                        TrendDirection.IMPROVING -> Color(0xFF81C784)
-                        TrendDirection.DECLINING -> Color(0xFFEF9A9A)
-                        TrendDirection.STEADY -> Color(0xFFFFE082)
+                        TrendDirection.IMPROVING -> HealthColors.HealthyDark
+                        TrendDirection.DECLINING -> HealthColors.DangerLight
+                        TrendDirection.STEADY -> HealthColors.WarningLight
                     }
                     Icon(trendIcon, null, tint = trendColor, modifier = Modifier.size(20.dp))
                     Text(
@@ -873,9 +877,14 @@ private fun WeeklyReportCard(report: WeeklyReport) {
 }
 
 @Composable
-private fun WeeklyStatItem(label: String, value: String, icon: String) {
+private fun WeeklyStatItem(label: String, value: String, icon: ImageVector) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(icon, fontSize = 20.sp)
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = FeatureColors.OnWater,
+            modifier = Modifier.size(22.dp)
+        )
         Spacer(Modifier.height(4.dp))
         Text(value, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
         Text(label, color = Color.White.copy(alpha = 0.7f), fontSize = 11.sp)
@@ -895,7 +904,12 @@ private fun StatsTab(
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(stringResource(R.string.txt_text_placeholder_78), fontSize = 48.sp)
+                Icon(
+                    imageVector = Icons.Outlined.WaterDrop,
+                    contentDescription = null,
+                    tint = FeatureColors.WaterStart,
+                    modifier = Modifier.size(48.dp)
+                )
                 Spacer(Modifier.height(12.dp))
                 Text(stringResource(R.string.txt_no_data_yet), fontWeight = FontWeight.Bold, fontSize = 18.sp)
                 Text(
@@ -962,9 +976,9 @@ private fun StreakCard(currentStreak: Int, longestStreak: Int) {
                 .background(
                     brush = Brush.linearGradient(
                         colors = if (currentStreak > 0)
-                            listOf(Color(0xFFFF9800), Color(0xFFF44336))
+                            listOf(HealthColors.Caution, HealthColors.Danger)
                         else
-                            listOf(Color.Gray, Color.DarkGray)
+                            listOf(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.colorScheme.surface)
                     ),
                     shape = RoundedCornerShape(20.dp)
                 )
@@ -976,7 +990,12 @@ private fun StreakCard(currentStreak: Int, longestStreak: Int) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(stringResource(R.string.txt_text_placeholder_6), fontSize = 36.sp)
+                    Icon(
+                        imageVector = if (currentStreak > 0) Icons.Outlined.Whatshot else Icons.Outlined.Schedule,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(36.dp)
+                    )
                     Spacer(Modifier.height(8.dp))
                     Text(
                         "$currentStreak",
@@ -1004,7 +1023,12 @@ private fun StreakCard(currentStreak: Int, longestStreak: Int) {
                 )
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(stringResource(R.string.txt_text_placeholder_2), fontSize = 36.sp)
+                    Icon(
+                        imageVector = Icons.Outlined.EmojiEvents,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(36.dp)
+                    )
                     Spacer(Modifier.height(8.dp))
                     Text(
                         "$longestStreak",
@@ -1046,7 +1070,12 @@ private fun StatsGridCard(stats: WaterStats) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(stringResource(R.string.txt_text_placeholder_4), fontSize = 18.sp)
+                Icon(
+                    imageVector = Icons.Outlined.Assessment,
+                    contentDescription = null,
+                    tint = FeatureColors.WaterStart,
+                    modifier = Modifier.size(20.dp)
+                )
                 Text(stringResource(R.string.txt_statistics_1), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
             }
 
@@ -1057,13 +1086,13 @@ private fun StatsGridCard(stats: WaterStats) {
                 StatGridItem(
                     label = "Avg Daily",
                     value = "${stats.averageDailyMl}ml",
-                    icon = "📊",
+                    icon = Icons.Outlined.ShowChart,
                     modifier = Modifier.weight(1f)
                 )
                 StatGridItem(
                     label = "Goal Met",
                     value = "${stats.daysGoalMet} days",
-                    icon = "✅",
+                    icon = Icons.Outlined.CheckCircle,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -1071,13 +1100,13 @@ private fun StatsGridCard(stats: WaterStats) {
                 StatGridItem(
                     label = "Success Rate",
                     value = "${stats.goalMetPercentage}%",
-                    icon = "🎯",
+                    icon = Icons.Outlined.Flag,
                     modifier = Modifier.weight(1f)
                 )
                 StatGridItem(
                     label = "This Week",
                     value = "${String.format(Locale.US, "%.1f", stats.thisWeekTotalL)}L",
-                    icon = "📅",
+                    icon = Icons.Outlined.CalendarMonth,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -1085,13 +1114,13 @@ private fun StatsGridCard(stats: WaterStats) {
                 StatGridItem(
                     label = "This Month",
                     value = "${String.format(Locale.US, "%.1f", stats.thisMonthTotalL)}L",
-                    icon = "📆",
+                    icon = Icons.Outlined.DateRange,
                     modifier = Modifier.weight(1f)
                 )
                 StatGridItem(
                     label = "Total Days",
                     value = "${stats.totalDaysTracked}",
-                    icon = "🗓️",
+                    icon = Icons.Outlined.EventNote,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -1103,7 +1132,7 @@ private fun StatsGridCard(stats: WaterStats) {
 private fun StatGridItem(
     label: String,
     value: String,
-    icon: String,
+    icon: ImageVector,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -1118,7 +1147,12 @@ private fun StatGridItem(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Text(icon, fontSize = 20.sp)
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = FeatureColors.WaterStart,
+                modifier = Modifier.size(22.dp)
+            )
             Text(value, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = MaterialTheme.colorScheme.onSecondaryContainer)
             Text(label, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.75f))
         }
@@ -1143,21 +1177,26 @@ private fun RecordsCard(stats: WaterStats) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(stringResource(R.string.txt_text_placeholder_77), fontSize = 18.sp)
+                Icon(
+                    imageVector = Icons.Outlined.EmojiEvents,
+                    contentDescription = null,
+                    tint = HealthColors.Warning,
+                    modifier = Modifier.size(20.dp)
+                )
                 Text(stringResource(R.string.txt_personal_records), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
             }
 
             HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f))
 
-            RecordRow("🏆", "Best Day Ever", "${stats.bestDayMl}ml", stats.bestDayDate)
-            RecordRow("📈", "Best Week Total", "${String.format(Locale.US, "%.1f", stats.bestWeekTotalL)}L", null)
-            RecordRow("🔥", "Longest Streak", "${stats.longestStreak} days", null)
+            RecordRow(Icons.Outlined.EmojiEvents, "Best Day Ever", "${stats.bestDayMl}ml", stats.bestDayDate)
+            RecordRow(Icons.Outlined.ShowChart, "Best Week Total", "${String.format(Locale.US, "%.1f", stats.bestWeekTotalL)}L", null)
+            RecordRow(Icons.Outlined.Whatshot, "Longest Streak", "${stats.longestStreak} days", null)
         }
     }
 }
 
 @Composable
-private fun RecordRow(icon: String, label: String, value: String, date: String?) {
+private fun RecordRow(icon: ImageVector, label: String, value: String, date: String?) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -1166,7 +1205,12 @@ private fun RecordRow(icon: String, label: String, value: String, date: String?)
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        Text(icon, fontSize = 22.sp)
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = FeatureColors.WaterStart,
+            modifier = Modifier.size(22.dp)
+        )
         Column(modifier = Modifier.weight(1f)) {
             Text(label, fontWeight = FontWeight.Medium, fontSize = 13.sp)
             if (date != null) {
