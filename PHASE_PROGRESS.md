@@ -327,6 +327,28 @@ This file is the source of truth for the sequential product-development phases. 
 
 Updated: 2026-09-12
 
+## Follow-up — Blood-pressure education trust and visual cleanup
+
+- **Status:** Complete locally; device/accessibility validation remains open
+- **Major changes:** The BP education guide now renders section, instruction,
+  comparison, myth/fact and analogy markers as stable Material icons with the
+  shared semantic health palette. Expandable section headers meet a 48 dp
+  minimum target. Educational copy was audited against current AHA/CDC home
+  measurement guidance: unsupported universal effect sizes, “most accurate”
+  promises, fixed targets and medication certainty were removed or qualified;
+  reference ranges are explicitly context rather than diagnosis.
+- **Tests:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  pass with `GRADLE_EXIT=0`.
+- **Known limitations:** The guide remains informational and does not replace
+  a validated monitor or professional interpretation. TalkBack, large-font,
+  theme and route rendering checks require a connected device.
+- **Next phase:** Execute the documented device/console release checklist;
+  continue deep-screen cleanup only where it improves trust, accessibility or
+  reliability.
+
+Updated: 2026-09-12
+
 ## Follow-up — Resting heart-rate guide trust and visual cleanup
 
 - **Status:** Complete locally; device/accessibility validation remains open

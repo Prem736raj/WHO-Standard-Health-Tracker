@@ -22,12 +22,49 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.health.calculator.bmi.tracker.data.model.*
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
+
+/**
+ * The educational model keeps legacy emoji labels for compatibility. Render
+ * stable vector icons so the guide has one visual language across themes and
+ * device fonts.
+ */
+private fun bpEducationIcon(legacyLabel: String): ImageVector = when {
+    legacyLabel.contains("🫀") || legacyLabel.contains("❤️") || legacyLabel.contains("💙") -> Icons.Outlined.MonitorHeart
+    legacyLabel.contains("📋") || legacyLabel.contains("📝") -> Icons.Outlined.Assignment
+    legacyLabel.contains("📏") -> Icons.Outlined.Straighten
+    legacyLabel.contains("📈") || legacyLabel.contains("📊") -> Icons.Outlined.ShowChart
+    legacyLabel.contains("💡") -> Icons.Outlined.Lightbulb
+    legacyLabel.contains("🎯") -> Icons.Outlined.Flag
+    legacyLabel.contains("⚠") -> Icons.Outlined.Warning
+    legacyLabel.contains("✅") -> Icons.Outlined.CheckCircle
+    legacyLabel.contains("❌") -> Icons.Outlined.Cancel
+    legacyLabel.contains("⚡") -> Icons.Outlined.Bolt
+    legacyLabel.contains("🏥") -> Icons.Outlined.LocalHospital
+    legacyLabel.contains("📅") || legacyLabel.contains("⏰") -> Icons.Outlined.CalendarMonth
+    legacyLabel.contains("🧂") -> Icons.Outlined.Restaurant
+    legacyLabel.contains("⚖") -> Icons.Outlined.MonitorWeight
+    legacyLabel.contains("😴") -> Icons.Outlined.Schedule
+    legacyLabel.contains("🧬") -> Icons.Outlined.Science
+    legacyLabel.contains("🌍") -> Icons.Outlined.Public
+    legacyLabel.contains("🔍") -> Icons.Outlined.Search
+    legacyLabel.contains("🥗") || legacyLabel.contains("🥬") || legacyLabel.contains("🍎") -> Icons.Outlined.Restaurant
+    legacyLabel.contains("🏆") -> Icons.Outlined.EmojiEvents
+    legacyLabel.contains("💪") -> Icons.Outlined.FitnessCenter
+    legacyLabel.contains("🏠") -> Icons.Outlined.Home
+    legacyLabel.contains("🚫") -> Icons.Outlined.Block
+    legacyLabel.contains("🪑") -> Icons.Outlined.EventSeat
+    legacyLabel.contains("🤫") -> Icons.Outlined.VolumeOff
+    legacyLabel.contains("⌚") -> Icons.Outlined.AccessTime
+    else -> Icons.Outlined.Info
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -171,13 +208,16 @@ private fun EducationalSectionCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onToggle() }
+                    .heightIn(min = 48.dp)
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    section.emoji,
-                    style = MaterialTheme.typography.headlineSmall
+                Icon(
+                    imageVector = bpEducationIcon(section.emoji),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(28.dp)
                 )
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
@@ -289,10 +329,13 @@ private fun BulletPointRenderer(item: BpEducationalItem.BulletPoint) {
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.Top
     ) {
-        Text(
-            item.icon,
-            style = MaterialTheme.typography.titleSmall,
-            modifier = Modifier.padding(top = 1.dp)
+        Icon(
+            imageVector = bpEducationIcon(item.icon),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .padding(top = 1.dp)
+                .size(22.dp)
         )
         Column(modifier = Modifier.weight(1f)) {
             Text(
@@ -340,7 +383,12 @@ private fun NumberedStepRenderer(item: BpEducationalItem.NumberedStep) {
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(item.icon, style = MaterialTheme.typography.titleSmall)
+                Icon(
+                    imageVector = bpEducationIcon(item.icon),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(20.dp)
+                )
                 Text(
                     item.title,
                     style = MaterialTheme.typography.bodyMedium,
@@ -361,29 +409,29 @@ private fun NumberedStepRenderer(item: BpEducationalItem.NumberedStep) {
 private fun HighlightBoxRenderer(item: BpEducationalItem.HighlightBox) {
     val (bgColor, borderColor, iconTint) = when (item.type) {
         HighlightType.INFO -> Triple(
-            Color(0xFF2196F3).copy(alpha = 0.06f),
-            Color(0xFF2196F3).copy(alpha = 0.2f),
-            Color(0xFF1565C0)
+            HealthColors.Good.copy(alpha = 0.08f),
+            HealthColors.Good.copy(alpha = 0.25f),
+            HealthColors.Good
         )
         HighlightType.WARNING -> Triple(
-            Color(0xFFFF9800).copy(alpha = 0.06f),
-            Color(0xFFFF9800).copy(alpha = 0.2f),
-            Color(0xFFE65100)
+            HealthColors.Warning.copy(alpha = 0.08f),
+            HealthColors.Warning.copy(alpha = 0.25f),
+            HealthColors.Warning
         )
         HighlightType.SUCCESS -> Triple(
-            Color(0xFF4CAF50).copy(alpha = 0.06f),
-            Color(0xFF4CAF50).copy(alpha = 0.2f),
-            Color(0xFF2E7D32)
+            HealthColors.Healthy.copy(alpha = 0.08f),
+            HealthColors.Healthy.copy(alpha = 0.25f),
+            HealthColors.Healthy
         )
         HighlightType.TIP -> Triple(
-            Color(0xFF9C27B0).copy(alpha = 0.06f),
-            Color(0xFF9C27B0).copy(alpha = 0.2f),
-            Color(0xFF6A1B9A)
+            HealthColors.Info.copy(alpha = 0.08f),
+            HealthColors.Info.copy(alpha = 0.25f),
+            HealthColors.Info
         )
         HighlightType.DANGER -> Triple(
-            Color(0xFFF44336).copy(alpha = 0.06f),
-            Color(0xFFF44336).copy(alpha = 0.2f),
-            Color(0xFFC62828)
+            HealthColors.Danger.copy(alpha = 0.08f),
+            HealthColors.Danger.copy(alpha = 0.25f),
+            HealthColors.Danger
         )
     }
 
@@ -401,7 +449,12 @@ private fun HighlightBoxRenderer(item: BpEducationalItem.HighlightBox) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(item.emoji, style = MaterialTheme.typography.titleSmall)
+                Icon(
+                    imageVector = bpEducationIcon(item.emoji),
+                    contentDescription = null,
+                    tint = iconTint,
+                    modifier = Modifier.size(20.dp)
+                )
                 Text(
                     item.title,
                     style = MaterialTheme.typography.labelLarge,
@@ -432,27 +485,51 @@ private fun ComparisonRowRenderer(item: BpEducationalItem.ComparisonRow) {
         )
         Card(
             modifier = Modifier.weight(0.375f),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF4CAF50).copy(alpha = 0.08f)),
+            colors = CardDefaults.cardColors(containerColor = HealthColors.Healthy.copy(alpha = 0.08f)),
             shape = RoundedCornerShape(8.dp)
         ) {
-            Text(
-                "✅ ${item.include}",
+            Row(
                 modifier = Modifier.padding(6.dp),
-                style = MaterialTheme.typography.bodySmall,
-                color = Color(0xFF2E7D32)
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.Top
             )
+            {
+                Icon(
+                    imageVector = Icons.Outlined.CheckCircle,
+                    contentDescription = null,
+                    tint = HealthColors.Healthy,
+                    modifier = Modifier.size(16.dp)
+                )
+                Text(
+                    item.include,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = HealthColors.Healthy
+                )
+            }
         }
         Card(
             modifier = Modifier.weight(0.375f),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFFF44336).copy(alpha = 0.08f)),
+            colors = CardDefaults.cardColors(containerColor = HealthColors.Danger.copy(alpha = 0.08f)),
             shape = RoundedCornerShape(8.dp)
         ) {
-            Text(
-                "❌ ${item.avoid}",
+            Row(
                 modifier = Modifier.padding(6.dp),
-                style = MaterialTheme.typography.bodySmall,
-                color = Color(0xFFC62828)
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.Top
             )
+            {
+                Icon(
+                    imageVector = Icons.Outlined.Cancel,
+                    contentDescription = null,
+                    tint = HealthColors.Danger,
+                    modifier = Modifier.size(16.dp)
+                )
+                Text(
+                    item.avoid,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = HealthColors.Danger
+                )
+            }
         }
     }
 }
@@ -474,7 +551,7 @@ private fun MythBusterRenderer(item: BpEducationalItem.MythBuster) {
             // Myth
             Card(
                 colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFFF44336).copy(alpha = 0.06f)
+                    containerColor = HealthColors.Danger.copy(alpha = 0.08f)
                 ),
                 shape = RoundedCornerShape(10.dp)
             ) {
@@ -483,20 +560,25 @@ private fun MythBusterRenderer(item: BpEducationalItem.MythBuster) {
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.Top
                 ) {
-                    Text(stringResource(R.string.txt_text_placeholder_16), style = MaterialTheme.typography.titleSmall)
+                    Icon(
+                        imageVector = Icons.Outlined.Cancel,
+                        contentDescription = null,
+                        tint = HealthColors.Danger,
+                        modifier = Modifier.size(20.dp)
+                    )
                     Column {
                         Text(
                             stringResource(R.string.txt_myth),
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.ExtraBold,
-                            color = Color(0xFFD32F2F)
+                            color = HealthColors.Danger
                         )
                         Text(
                             item.myth,
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Medium,
                             fontStyle = FontStyle.Italic,
-                            color = Color(0xFFD32F2F).copy(alpha = 0.8f)
+                            color = HealthColors.Danger.copy(alpha = 0.8f)
                         )
                     }
                 }
@@ -505,7 +587,7 @@ private fun MythBusterRenderer(item: BpEducationalItem.MythBuster) {
             // Fact
             Card(
                 colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF4CAF50).copy(alpha = 0.06f)
+                    containerColor = HealthColors.Healthy.copy(alpha = 0.08f)
                 ),
                 shape = RoundedCornerShape(10.dp)
             ) {
@@ -514,13 +596,18 @@ private fun MythBusterRenderer(item: BpEducationalItem.MythBuster) {
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.Top
                 ) {
-                    Text(stringResource(R.string.txt_text_placeholder_15), style = MaterialTheme.typography.titleSmall)
+                    Icon(
+                        imageVector = Icons.Outlined.CheckCircle,
+                        contentDescription = null,
+                        tint = HealthColors.Healthy,
+                        modifier = Modifier.size(20.dp)
+                    )
                     Column {
                         Text(
                             stringResource(R.string.txt_fact),
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.ExtraBold,
-                            color = Color(0xFF2E7D32)
+                            color = HealthColors.Healthy
                         )
                         Text(
                             item.fact,
@@ -538,23 +625,28 @@ private fun MythBusterRenderer(item: BpEducationalItem.MythBuster) {
 private fun AnalogyRenderer(item: BpEducationalItem.Analogy) {
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFFFF8E1).copy(alpha = 0.6f)
+            containerColor = HealthColors.Warning.copy(alpha = 0.08f)
         ),
         shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(1.dp, Color(0xFFFFE082).copy(alpha = 0.5f))
+        border = BorderStroke(1.dp, HealthColors.Warning.copy(alpha = 0.35f))
     ) {
         Row(
             modifier = Modifier.padding(14.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.Top
         ) {
-            Text(item.emoji, style = MaterialTheme.typography.headlineSmall)
+            Icon(
+                imageVector = bpEducationIcon(item.emoji),
+                contentDescription = null,
+                tint = HealthColors.Warning,
+                modifier = Modifier.size(26.dp)
+            )
             Column {
                 Text(
                     stringResource(R.string.txt_think_of_it_this_way),
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFFFF8F00)
+                    color = HealthColors.Warning
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(

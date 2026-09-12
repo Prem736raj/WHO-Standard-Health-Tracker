@@ -91,7 +91,7 @@ object BpEducationalContent {
             BpEducationalItem.BulletPoint(
                 "📈",
                 "High Systolic",
-                "Indicates your heart is working too hard to push blood, or your arteries are too stiff. This is especially concerning as we age and is the primary driver of stroke risk."
+                "A higher systolic value can reflect greater pressure during each heartbeat. Patterns over time are more informative than one reading, and a qualified professional should interpret persistent elevation."
             ),
 
             BpEducationalItem.BulletPoint(
@@ -112,13 +112,13 @@ object BpEducationalContent {
             BpEducationalItem.Heading("The Pulse Pressure Connection"),
 
             BpEducationalItem.Paragraph(
-                "The difference between your systolic and diastolic numbers is called 'pulse pressure.' A healthy pulse pressure is typically 40-60 mmHg. A wide pulse pressure (>60) may indicate stiff arteries, while a narrow one (<40) might suggest reduced heart function."
+                "The difference between your systolic and diastolic numbers is called pulse pressure. It changes with age, health, measurement conditions and the individual; this app shows it as context, not as a standalone assessment of artery or heart function."
             ),
 
             BpEducationalItem.HighlightBox(
                 "🎯",
                 "The Goal",
-                "For most adults, the goal is to maintain blood pressure below 120/80 mmHg. However, your personal target may differ based on your age, health conditions, and other factors. Always discuss your target with your healthcare provider.",
+                "Reference categories can help describe a reading, but a personal target depends on your history, health conditions and care plan. Discuss goals with a qualified healthcare professional rather than treating 120/80 mmHg as a universal target.",
                 HighlightType.SUCCESS
             )
         )
@@ -135,7 +135,7 @@ object BpEducationalContent {
             BpEducationalItem.HighlightBox(
                 "⚠️",
                 "Why Accuracy Matters",
-                "An incorrect measurement can lead to unnecessary worry or, worse, a missed diagnosis. Following these steps ensures your readings are reliable and useful for tracking your health.",
+                "An incorrect measurement can create confusion. Consistent technique makes readings more useful for personal tracking and for questions you may bring to a healthcare professional.",
                 HighlightType.WARNING
             ),
 
@@ -150,7 +150,7 @@ object BpEducationalContent {
             BpEducationalItem.NumberedStep(
                 2, "🚽",
                 "Empty Your Bladder",
-                "A full bladder can increase your blood pressure by up to 10-15 mmHg. Use the bathroom before measuring."
+                "Use the bathroom before measuring when possible; a full bladder can affect a reading."
             ),
 
             BpEducationalItem.NumberedStep(
@@ -176,13 +176,13 @@ object BpEducationalContent {
             BpEducationalItem.NumberedStep(
                 6, "🤫",
                 "Stay Still and Quiet",
-                "Don't talk, text, or move during the measurement. Even small movements or talking can raise your reading by 5-10 mmHg. Breathe normally and try to relax."
+                "Don't talk, text, or move during the measurement. Small movements and conversation can affect a reading. Breathe normally and try to relax."
             ),
 
             BpEducationalItem.NumberedStep(
                 7, "📝",
                 "Take Multiple Readings",
-                "Take 2-3 readings, waiting at least 1 minute between each. Discard the first reading (it's often higher) and average the remaining readings. This is the medically recommended approach for the most accurate result."
+                "Take two readings about one minute apart and record both; follow your monitor and care team's instructions if they differ. Repeated readings give more context than a single snapshot."
             ),
 
             BpEducationalItem.DividerItem("Best Practices"),
@@ -201,8 +201,8 @@ object BpEducationalContent {
 
             BpEducationalItem.HighlightBox(
                 "✅",
-                "Pro Tip: The Rule of 3",
-                "Medical professionals often recommend the 'Rule of 3': Measure at 3 different times of day, on 3 different days, taking 3 readings each time. The average of all these readings gives the most accurate picture of your true blood pressure.",
+                "A consistent home log",
+                "Many home-monitoring plans use readings at consistent times on several days. Your care team can tell you how often to measure; record the readings and conditions rather than searching for one supposedly perfect number.",
                 HighlightType.TIP
             ),
 
@@ -219,19 +219,19 @@ object BpEducationalContent {
             BpEducationalItem.BulletPoint(
                 "❌",
                 "Measuring Over Clothing",
-                "Even a thin shirt sleeve can add 5-50 mmHg to your reading. Always measure on bare skin."
+                "A cuff over clothing can affect a reading. Place it on bare skin and follow the monitor's fit instructions."
             ),
 
             BpEducationalItem.BulletPoint(
                 "❌",
                 "Unsupported Back or Feet",
-                "Sitting without back support can raise systolic BP by 5-10 mmHg. Dangling feet can raise it by 5-6 mmHg. Crossed legs can add another 2-8 mmHg."
+                "Use a chair with back support, keep both feet flat and avoid crossing your legs so your posture is consistent."
             ),
 
             BpEducationalItem.BulletPoint(
                 "❌",
                 "Arm Below Heart Level",
-                "If your arm hangs at your side or rests on your lap, the reading can be 10+ mmHg higher than if properly positioned at heart level."
+                "Support your arm on a flat surface with the cuff at heart level; an unsupported or low arm can affect the reading."
             )
         )
     )
@@ -254,19 +254,19 @@ object BpEducationalContent {
             BpEducationalItem.BulletPoint(
                 "🧂",
                 "High Sodium Diet",
-                "Excess sodium causes your body to retain water, increasing blood volume and pressure. The average person consumes 3,400 mg/day — nearly 50% more than the recommended limit of 2,300 mg. Aim for 1,500 mg if you already have high BP."
+                "Higher sodium intake can raise blood pressure for some people. The American Heart Association describes less than 2,300 mg/day as a general limit and an ideal 1,500 mg/day for many adults with high blood pressure, but individual advice can differ."
             ),
 
             BpEducationalItem.BulletPoint(
                 "⚖️",
                 "Excess Weight",
-                "Being overweight increases the workload on your heart. For every 2 lbs (1 kg) lost, blood pressure can drop by about 1 mmHg. Even losing 5-10% of body weight can significantly improve BP."
+                "Body size and blood pressure can be related, but the relationship varies. If weight change is a goal, choose gradual, sustainable habits and discuss an appropriate plan with a professional rather than expecting a fixed change in mmHg."
             ),
 
             BpEducationalItem.BulletPoint(
                 "🛋️",
                 "Physical Inactivity",
-                "Sedentary people have a 20-50% higher risk of developing hypertension. Regular exercise strengthens the heart so it can pump more blood with less effort, reducing the force on arteries."
+                "Regular movement supports overall cardiovascular health. Start at a comfortable level and build gradually; activity choices and limits should reflect your current health and advice from a professional."
             ),
 
             BpEducationalItem.BulletPoint(
@@ -352,13 +352,13 @@ object BpEducationalContent {
         subtitle = "Dietary Approaches to Stop Hypertension",
         content = listOf(
             BpEducationalItem.Paragraph(
-                "The DASH diet (Dietary Approaches to Stop Hypertension) is a scientifically proven eating plan developed by the National Heart, Lung, and Blood Institute. Studies show it can lower blood pressure by 8-14 mmHg in just 2 weeks — comparable to some medications."
+                "The DASH diet (Dietary Approaches to Stop Hypertension) is an eating pattern studied by the National Heart, Lung, and Blood Institute. It emphasizes vegetables, fruit, whole grains, beans, nuts, low-fat dairy and lower sodium; response varies by person."
             ),
 
             BpEducationalItem.HighlightBox(
                 "🏆",
                 "Proven Results",
-                "The DASH diet has been ranked the #1 Best Diet Overall by U.S. News & World Report multiple years running. It's not a fad — it's a sustainable, evidence-based eating pattern.",
+                "DASH is an evidence-informed eating pattern, not a prescription or a promise of a specific blood-pressure change. Adapt it to your culture, preferences, access and any clinical dietary advice.",
                 HighlightType.SUCCESS
             ),
 
@@ -483,7 +483,7 @@ object BpEducationalContent {
 
             BpEducationalItem.MythBuster(
                 myth = "\"I feel fine, so my blood pressure must be fine.\"",
-                fact = "High blood pressure is called the 'silent killer' for a reason — it usually has NO symptoms until it causes serious damage. Most people with hypertension feel perfectly normal. The only way to know your blood pressure is to measure it. By the time symptoms appear (severe headaches, vision problems, chest pain), significant damage may have already occurred to your heart, kidneys, brain, or eyes."
+                fact = "High blood pressure often has no warning signs or symptoms. Measuring it is the only way to know your current reading; one reading is a snapshot, so a healthcare professional should interpret a repeated pattern and any symptoms."
             ),
 
             BpEducationalItem.MythBuster(
@@ -493,7 +493,7 @@ object BpEducationalContent {
 
             BpEducationalItem.MythBuster(
                 myth = "\"I can stop taking my BP medication once my numbers are normal.\"",
-                fact = "NEVER stop or adjust blood pressure medication without consulting your doctor. Your BP is normal BECAUSE the medication is working. Stopping abruptly can cause a dangerous rebound spike in blood pressure. If your doctor agrees your BP is well-controlled, they may gradually reduce your dose — but this must be done under medical supervision."
+                fact = "Do not stop or change prescribed blood-pressure medicine on your own. A reading can reflect treatment, measurement conditions or other factors; ask the prescriber how to review medicines safely."
             ),
 
             BpEducationalItem.MythBuster(
@@ -518,13 +518,13 @@ object BpEducationalContent {
 
             BpEducationalItem.MythBuster(
                 myth = "\"Drinking lots of water will lower my blood pressure.\"",
-                fact = "Staying hydrated is important for overall health, but drinking extra water won't directly lower blood pressure. However, dehydration CAN temporarily raise blood pressure, so adequate hydration helps maintain stable readings. The best approach is to drink water consistently throughout the day — about 8 glasses — rather than relying on water as a blood pressure treatment."
+                fact = "Staying hydrated supports overall wellbeing, but extra water is not a blood-pressure treatment. Fluid needs vary with climate, activity, medicines and health conditions; follow individualized advice instead of a fixed glass count."
             ),
 
             BpEducationalItem.HighlightBox(
                 "🎯",
                 "The Bottom Line",
-                "The most dangerous myth of all is that high blood pressure isn't serious. Uncontrolled hypertension is a leading cause of heart attack, stroke, kidney failure, and vision loss worldwide. Knowledge is power — now that you know the facts, you can take informed action to protect your health.",
+                "High blood pressure deserves attention, but this app cannot diagnose or manage it. Use readings as information to discuss with a qualified healthcare professional and follow the care plan you receive.",
                 HighlightType.WARNING
             )
         )

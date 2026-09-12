@@ -142,3 +142,18 @@ These cannot be proven by a Windows unit/build run:
   `assembleRelease` and `bundleRelease` passed with `GRADLE_EXIT=0`.
 - **Remaining gates:** Physical-device TalkBack, large-font, theme and sheet
   rendering checks, plus signing/Firebase/Play Console work, remain owner-only.
+
+## Blood-pressure education trust and visual follow-up — 2026-09-12
+
+- **Status:** Code-fixable audit complete; device/accessibility validation
+  remains open.
+- **Changes:** BP education sections, instructions, comparisons, myth/fact
+  blocks and analogies now use stable vector icons and shared semantic colors.
+  Expandable section headers have a 48 dp minimum target. Copy was aligned to
+  current AHA/CDC home-monitoring guidance by removing unsupported fixed
+  effect-size claims, universal “most accurate” language, fixed targets and
+  medication certainty; reference bands are explicitly non-diagnostic.
+- **Verification:** `test`, `lintRelease`, `assembleDebug`,
+  `assembleRelease` and `bundleRelease` passed with `GRADLE_EXIT=0`.
+- **Remaining gates:** Physical-device TalkBack, large-font, theme and route
+  rendering checks, plus signing/Firebase/Play Console work, remain owner-only.
