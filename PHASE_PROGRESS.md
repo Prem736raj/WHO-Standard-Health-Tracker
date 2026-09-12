@@ -327,6 +327,24 @@ This file is the source of truth for the sequential product-development phases. 
 
 Updated: 2026-09-12
 
+## Follow-up — Hydration achievements visual consistency
+
+- **Status:** Complete locally; device/accessibility validation remains open
+- **Major changes:** Hydration achievements now use shared semantic tier/score
+  colors and vector icons for streaks, grades, badges, milestones and unlock
+  celebrations. Legacy model emoji/icon fields remain unchanged for storage
+  compatibility, but are not rendered. Active and inactive streak treatments
+  keep readable contrast.
+- **Tests:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  pass with `GRADLE_EXIT=0`.
+- **Known limitations:** Hydration scores and streaks are informational and
+  should not create pressure around missed days. Connected-device TalkBack,
+  large-font, theme and interaction checks remain open.
+- **Next phase:** Execute the documented device/console release checklist;
+  continue deep-screen cleanup only when it improves trust, accessibility or
+  reliability.
+
 ## Follow-up — Hydration tracking visual consistency
 
 - **Status:** Complete locally; device/accessibility validation remains open

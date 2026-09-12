@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -33,6 +34,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
@@ -40,13 +42,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.health.calculator.bmi.tracker.data.model.*
+import com.health.calculator.bmi.tracker.ui.theme.FeatureColors
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.*
-
-private val WaterBlueMedium = Color(0xFF2196F3)
-private val WaterBlueDark = Color(0xFF1565C0)
-private val WaterBlueSurface = Color(0xFFE3F2FD)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,7 +71,12 @@ fun WaterGamificationScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(stringResource(R.string.txt_text_placeholder_2), fontSize = 22.sp)
+                        Icon(
+                            imageVector = Icons.Outlined.EmojiEvents,
+                            contentDescription = null,
+                            tint = HealthColors.Warning,
+                            modifier = Modifier.size(22.dp)
+                        )
                         Text(stringResource(R.string.txt_achievements), fontWeight = FontWeight.Bold)
                     }
                 },
@@ -184,6 +189,7 @@ fun WaterGamificationScreen(
 @Composable
 private fun StreakDisplayCard(streakData: WaterStreakData) {
     val isActive = streakData.currentStreak > 0
+    val contentColor = if (isActive) Color.White else MaterialTheme.colorScheme.onSurface
 
     val infiniteTransition = rememberInfiniteTransition(label = "flame")
     val flameScale by infiniteTransition.animateFloat(
@@ -207,8 +213,8 @@ private fun StreakDisplayCard(streakData: WaterStreakData) {
                 .fillMaxWidth()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = if (isActive) listOf(Color(0xFFFF6B35), Color(0xFFFF3D00))
-                        else listOf(Color(0xFF757575), Color(0xFF424242))
+                        colors = if (isActive) listOf(HealthColors.Caution, FeatureColors.CalorieDeep)
+                        else listOf(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.colorScheme.surface)
                     ),
                     shape = RoundedCornerShape(20.dp)
                 )
@@ -219,22 +225,25 @@ private fun StreakDisplayCard(streakData: WaterStreakData) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(
-                    text = if (isActive) "🔥" else "💤",
-                    fontSize = 48.sp,
-                    modifier = Modifier.scale(flameScale)
+                Icon(
+                    imageVector = if (isActive) Icons.Outlined.Whatshot else Icons.Outlined.Schedule,
+                    contentDescription = null,
+                    tint = contentColor,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .scale(flameScale)
                 )
 
                 if (isActive) {
                     Text(
                         text = "${streakData.currentStreak}",
-                        color = Color.White,
+                        color = contentColor,
                         fontSize = 52.sp,
                         fontWeight = FontWeight.ExtraBold
                     )
                     Text(
                         text = stringResource(R.string.txt_day_streak),
-                        color = Color.White.copy(alpha = 0.9f),
+                        color = contentColor.copy(alpha = 0.9f),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Medium
                     )
@@ -248,35 +257,41 @@ private fun StreakDisplayCard(streakData: WaterStreakData) {
                         Card(
                             shape = RoundedCornerShape(12.dp),
                             colors = CardDefaults.cardColors(
-                                containerColor = Color.White.copy(alpha = 0.2f)
+                                containerColor = contentColor.copy(alpha = 0.2f)
                             )
                         ) {
-                            Text(
-                                text = "🎯 $daysRemaining days to $milestone-day milestone!",
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                                color = Color.White,
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Medium
-                            )
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Icon(Icons.Outlined.Flag, contentDescription = null, tint = contentColor, modifier = Modifier.size(16.dp))
+                        Text(
+                            text = "$daysRemaining days to $milestone-day milestone!",
+                            color = contentColor,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
                         }
                     }
                 } else {
                     Text(
                         text = stringResource(R.string.txt_no_active_streak),
-                        color = Color.White,
+                        color = contentColor,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Card(
                         shape = RoundedCornerShape(12.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = Color.White.copy(alpha = 0.2f)
+                            containerColor = contentColor.copy(alpha = 0.2f)
                         )
                     ) {
                         Text(
                             text = stringResource(R.string.txt_start_a_new_streak_today_meet_),
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
-                            color = Color.White,
+                            color = contentColor,
                             fontSize = 13.sp,
                             textAlign = TextAlign.Center
                         )
@@ -288,10 +303,10 @@ private fun StreakDisplayCard(streakData: WaterStreakData) {
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(stringResource(R.string.txt_text_placeholder_2), fontSize = 14.sp)
+                    Icon(Icons.Outlined.EmojiEvents, contentDescription = null, tint = contentColor, modifier = Modifier.size(16.dp))
                     Text(
                         text = "Best: ${streakData.longestStreak} days",
-                        color = Color.White.copy(alpha = 0.7f),
+                        color = contentColor.copy(alpha = 0.7f),
                         fontSize = 13.sp
                     )
                 }
@@ -321,11 +336,11 @@ private fun HydrationScoreCard(score: HydrationScore?) {
     )
 
     val scoreColor = when {
-        displayScore.totalScore >= 90 -> Color(0xFF4CAF50)
-        displayScore.totalScore >= 70 -> Color(0xFF8BC34A)
-        displayScore.totalScore >= 50 -> Color(0xFFFFC107)
-        displayScore.totalScore >= 30 -> Color(0xFFFF9800)
-        else -> Color(0xFFF44336)
+        displayScore.totalScore >= 90 -> HealthColors.Healthy
+        displayScore.totalScore >= 70 -> HealthColors.Good
+        displayScore.totalScore >= 50 -> HealthColors.Warning
+        displayScore.totalScore >= 30 -> HealthColors.Caution
+        else -> HealthColors.Danger
     }
 
     Card(
@@ -356,12 +371,13 @@ private fun HydrationScoreCard(score: HydrationScore?) {
                     modifier = Modifier.size(100.dp),
                     contentAlignment = Alignment.Center
                 ) {
+                    val ringTrackColor = MaterialTheme.colorScheme.outline
                     Canvas(modifier = Modifier.fillMaxSize()) {
                         val strokeWidth = 12f
                         val radius = (size.minDimension - strokeWidth) / 2
 
                         drawCircle(
-                            color = Color.Gray.copy(alpha = 0.1f),
+                            color = ringTrackColor.copy(alpha = 0.18f),
                             radius = radius,
                             style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
                         )
@@ -418,7 +434,12 @@ private fun HydrationScoreCard(score: HydrationScore?) {
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(displayScore.gradeEmoji, fontSize = 24.sp)
+                    Icon(
+                        imageVector = hydrationGradeIcon(displayScore.grade),
+                        contentDescription = null,
+                        tint = scoreColor,
+                        modifier = Modifier.size(24.dp)
+                    )
                     Text(
                         text = getGradeMessage(displayScore.grade),
                         fontSize = 13.sp,
@@ -441,9 +462,11 @@ private fun ScoreBreakdownRow(item: ScoreBreakdownItem) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            Text(
-                text = if (item.earned) "✅" else "⬜",
-                fontSize = 12.sp
+            Icon(
+                imageVector = if (item.earned) Icons.Outlined.CheckCircle else Icons.Outlined.Info,
+                contentDescription = null,
+                tint = if (item.earned) HealthColors.Healthy else MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(16.dp)
             )
             Text(
                 text = item.label,
@@ -457,7 +480,7 @@ private fun ScoreBreakdownRow(item: ScoreBreakdownItem) {
             text = "${item.points}/${item.maxPoints}",
             fontSize = 12.sp,
             fontWeight = FontWeight.SemiBold,
-            color = if (item.earned) Color(0xFF4CAF50) else Color.Gray
+            color = if (item.earned) HealthColors.Healthy else MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
@@ -497,13 +520,13 @@ private fun BadgeGrid(
                         Box(
                             modifier = Modifier
                                 .size(12.dp)
-                                .background(Color(tier.accentColor), CircleShape)
+                                .background(badgeTierColor(tier), CircleShape)
                         )
                         Text(
                             tier.label,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 14.sp,
-                            color = Color(tier.accentColor)
+                            color = badgeTierColor(tier)
                         )
                         val tierEarned = tierBadges.count { it.name in earnedBadges }
                         Text(
@@ -566,7 +589,7 @@ private fun BadgeCard(
         shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (isEarned)
-                Color(badge.tier.accentColor).copy(alpha = 0.1f)
+                badgeTierColor(badge.tier).copy(alpha = 0.1f)
             else
                 MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
         ),
@@ -580,16 +603,19 @@ private fun BadgeCard(
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Box(contentAlignment = Alignment.Center) {
-                Text(
-                    text = badge.icon,
-                    fontSize = 32.sp,
-                    modifier = Modifier.alpha(if (isEarned) 1f else 0.3f)
-                )
+                    Icon(
+                        imageVector = badgeIcon(badge),
+                        contentDescription = null,
+                        tint = badgeTierColor(badge.tier),
+                        modifier = Modifier
+                            .size(32.dp)
+                            .alpha(if (isEarned) 1f else 0.3f)
+                    )
                 if (!isEarned) {
                     Icon(
                         Icons.Default.Lock,
                         null,
-                        tint = Color.Gray.copy(alpha = 0.5f),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                         modifier = Modifier.size(16.dp)
                     )
                 }
@@ -629,7 +655,7 @@ private fun BadgeCard(
                         Text(
                             text = "Earned: $earnedDate",
                             fontSize = 8.sp,
-                            color = Color(badge.tier.accentColor)
+                            color = badgeTierColor(badge.tier)
                         )
                     }
                 }
@@ -643,13 +669,13 @@ private fun BadgeCard(
 @Composable
 private fun MilestoneProgressCard(streakData: WaterStreakData) {
     val milestones = listOf(
-        3 to "Hydration Habit 🌱",
-        7 to "7-Day Streak 🔥",
-        14 to "Two Week Warrior ⚡",
-        30 to "Monthly Master 👑",
-        60 to "Hydration Expert 💎",
-        90 to "Quarterly Champion 🏆",
-        365 to "Diamond Drinker 💠"
+        Triple(3, "Hydration Habit", Icons.Outlined.WaterDrop),
+        Triple(7, "7-Day Streak", Icons.Outlined.Whatshot),
+        Triple(14, "Two Week Warrior", Icons.Outlined.Bolt),
+        Triple(30, "Monthly Master", Icons.Outlined.EmojiEvents),
+        Triple(60, "Hydration Expert", Icons.Outlined.Star),
+        Triple(90, "Quarterly Champion", Icons.Outlined.EmojiEvents),
+        Triple(365, "Diamond Drinker", Icons.Outlined.WaterDrop)
     )
 
     Card(
@@ -672,7 +698,7 @@ private fun MilestoneProgressCard(streakData: WaterStreakData) {
 
             HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f))
 
-            milestones.forEach { (days, name) ->
+            milestones.forEach { (days, name, icon) ->
                 val isCompleted = streakData.longestStreak >= days
                 val progress = (streakData.currentStreak.toFloat() / days).coerceAtMost(1f)
                 val animatedProgress by animateFloatAsState(
@@ -686,9 +712,11 @@ private fun MilestoneProgressCard(streakData: WaterStreakData) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    Text(
-                        text = if (isCompleted) "✅" else "⬜",
-                        fontSize = 16.sp
+                    Icon(
+                        imageVector = if (isCompleted) Icons.Outlined.CheckCircle else icon,
+                        contentDescription = null,
+                        tint = if (isCompleted) HealthColors.Healthy else MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(20.dp)
                     )
                     Column(modifier = Modifier.weight(1f)) {
                         Row(
@@ -699,7 +727,7 @@ private fun MilestoneProgressCard(streakData: WaterStreakData) {
                                 name,
                                 fontSize = 13.sp,
                                 fontWeight = if (isCompleted) FontWeight.Bold else FontWeight.Normal,
-                                color = if (isCompleted) Color(0xFF4CAF50)
+                                color = if (isCompleted) HealthColors.Healthy
                                 else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                             )
                             Text(
@@ -715,7 +743,7 @@ private fun MilestoneProgressCard(streakData: WaterStreakData) {
                                 .fillMaxWidth()
                                 .height(6.dp)
                                 .clip(RoundedCornerShape(3.dp)),
-                            color = if (isCompleted) Color(0xFF4CAF50) else WaterBlueMedium,
+                            color = if (isCompleted) HealthColors.Healthy else FeatureColors.WaterDeep,
                             trackColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
                         )
                     }
@@ -760,13 +788,20 @@ private fun BadgeUnlockOverlay(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.5f))
+            .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f))
             .clickable { onDismiss() },
         contentAlignment = Alignment.Center
     ) {
-        // Floating particles
-        val emojis = listOf("✨", "⭐", "🌟", "💫", "🎉", "🎊")
-        emojis.forEachIndexed { index, emoji ->
+        // Floating vector particles
+        val particleIcons = listOf(
+            Icons.Outlined.AutoAwesome,
+            Icons.Outlined.Star,
+            Icons.Outlined.EmojiEvents,
+            Icons.Outlined.WaterDrop,
+            Icons.Outlined.AutoAwesome,
+            Icons.Outlined.Star
+        )
+        particleIcons.forEachIndexed { index, icon ->
             val offsetY by infiniteTransition.animateFloat(
                 initialValue = 300f,
                 targetValue = -300f,
@@ -774,15 +809,18 @@ private fun BadgeUnlockOverlay(
                     animation = tween(2000 + index * 200, easing = LinearEasing),
                     repeatMode = RepeatMode.Restart
                 ),
-                label = "particle_$index"
+                label = "particle_y_$index"
             )
-            Text(
-                text = emoji,
-                fontSize = 24.sp,
-                modifier = Modifier.offset(
-                    x = ((index * 67 + 30) % 250 - 125).dp,
-                    y = offsetY.dp
-                )
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = if (index % 2 == 0) HealthColors.Warning else FeatureColors.WaterDeep,
+                modifier = Modifier
+                    .size(24.dp)
+                    .offset(
+                        x = ((index * 67 + 30) % 250 - 125).dp,
+                        y = offsetY.dp
+                    )
             )
         }
 
@@ -791,7 +829,7 @@ private fun BadgeUnlockOverlay(
                 .scale(scale)
                 .padding(32.dp),
             shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(16.dp)
         ) {
             Column(
@@ -805,32 +843,37 @@ private fun BadgeUnlockOverlay(
                     modifier = Modifier
                         .size(80.dp)
                         .background(
-                            Color(badge.tier.accentColor).copy(alpha = 0.15f),
+                            badgeTierColor(badge.tier).copy(alpha = 0.15f),
                             CircleShape
                         )
-                        .border(3.dp, Color(badge.tier.accentColor), CircleShape),
+                        .border(3.dp, badgeTierColor(badge.tier), CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(badge.icon, fontSize = 44.sp)
+                    Icon(
+                        imageVector = badgeIcon(badge),
+                        contentDescription = null,
+                        tint = badgeTierColor(badge.tier),
+                        modifier = Modifier.size(44.dp)
+                    )
                 }
 
                 Text(
                     badge.displayName,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    color = Color(badge.tier.accentColor)
+                    color = badgeTierColor(badge.tier)
                 )
                 Text(
                     badge.description,
                     fontSize = 14.sp,
                     textAlign = TextAlign.Center,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Card(
                     shape = RoundedCornerShape(8.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = Color(badge.tier.accentColor).copy(alpha = 0.1f)
+                        containerColor = badgeTierColor(badge.tier).copy(alpha = 0.1f)
                     )
                 ) {
                     Text(
@@ -838,7 +881,7 @@ private fun BadgeUnlockOverlay(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(badge.tier.accentColor)
+                        color = badgeTierColor(badge.tier)
                     )
                 }
 
@@ -848,4 +891,40 @@ private fun BadgeUnlockOverlay(
             }
         }
     }
+}
+
+private fun hydrationGradeIcon(grade: String?): ImageVector = when (grade?.uppercase()) {
+    "A", "B", "B+" -> Icons.Outlined.CheckCircle
+    "C", "C+" -> Icons.Outlined.Info
+    else -> Icons.Outlined.Warning
+}
+
+private fun hydrationGradeColor(grade: String?): Color = when (grade?.uppercase()) {
+    "A", "B", "B+" -> HealthColors.Healthy
+    "C", "C+" -> HealthColors.Warning
+    else -> HealthColors.Danger
+}
+
+private fun badgeTierColor(tier: BadgeTier): Color = when (tier) {
+    BadgeTier.BRONZE -> HealthColors.Caution
+    BadgeTier.SILVER -> HealthColors.Info
+    BadgeTier.GOLD -> HealthColors.Warning
+    BadgeTier.PLATINUM -> HealthColors.Severe
+    BadgeTier.DIAMOND -> HealthColors.BelowNormal
+}
+
+private fun badgeIcon(badge: BadgeType): ImageVector = when (badge) {
+    BadgeType.FIRST_DROP, BadgeType.GLASS_HALF_FULL -> Icons.Outlined.WaterDrop
+    BadgeType.DAILY_CHAMPION, BadgeType.NINETY_DAY_STREAK -> Icons.Outlined.EmojiEvents
+    BadgeType.THREE_DAY_STREAK -> Icons.Outlined.WaterDrop
+    BadgeType.SEVEN_DAY_STREAK -> Icons.Outlined.Whatshot
+    BadgeType.FOURTEEN_DAY_STREAK -> Icons.Outlined.Bolt
+    BadgeType.MONTHLY_MASTER -> Icons.Outlined.EmojiEvents
+    BadgeType.SIXTY_DAY_STREAK -> Icons.Outlined.Star
+    BadgeType.HYDRATION_HERO -> Icons.Outlined.HealthAndSafety
+    BadgeType.DIAMOND_DRINKER -> Icons.Outlined.Star
+    BadgeType.EARLY_BIRD -> Icons.Outlined.WbSunny
+    BadgeType.NIGHT_OWL -> Icons.Outlined.NightsStay
+    BadgeType.OVERACHIEVER -> Icons.Outlined.TrendingUp
+    BadgeType.CONSISTENCY_KING -> Icons.Outlined.Flag
 }

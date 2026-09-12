@@ -317,3 +317,18 @@ These cannot be proven by a Windows unit/build run:
 - **Remaining gates:** Connected-device TalkBack, large-font, theme and
   hydration interaction checks, plus signing/Firebase/Play Console work,
   remain owner-only.
+
+## Hydration achievements visual consistency follow-up — 2026-09-12
+
+- **Status:** Code-fixable polish complete; device/accessibility validation
+  remains open.
+- **Changes:** Achievement title, active/inactive streak cards, score ring,
+  breakdown, tiers, badges, milestones and unlock overlay use shared semantic
+  colors and stable vector icons instead of rendered emoji. Legacy badge/grade
+  marker fields and behavior remain compatible.
+- **Verification:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  passed with `GRADLE_EXIT=0`.
+- **Remaining gates:** Connected-device TalkBack, large-font, theme and
+  achievement interaction checks, plus signing/Firebase/Play Console work,
+  remain owner-only.
