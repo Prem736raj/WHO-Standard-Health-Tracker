@@ -157,3 +157,16 @@ These cannot be proven by a Windows unit/build run:
   `assembleRelease` and `bundleRelease` passed with `GRADLE_EXIT=0`.
 - **Remaining gates:** Physical-device TalkBack, large-font, theme and route
   rendering checks, plus signing/Firebase/Play Console work, remain owner-only.
+
+## Blood-pressure recommendation visual follow-up — 2026-09-12
+
+- **Status:** Code-fixable polish complete; device/accessibility validation
+  remains open.
+- **Changes:** Persisted recommendation markers now resolve to stable Material
+  icons instead of rendered emoji. Urgency, advice, risk, and white-coat
+  sections use shared semantic health colors, and expandable recommendation
+  headers provide a 48 dp minimum touch target while preserving legacy data.
+- **Verification:** `test`, `lintRelease`, `assembleDebug`,
+  `assembleRelease` and `bundleRelease` passed with `GRADLE_EXIT=0`.
+- **Remaining gates:** Physical-device TalkBack, large-font, theme and route
+  rendering checks, plus signing/Firebase/Play Console work, remain owner-only.

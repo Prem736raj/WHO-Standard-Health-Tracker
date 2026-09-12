@@ -327,6 +327,27 @@ This file is the source of truth for the sequential product-development phases. 
 
 Updated: 2026-09-12
 
+## Follow-up — Blood-pressure recommendation visual consistency
+
+- **Status:** Complete locally; device/accessibility validation remains open
+- **Major changes:** Blood-pressure recommendation guidance now maps persisted
+  emoji markers to stable Material icons at render time, so legacy saved data
+  remains readable without shipping emoji illustrations. Urgency, clinician
+  advice, risk, and white-coat sections use shared semantic health colors;
+  expandable recommendation headers meet a 48 dp minimum touch target and
+  zero-copy icon fallbacks remain available for older records.
+- **Tests:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  pass with `GRADLE_EXIT=0`.
+- **Known limitations:** Legacy recommendation models still retain emoji
+  labels for backwards compatibility. TalkBack, large-font, theme and route
+  rendering checks require a connected device.
+- **Next phase:** Execute the documented device/console release checklist;
+  continue deep-screen cleanup only when it improves trust, accessibility or
+  reliability.
+
+Updated: 2026-09-12
+
 ## Follow-up — Blood-pressure education trust and visual cleanup
 
 - **Status:** Complete locally; device/accessibility validation remains open

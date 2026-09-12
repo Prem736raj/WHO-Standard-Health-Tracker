@@ -20,12 +20,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.health.calculator.bmi.tracker.data.model.*
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
+
+/** Convert persisted recommendation markers to stable Material icons. */
+private fun bpRecommendationIcon(legacyLabel: String): ImageVector = when {
+    legacyLabel.contains("✅") -> Icons.Outlined.CheckCircle
+    legacyLabel.contains("⚠") -> Icons.Outlined.Warning
+    legacyLabel.contains("📈") || legacyLabel.contains("📊") -> Icons.Outlined.ShowChart
+    legacyLabel.contains("📋") || legacyLabel.contains("📝") -> Icons.Outlined.Assignment
+    legacyLabel.contains("🩺") || legacyLabel.contains("🏥") -> Icons.Outlined.LocalHospital
+    legacyLabel.contains("❤️") || legacyLabel.contains("💙") -> Icons.Outlined.FavoriteBorder
+    legacyLabel.contains("📏") -> Icons.Outlined.Straighten
+    legacyLabel.contains("🔁") -> Icons.Outlined.Timeline
+    legacyLabel.contains("🚫") -> Icons.Outlined.Block
+    legacyLabel.contains("🥗") || legacyLabel.contains("🧂") -> Icons.Outlined.Restaurant
+    legacyLabel.contains("🚶") -> Icons.Outlined.DirectionsWalk
+    legacyLabel.contains("😴") -> Icons.Outlined.Schedule
+    legacyLabel.contains("💡") -> Icons.Outlined.Lightbulb
+    legacyLabel.contains("ℹ") -> Icons.Outlined.Info
+    else -> Icons.Outlined.Info
+}
 
 // ─── Main Recommendations Section (for embedding in result screen) ─────────────
 
@@ -49,7 +70,7 @@ fun BpRecommendationsSection(
 
             // Header Message Card
             RecommendationHeaderCard(
-                emoji = guidance.headerEmoji,
+                legacyIcon = guidance.headerEmoji,
                 message = guidance.headerMessage,
                 tone = guidance.headerTone,
                 categoryColor = categoryColor,
@@ -65,7 +86,7 @@ fun BpRecommendationsSection(
             if (guidance.recommendations.isNotEmpty()) {
                 ExpandableRecommendationCard(
                     title = "Lifestyle Recommendations",
-                    icon = "💡",
+                    icon = bpRecommendationIcon("💡"),
                     recommendations = guidance.recommendations,
                     categoryColor = categoryColor,
                     initiallyExpanded = true
@@ -76,7 +97,7 @@ fun BpRecommendationsSection(
             if (guidance.dietTips.isNotEmpty()) {
                 ExpandableRecommendationCard(
                     title = "Diet & Nutrition",
-                    icon = "🥗",
+                    icon = bpRecommendationIcon("🥗"),
                     recommendations = guidance.dietTips,
                     categoryColor = categoryColor,
                     initiallyExpanded = false
@@ -87,7 +108,7 @@ fun BpRecommendationsSection(
             if (guidance.exerciseTips.isNotEmpty()) {
                 ExpandableRecommendationCard(
                     title = "Exercise & Activity",
-                    icon = "🏃",
+                    icon = bpRecommendationIcon("🚶"),
                     recommendations = guidance.exerciseTips,
                     categoryColor = categoryColor,
                     initiallyExpanded = false
@@ -120,20 +141,20 @@ fun BpRecommendationsSection(
 
 @Composable
 private fun RecommendationHeaderCard(
-    emoji: String,
+    legacyIcon: String,
     message: String,
     tone: BpGuidanceTone,
     categoryColor: Color,
     monitoringFrequency: String
 ) {
     val bgColor = when (tone) {
-        BpGuidanceTone.POSITIVE -> Color(0xFF4CAF50).copy(alpha = 0.08f)
-        BpGuidanceTone.GENTLE_AWARENESS -> Color(0xFF8BC34A).copy(alpha = 0.08f)
-        BpGuidanceTone.CAUTIOUS -> Color(0xFFFFC107).copy(alpha = 0.08f)
-        BpGuidanceTone.CONCERNED -> Color(0xFFFF9800).copy(alpha = 0.08f)
-        BpGuidanceTone.URGENT -> Color(0xFFF44336).copy(alpha = 0.08f)
-        BpGuidanceTone.EMERGENCY -> Color(0xFFB71C1C).copy(alpha = 0.08f)
-        BpGuidanceTone.INFORMATIONAL -> Color(0xFF42A5F5).copy(alpha = 0.08f)
+        BpGuidanceTone.POSITIVE -> HealthColors.Healthy.copy(alpha = 0.08f)
+        BpGuidanceTone.GENTLE_AWARENESS -> HealthColors.Healthy.copy(alpha = 0.08f)
+        BpGuidanceTone.CAUTIOUS -> HealthColors.Warning.copy(alpha = 0.08f)
+        BpGuidanceTone.CONCERNED -> HealthColors.Caution.copy(alpha = 0.08f)
+        BpGuidanceTone.URGENT -> HealthColors.Danger.copy(alpha = 0.08f)
+        BpGuidanceTone.EMERGENCY -> HealthColors.Danger.copy(alpha = 0.08f)
+        BpGuidanceTone.INFORMATIONAL -> HealthColors.Good.copy(alpha = 0.08f)
     }
 
     val borderColor = categoryColor.copy(alpha = 0.25f)
@@ -152,9 +173,11 @@ private fun RecommendationHeaderCard(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.Top
             ) {
-                Text(
-                    emoji,
-                    style = MaterialTheme.typography.headlineSmall
+                Icon(
+                    imageVector = bpRecommendationIcon(legacyIcon),
+                    contentDescription = null,
+                    tint = categoryColor,
+                    modifier = Modifier.size(28.dp)
                 )
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
@@ -220,10 +243,9 @@ private fun UrgencyNoteCard(note: String, tone: BpGuidanceTone) {
         remember { mutableFloatStateOf(1f) }
     }
 
-    val bgColor = if (isEmergency) Color(0xFFB71C1C).copy(alpha = 0.08f * pulseAlpha)
-    else Color(0xFFFF9800).copy(alpha = 0.08f)
-
-    val textColor = if (isEmergency) Color(0xFFB71C1C) else Color(0xFFE65100)
+    val urgencyColor = if (isEmergency) HealthColors.Danger else HealthColors.Caution
+    val bgColor = urgencyColor.copy(alpha = 0.08f * pulseAlpha)
+    val textColor = urgencyColor
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -231,8 +253,7 @@ private fun UrgencyNoteCard(note: String, tone: BpGuidanceTone) {
         shape = RoundedCornerShape(12.dp),
         border = BorderStroke(
             1.dp,
-            if (isEmergency) Color(0xFFB71C1C).copy(alpha = 0.3f * pulseAlpha)
-            else Color(0xFFFF9800).copy(alpha = 0.3f)
+            urgencyColor.copy(alpha = 0.3f * pulseAlpha)
         )
     ) {
         Row(
@@ -261,7 +282,7 @@ private fun UrgencyNoteCard(note: String, tone: BpGuidanceTone) {
 @Composable
 private fun ExpandableRecommendationCard(
     title: String,
-    icon: String,
+    icon: ImageVector,
     recommendations: List<BpRecommendation>,
     categoryColor: Color,
     initiallyExpanded: Boolean = false
@@ -284,6 +305,7 @@ private fun ExpandableRecommendationCard(
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         isExpanded = !isExpanded
                     }
+                    .heightIn(min = 48.dp)
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -292,7 +314,12 @@ private fun ExpandableRecommendationCard(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(icon, style = MaterialTheme.typography.titleMedium)
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = categoryColor,
+                        modifier = Modifier.size(22.dp)
+                    )
                     Text(
                         title,
                         style = MaterialTheme.typography.titleSmall,
@@ -373,10 +400,13 @@ private fun RecommendationItem(recommendation: BpRecommendation) {
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.Top
     ) {
-        Text(
-            recommendation.icon,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(top = 2.dp)
+        Icon(
+            imageVector = bpRecommendationIcon(recommendation.icon),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .padding(top = 2.dp)
+                .size(22.dp)
         )
         Column(modifier = Modifier.weight(1f)) {
             Text(
@@ -402,11 +432,11 @@ private fun HealthRisksCard(risks: List<String>, tone: BpGuidanceTone) {
     val haptic = LocalHapticFeedback.current
 
     val riskColor = when (tone) {
-        BpGuidanceTone.CAUTIOUS -> Color(0xFFFF9800)
-        BpGuidanceTone.CONCERNED -> Color(0xFFFF7043)
-        BpGuidanceTone.URGENT, BpGuidanceTone.EMERGENCY -> Color(0xFFF44336)
-        BpGuidanceTone.INFORMATIONAL -> Color(0xFF42A5F5)
-        else -> Color(0xFFFF9800)
+        BpGuidanceTone.CAUTIOUS -> HealthColors.Warning
+        BpGuidanceTone.CONCERNED -> HealthColors.Caution
+        BpGuidanceTone.URGENT, BpGuidanceTone.EMERGENCY -> HealthColors.Danger
+        BpGuidanceTone.INFORMATIONAL -> HealthColors.Good
+        else -> HealthColors.Warning
     }
 
     Card(
@@ -423,6 +453,7 @@ private fun HealthRisksCard(risks: List<String>, tone: BpGuidanceTone) {
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         isExpanded = !isExpanded
                     }
+                    .heightIn(min = 48.dp)
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -510,10 +541,11 @@ private fun DoctorAdviceCard(advice: String, tone: BpGuidanceTone) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = if (isUrgent) Color(0xFFE3F2FD) else Color(0xFFF3E5F5).copy(alpha = 0.5f)
+            containerColor = if (isUrgent) HealthColors.Good.copy(alpha = 0.1f)
+            else HealthColors.Severe.copy(alpha = 0.08f)
         ),
         shape = RoundedCornerShape(16.dp),
-        border = if (isUrgent) BorderStroke(1.dp, Color(0xFF1E88E5).copy(alpha = 0.2f)) else null
+        border = if (isUrgent) BorderStroke(1.dp, HealthColors.Good.copy(alpha = 0.25f)) else null
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -525,15 +557,15 @@ private fun DoctorAdviceCard(advice: String, tone: BpGuidanceTone) {
                     .size(40.dp)
                     .clip(CircleShape)
                     .background(
-                        if (isUrgent) Color(0xFF1E88E5).copy(alpha = 0.12f)
-                        else Color(0xFF7B1FA2).copy(alpha = 0.12f)
+                        if (isUrgent) HealthColors.Good.copy(alpha = 0.14f)
+                        else HealthColors.Severe.copy(alpha = 0.14f)
                     ),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     Icons.Outlined.LocalHospital,
                     contentDescription = null,
-                    tint = if (isUrgent) Color(0xFF1E88E5) else Color(0xFF7B1FA2),
+                    tint = if (isUrgent) HealthColors.Good else HealthColors.Severe,
                     modifier = Modifier.size(22.dp)
                 )
             }
@@ -542,7 +574,7 @@ private fun DoctorAdviceCard(advice: String, tone: BpGuidanceTone) {
                     stringResource(R.string.txt_medical_advice),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = if (isUrgent) Color(0xFF1565C0) else Color(0xFF6A1B9A)
+                    color = if (isUrgent) HealthColors.Good else HealthColors.Severe
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
@@ -577,6 +609,7 @@ private fun WhiteCoatSyndromeCard() {
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         isExpanded = !isExpanded
                     }
+                    .heightIn(min = 48.dp)
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -585,7 +618,12 @@ private fun WhiteCoatSyndromeCard() {
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(stringResource(R.string.txt_text_placeholder_17), style = MaterialTheme.typography.titleMedium)
+                    Icon(
+                        imageVector = Icons.Outlined.LocalHospital,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(22.dp)
+                    )
                     Column {
                         Text(
                             stringResource(R.string.txt_white_coat_syndrome),
@@ -631,15 +669,18 @@ private fun WhiteCoatSyndromeCard() {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(12.dp))
-                                .background(Color(0xFFE8EAF6).copy(alpha = 0.4f))
+                                .background(HealthColors.Info.copy(alpha = 0.08f))
                                 .padding(12.dp),
                             horizontalArrangement = Arrangement.spacedBy(10.dp),
                             verticalAlignment = Alignment.Top
                         ) {
-                            Text(
-                                info.icon,
-                                style = MaterialTheme.typography.titleSmall,
-                                modifier = Modifier.padding(top = 2.dp)
+                            Icon(
+                                imageVector = bpRecommendationIcon(info.icon),
+                                contentDescription = null,
+                                tint = HealthColors.Info,
+                                modifier = Modifier
+                                    .padding(top = 2.dp)
+                                    .size(20.dp)
                             )
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
