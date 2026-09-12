@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
@@ -34,10 +35,20 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.health.calculator.bmi.tracker.data.local.entity.BloodPressureEntity
 import com.health.calculator.bmi.tracker.data.model.*
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+
+/** Map the legacy persisted time-of-day marker to a stable Material icon. */
+private fun bpTimeOfDayIcon(value: String?): ImageVector? = when (value) {
+    BpTimeOfDay.MORNING.name -> Icons.Outlined.WbSunny
+    BpTimeOfDay.AFTERNOON.name -> Icons.Outlined.WbSunny
+    BpTimeOfDay.EVENING.name -> Icons.Outlined.WbTwilight
+    BpTimeOfDay.NIGHT.name -> Icons.Outlined.NightsStay
+    else -> null
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -258,12 +269,9 @@ private fun BpLogEntryCard(
     }
     val timeLabel = dateTime.format(DateTimeFormatter.ofPattern("hh:mm a"))
 
-    val timeOfDayEmoji = when (entity.timeOfDay) {
-        BpTimeOfDay.MORNING.name -> "🌅"
-        BpTimeOfDay.AFTERNOON.name -> "☀️"
-        BpTimeOfDay.EVENING.name -> "🌆"
-        BpTimeOfDay.NIGHT.name -> "🌙"
-        else -> ""
+    val timeOfDayIcon = bpTimeOfDayIcon(entity.timeOfDay)
+    val timeOfDayLabel = entity.timeOfDay?.let {
+        runCatching { BpTimeOfDay.valueOf(it).displayName }.getOrNull()
     }
 
     Card(
@@ -353,8 +361,19 @@ private fun BpLogEntryCard(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
+                    timeOfDayIcon?.let { icon ->
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = timeOfDayLabel,
+                            modifier = Modifier.size(14.dp),
+                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                        )
+                    }
                     Text(
-                        "$timeOfDayEmoji $dateLabel • $timeLabel",
+                        buildString {
+                            timeOfDayLabel?.let { append(it).append(" • ") }
+                            append(dateLabel).append(" • ").append(timeLabel)
+                        },
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.45f)
                     )
@@ -370,12 +389,12 @@ private fun BpLogEntryCard(
                             Icons.Outlined.Medication,
                             contentDescription = null,
                             modifier = Modifier.size(12.dp),
-                            tint = Color(0xFF1E88E5)
+                            tint = HealthColors.Info
                         )
                         Text(
                             if (entity.medicationName.isNotEmpty()) entity.medicationName else "On Medication",
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFF1E88E5).copy(alpha = 0.8f),
+                            color = HealthColors.Info.copy(alpha = 0.9f),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -392,7 +411,7 @@ private fun BpLogEntryCard(
                         Icons.Filled.FavoriteBorder,
                         contentDescription = null,
                         modifier = Modifier.size(14.dp),
-                        tint = Color(0xFFE91E63).copy(alpha = 0.6f)
+                        tint = MaterialTheme.colorScheme.secondary.copy(alpha = 0.8f)
                     )
                     Text(
                         "$pulse",
@@ -554,12 +573,23 @@ private fun BpLogDetailSheet(
 
                     if (entity.isAveragedResult) {
                         Spacer(modifier = Modifier.height(6.dp))
-                        Text(
-                            "📊 Average of ${entity.readingsInAverage} readings",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Medium
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.ShowChart,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Text(
+                                "Average of ${entity.readingsInAverage} readings",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
                     }
                 }
             }
@@ -613,14 +643,7 @@ private fun BpLogDetailSheet(
                         val todDisplay = try {
                             BpTimeOfDay.valueOf(it).displayName
                         } catch (e: Exception) { it }
-                        val emoji = when (it) {
-                            BpTimeOfDay.MORNING.name -> "🌅"
-                            BpTimeOfDay.AFTERNOON.name -> "☀️"
-                            BpTimeOfDay.EVENING.name -> "🌆"
-                            BpTimeOfDay.NIGHT.name -> "🌙"
-                            else -> ""
-                        }
-                        DetailRow("Time of Day", "$emoji $todDisplay")
+                        DetailRow("Time of Day", todDisplay)
                     }
 
                     val riskDisplay = try {
@@ -637,7 +660,7 @@ private fun BpLogDetailSheet(
                         DetailRow(
                             "Medication",
                             if (entity.medicationName.isNotEmpty()) entity.medicationName else "Yes",
-                            valueColor = Color(0xFF1E88E5)
+                            valueColor = HealthColors.Info
                         )
                     }
                 }

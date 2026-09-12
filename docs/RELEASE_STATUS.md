@@ -170,3 +170,17 @@ These cannot be proven by a Windows unit/build run:
   `assembleRelease` and `bundleRelease` passed with `GRADLE_EXIT=0`.
 - **Remaining gates:** Physical-device TalkBack, large-font, theme and route
   rendering checks, plus signing/Firebase/Play Console work, remain owner-only.
+
+## Blood-pressure history visual follow-up — 2026-09-12
+
+- **Status:** Code-fixable polish complete; device/accessibility validation
+  remains open.
+- **Changes:** BP history and detail views use stable Material icons for
+  time-of-day and averaged readings instead of emoji. Medication and pulse
+  accents now use shared semantic/theme colors, with legacy/unknown values
+  handled safely and all edit/delete/detail behavior preserved.
+- **Verification:** `test`, `lintRelease`, `assembleDebug`,
+  `assembleRelease` and `bundleRelease` passed with `GRADLE_EXIT=0`.
+- **Remaining gates:** Physical-device TalkBack, large-font, theme,
+  swipe-to-delete and sheet rendering checks, plus signing/Firebase/Play
+  Console work, remain owner-only.

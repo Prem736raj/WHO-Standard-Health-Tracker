@@ -327,6 +327,25 @@ This file is the source of truth for the sequential product-development phases. 
 
 Updated: 2026-09-12
 
+## Follow-up — Blood-pressure history visual consistency
+
+- **Status:** Complete locally; device/accessibility validation remains open
+- **Major changes:** BP history entries and detail sheets now replace rendered
+  time-of-day and averaged-reading emoji with stable Material icons. Medication
+  and pulse accents use shared semantic/theme colors, while date, time, unit,
+  category, note, edit and delete behavior remain unchanged. Unknown legacy
+  time values continue to display safely without a misleading icon.
+- **Tests:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  pass with `GRADLE_EXIT=0`.
+- **Known limitations:** The route still needs TalkBack, large-font, theme,
+  swipe-to-delete and sheet rendering checks on a connected device.
+- **Next phase:** Execute the documented device/console release checklist;
+  continue deep-screen cleanup only when it improves trust, accessibility or
+  reliability.
+
+Updated: 2026-09-12
+
 ## Follow-up — Blood-pressure recommendation visual consistency
 
 - **Status:** Complete locally; device/accessibility validation remains open
@@ -335,7 +354,7 @@ Updated: 2026-09-12
   remains readable without shipping emoji illustrations. Urgency, clinician
   advice, risk, and white-coat sections use shared semantic health colors;
   expandable recommendation headers meet a 48 dp minimum touch target and
-  zero-copy icon fallbacks remain available for older records.
+  safe icon fallbacks remain available for older records.
 - **Tests:** Focused Kotlin compilation and the complete `test`,
   `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
   pass with `GRADLE_EXIT=0`.
