@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -30,17 +31,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.health.calculator.bmi.tracker.data.model.*
+import com.health.calculator.bmi.tracker.ui.theme.FeatureColors
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.*
-
-private val WaterBlueMedium = Color(0xFF2196F3)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,7 +67,12 @@ fun HydrationToolsScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(stringResource(R.string.txt_text_placeholder_23), fontSize = 22.sp)
+                        Icon(
+                            imageVector = Icons.Outlined.WaterDrop,
+                            contentDescription = null,
+                            tint = FeatureColors.WaterStart,
+                            modifier = Modifier.size(22.dp)
+                        )
                         Text(stringResource(R.string.txt_hydration_tools), fontWeight = FontWeight.Bold)
                     }
                 },
@@ -98,25 +105,25 @@ fun HydrationToolsScreen(
                     selected = selectedTab == 0,
                     onClick = { selectedTab = 0 },
                     text = { Text(stringResource(R.string.txt_urine), fontSize = 11.sp) },
-                    icon = { Text(stringResource(R.string.txt_text_placeholder_75), fontSize = 14.sp) }
+                    icon = { Icon(Icons.Outlined.WaterDrop, contentDescription = null, modifier = Modifier.size(18.dp)) }
                 )
                 Tab(
                     selected = selectedTab == 1,
                     onClick = { selectedTab = 1 },
                     text = { Text(stringResource(R.string.txt_symptoms), fontSize = 11.sp) },
-                    icon = { Text(stringResource(R.string.txt_text_placeholder_74), fontSize = 14.sp) }
+                    icon = { Icon(Icons.Outlined.HealthAndSafety, contentDescription = null, modifier = Modifier.size(18.dp)) }
                 )
                 Tab(
                     selected = selectedTab == 2,
                     onClick = { selectedTab = 2 },
                     text = { Text(stringResource(R.string.txt_food), fontSize = 11.sp) },
-                    icon = { Text(stringResource(R.string.txt_text_placeholder_73), fontSize = 14.sp) }
+                    icon = { Icon(Icons.Outlined.Restaurant, contentDescription = null, modifier = Modifier.size(18.dp)) }
                 )
                 Tab(
                     selected = selectedTab == 3,
                     onClick = { selectedTab = 3 },
                     text = { Text(stringResource(R.string.txt_electrolytes), fontSize = 11.sp) },
-                    icon = { Text(stringResource(R.string.txt_text_placeholder_33), fontSize = 14.sp) }
+                    icon = { Icon(Icons.Outlined.Science, contentDescription = null, modifier = Modifier.size(18.dp)) }
                 )
             }
 
@@ -264,7 +271,7 @@ private fun UrineColorTab(
         ) {
             Card(
                 shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF4CAF50)),
+                colors = CardDefaults.cardColors(containerColor = HealthColors.Healthy),
                 elevation = CardDefaults.cardElevation(8.dp)
             ) {
                 Row(
@@ -293,7 +300,7 @@ private fun UrineChartHeaderCard() {
                 .fillMaxWidth()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(Color(0xFFFFA726), Color(0xFFFF7043))
+                        colors = listOf(HealthColors.Warning, HealthColors.Caution)
                     ),
                     shape = RoundedCornerShape(16.dp)
                 )
@@ -303,7 +310,12 @@ private fun UrineChartHeaderCard() {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text(stringResource(R.string.txt_text_placeholder_75), fontSize = 40.sp)
+                Icon(
+                    imageVector = Icons.Outlined.WaterDrop,
+                    contentDescription = null,
+                    tint = FeatureColors.OnWater,
+                    modifier = Modifier.size(44.dp)
+                )
                 Column {
                     Text(
                         stringResource(R.string.txt_urine_color_chart),
@@ -416,19 +428,16 @@ private fun UrineColorChartCard(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            Text(
-                                color.hydrationLevel.emoji,
-                                fontSize = 12.sp
+                            Icon(
+                                imageVector = hydrationLevelIcon(color.hydrationLevel),
+                                contentDescription = null,
+                                tint = hydrationLevelColor(color.hydrationLevel),
+                                modifier = Modifier.size(16.dp)
                             )
                             Text(
                                 color.status,
                                 fontSize = 12.sp,
-                                color = when (color.hydrationLevel) {
-                                    HydrationLevel.WELL_HYDRATED -> Color(0xFF4CAF50)
-                                    HydrationLevel.ADEQUATE -> Color(0xFF8BC34A)
-                                    HydrationLevel.SLIGHTLY_DEHYDRATED -> Color(0xFFFF9800)
-                                    HydrationLevel.DEHYDRATED -> Color(0xFFF44336)
-                                }
+                                color = hydrationLevelColor(color.hydrationLevel)
                             )
                         }
                     }
@@ -442,7 +451,7 @@ private fun UrineColorChartCard(
                         Icon(
                             Icons.Default.CheckCircle,
                             null,
-                            tint = WaterBlueMedium,
+                            tint = FeatureColors.WaterStart,
                             modifier = Modifier.size(22.dp)
                         )
                     }
@@ -503,11 +512,22 @@ private fun LatestUrineCard(entry: UrineColorEntry) {
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
-                Text(
-                    "${color.hydrationLevel.emoji} ${color.status} • ${timeFormat.format(Date(entry.timestamp))}",
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Icon(
+                        imageVector = hydrationLevelIcon(color.hydrationLevel),
+                        contentDescription = null,
+                        tint = hydrationLevelColor(color.hydrationLevel),
+                        modifier = Modifier.size(15.dp)
+                    )
+                    Text(
+                        "${color.status} • ${timeFormat.format(Date(entry.timestamp))}",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                    )
+                }
             }
         }
     }
@@ -542,9 +562,11 @@ private fun UrineHistoryEntry(entry: UrineColorEntry) {
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
             )
         }
-        Text(
-            color.hydrationLevel.emoji,
-            fontSize = 16.sp
+        Icon(
+            imageVector = hydrationLevelIcon(color.hydrationLevel),
+            contentDescription = null,
+            tint = hydrationLevelColor(color.hydrationLevel),
+            modifier = Modifier.size(20.dp)
         )
     }
 }
@@ -731,7 +753,7 @@ private fun SymptomsHeaderCard() {
                 .fillMaxWidth()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(Color(0xFF7B1FA2), Color(0xFF4A148C))
+                        colors = listOf(HealthColors.Severe, FeatureColors.BpDeep)
                     ),
                     shape = RoundedCornerShape(16.dp)
                 )
@@ -741,7 +763,12 @@ private fun SymptomsHeaderCard() {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text(stringResource(R.string.txt_text_placeholder_74), fontSize = 40.sp)
+                Icon(
+                    imageVector = Icons.Outlined.HealthAndSafety,
+                    contentDescription = null,
+                    tint = FeatureColors.OnAi,
+                    modifier = Modifier.size(44.dp)
+                )
                 Column {
                     Text(stringResource(R.string.txt_dehydration_checker), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     Text(
@@ -783,7 +810,12 @@ private fun SymptomCheckItem(
                 uncheckedColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
             )
         )
-        Text(symptom.icon, fontSize = 20.sp)
+        Icon(
+            imageVector = toolIcon(symptom.icon),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.tertiary,
+            modifier = Modifier.size(22.dp)
+        )
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 symptom.name,
@@ -797,9 +829,9 @@ private fun SymptomCheckItem(
             )
         }
         val severityColor = when (symptom.severity) {
-            SymptomSeverity.MILD -> Color(0xFFFFC107)
-            SymptomSeverity.MODERATE -> Color(0xFFFF9800)
-            SymptomSeverity.SEVERE -> Color(0xFFF44336)
+            SymptomSeverity.MILD -> HealthColors.Warning
+            SymptomSeverity.MODERATE -> HealthColors.Caution
+            SymptomSeverity.SEVERE -> HealthColors.Danger
         }
         Box(
             modifier = Modifier
@@ -823,7 +855,7 @@ private fun DehydrationRiskCard(risk: DehydrationRisk, symptomCount: Int) {
             .scale(animatedScale),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(risk.colorHex).copy(alpha = 0.1f)
+            containerColor = riskColor(risk).copy(alpha = 0.12f)
         ),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
@@ -834,13 +866,18 @@ private fun DehydrationRiskCard(risk: DehydrationRisk, symptomCount: Int) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text(risk.emoji, fontSize = 32.sp)
+            Icon(
+                imageVector = riskIcon(risk),
+                contentDescription = null,
+                tint = riskColor(risk),
+                modifier = Modifier.size(34.dp)
+            )
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     risk.label,
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 18.sp,
-                    color = Color(risk.colorHex)
+                    color = riskColor(risk)
                 )
                 Text(
                     "$symptomCount of ${HydrationToolsViewModel.DEHYDRATION_SYMPTOMS.size} symptoms checked",
@@ -898,8 +935,18 @@ private fun DehydrationRecommendationCard(risk: DehydrationRisk) {
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.Top
                 ) {
-                    Text(icon, fontSize = 16.sp)
-                    Text(text, fontSize = 13.sp, lineHeight = 18.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f))
+                    Icon(
+                        imageVector = toolIcon(icon),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Text(
+                        cleanToolMarker(text),
+                        fontSize = 13.sp,
+                        lineHeight = 18.sp,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                    )
                 }
             }
         }
@@ -951,7 +998,12 @@ private fun WaterFromFoodTab(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text(stringResource(R.string.txt_text_placeholder_30), fontSize = 18.sp)
+                    Icon(
+                        imageVector = Icons.Outlined.Restaurant,
+                        contentDescription = null,
+                        tint = HealthColors.Healthy,
+                        modifier = Modifier.size(20.dp)
+                    )
                     Text(stringResource(R.string.txt_water_rich_foods), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
                 }
             }
@@ -993,7 +1045,7 @@ private fun FoodWaterHeaderCard(estimatedMl: Int, goalMl: Int) {
                 .fillMaxWidth()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(Color(0xFF66BB6A), Color(0xFF388E3C))
+                        colors = listOf(HealthColors.HealthyDark, FeatureColors.WeightDeep)
                     ),
                     shape = RoundedCornerShape(16.dp)
                 )
@@ -1003,7 +1055,12 @@ private fun FoodWaterHeaderCard(estimatedMl: Int, goalMl: Int) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text(stringResource(R.string.txt_text_placeholder_73), fontSize = 40.sp)
+                Icon(
+                    imageVector = Icons.Outlined.Restaurant,
+                    contentDescription = null,
+                    tint = FeatureColors.OnWeight,
+                    modifier = Modifier.size(44.dp)
+                )
                 Column {
                     Text(stringResource(R.string.txt_water_from_food), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     Text(
@@ -1042,20 +1099,24 @@ private fun FoodContributionCard(estimatedMl: Int, goalMl: Int) {
                         "~${estimatedMl}ml",
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 28.sp,
-                        color = Color(0xFF4CAF50)
+                        color = HealthColors.Healthy
                     )
                     Text(stringResource(R.string.txt_from_food), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
                 }
 
-                Text(stringResource(R.string.txt_text_placeholder_72), fontSize = 24.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
-                    modifier = Modifier.padding(top = 8.dp))
+                Icon(
+                    imageVector = Icons.Outlined.Add,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.35f),
+                    modifier = Modifier.padding(top = 8.dp).size(22.dp)
+                )
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         "~${goalMl - estimatedMl}ml",
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 28.sp,
-                        color = WaterBlueMedium
+                        color = FeatureColors.WaterStart
                     )
                     Text(stringResource(R.string.txt_from_drinks), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
                 }
@@ -1072,13 +1133,13 @@ private fun FoodContributionCard(estimatedMl: Int, goalMl: Int) {
                     modifier = Modifier
                         .weight(0.2f)
                         .fillMaxHeight()
-                        .background(Color(0xFF4CAF50))
+                        .background(HealthColors.Healthy)
                 )
                 Box(
                     modifier = Modifier
                         .weight(0.8f)
                         .fillMaxHeight()
-                        .background(WaterBlueMedium)
+                        .background(FeatureColors.WaterStart)
                 )
             }
 
@@ -1090,14 +1151,14 @@ private fun FoodContributionCard(estimatedMl: Int, goalMl: Int) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Box(modifier = Modifier.size(10.dp).background(Color(0xFF4CAF50), CircleShape))
+                    Box(modifier = Modifier.size(10.dp).background(HealthColors.Healthy, CircleShape))
                     Text(stringResource(R.string.txt_food_20), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Box(modifier = Modifier.size(10.dp).background(WaterBlueMedium, CircleShape))
+                    Box(modifier = Modifier.size(10.dp).background(FeatureColors.WaterStart, CircleShape))
                     Text(stringResource(R.string.txt_drinks_80), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
                 }
             }
@@ -1108,10 +1169,10 @@ private fun FoodContributionCard(estimatedMl: Int, goalMl: Int) {
 @Composable
 private fun FoodItemCard(food: WaterRichFood) {
     val percentColor = when {
-        food.waterPercent >= 94 -> Color(0xFF1B5E20)
-        food.waterPercent >= 90 -> Color(0xFF388E3C)
-        food.waterPercent >= 85 -> Color(0xFF66BB6A)
-        else -> Color(0xFF8BC34A)
+        food.waterPercent >= 94 -> FeatureColors.WeightDeep
+        food.waterPercent >= 90 -> HealthColors.Healthy
+        food.waterPercent >= 85 -> HealthColors.HealthyDark
+        else -> HealthColors.Good
     }
 
     Card(
@@ -1127,7 +1188,12 @@ private fun FoodItemCard(food: WaterRichFood) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text(food.icon, fontSize = 28.sp)
+            Icon(
+                imageVector = toolIcon(food.icon),
+                contentDescription = null,
+                tint = HealthColors.Healthy,
+                modifier = Modifier.size(30.dp)
+            )
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(food.name, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
@@ -1148,7 +1214,7 @@ private fun FoodItemCard(food: WaterRichFood) {
                 Text(
                     "~${food.waterMl}ml",
                     fontSize = 11.sp,
-                    color = WaterBlueMedium
+                    color = FeatureColors.WaterStart
                 )
             }
 
@@ -1158,7 +1224,7 @@ private fun FoodItemCard(food: WaterRichFood) {
                     .width(6.dp)
                     .height(36.dp)
                     .clip(RoundedCornerShape(3.dp))
-                    .background(Color.Gray.copy(alpha = 0.1f))
+                    .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.15f))
             ) {
                 Box(
                     modifier = Modifier
@@ -1208,9 +1274,14 @@ private fun FoodHydrationTipsCard() {
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.Top
                 ) {
-                    Text(icon, fontSize = 16.sp)
+                    Icon(
+                        imageVector = toolIcon(icon),
+                        contentDescription = null,
+                        tint = HealthColors.Healthy,
+                        modifier = Modifier.size(18.dp)
+                    )
                     Text(
-                        tip, fontSize = 13.sp, lineHeight = 18.sp,
+                        cleanToolMarker(tip), fontSize = 13.sp, lineHeight = 18.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                     )
                 }
@@ -1245,7 +1316,7 @@ private fun ElectrolytesTab(
                             .fillMaxWidth()
                             .background(
                                 brush = Brush.linearGradient(
-                                    colors = listOf(Color(0xFFFF8F00), Color(0xFFFF6F00))
+                                    colors = listOf(HealthColors.Warning, HealthColors.Caution)
                                 ),
                                 shape = RoundedCornerShape(16.dp)
                             )
@@ -1255,7 +1326,12 @@ private fun ElectrolytesTab(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            Text(stringResource(R.string.txt_text_placeholder_33), fontSize = 36.sp)
+                            Icon(
+                                imageVector = Icons.Outlined.Bolt,
+                                contentDescription = null,
+                                tint = FeatureColors.OnCalorie,
+                                modifier = Modifier.size(40.dp)
+                            )
                             Column {
                                 Text(
                                     stringResource(R.string.txt_electrolyte_balance),
@@ -1303,10 +1379,10 @@ private fun ElectrolytesTab(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
-                            QuickElectrolyteChip("🧂", "Sodium", Color(0xFFFF7043))
-                            QuickElectrolyteChip("🍌", "Potassium", Color(0xFFFFCA28))
-                            QuickElectrolyteChip("🥜", "Magnesium", Color(0xFF66BB6A))
-                            QuickElectrolyteChip("🦴", "Calcium", Color(0xFF42A5F5))
+                            QuickElectrolyteChip("🧂", "Sodium", HealthColors.Caution)
+                            QuickElectrolyteChip("🍌", "Potassium", HealthColors.Warning)
+                            QuickElectrolyteChip("🥜", "Magnesium", HealthColors.Healthy)
+                            QuickElectrolyteChip("🦴", "Calcium", HealthColors.Good)
                         }
                     }
                 }
@@ -1349,8 +1425,13 @@ private fun ElectrolytesTab(
                                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(icon, fontSize = 18.sp)
-                                Text(text, fontSize = 13.sp)
+                                Icon(
+                                    imageVector = toolIcon(icon),
+                                    contentDescription = null,
+                                    tint = HealthColors.Caution,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Text(cleanToolMarker(text), fontSize = 13.sp)
                             }
                         }
                     }
@@ -1371,10 +1452,15 @@ private fun ElectrolytesTab(
                         .height(54.dp),
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFFF8F00)
+                        containerColor = HealthColors.Warning
                     )
                 ) {
-                    Text(stringResource(R.string.txt_text_placeholder_33), fontSize = 18.sp)
+                        Icon(
+                            imageVector = Icons.Outlined.Bolt,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(20.dp)
+                        )
                     Spacer(Modifier.width(8.dp))
                     Text(
                         stringResource(R.string.txt_view_full_electrolyte_guide),
@@ -1405,7 +1491,12 @@ private fun ElectrolytesTab(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Text(stringResource(R.string.txt_text_placeholder_69), fontSize = 32.sp)
+                        Icon(
+                            imageVector = Icons.Outlined.WaterDrop,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(34.dp)
+                        )
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 stringResource(R.string.txt_diy_electrolyte_drink),
@@ -1418,7 +1509,12 @@ private fun ElectrolytesTab(
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                             )
                         }
-                        Text(stringResource(R.string.txt_text_placeholder_61), fontSize = 18.sp, color = MaterialTheme.colorScheme.secondary)
+                        Icon(
+                            imageVector = Icons.Outlined.ArrowForward,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier.size(20.dp)
+                        )
                     }
                 }
             }
@@ -1427,7 +1523,7 @@ private fun ElectrolytesTab(
 }
 
 @Composable
-private fun QuickElectrolyteChip(emoji: String, name: String, color: Color) {
+private fun QuickElectrolyteChip(marker: String, name: String, color: Color) {
     Card(
         shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(
@@ -1439,8 +1535,57 @@ private fun QuickElectrolyteChip(emoji: String, name: String, color: Color) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Text(emoji, fontSize = 22.sp)
+            Icon(
+                imageVector = toolIcon(marker),
+                contentDescription = null,
+                tint = color,
+                modifier = Modifier.size(24.dp)
+            )
             Text(name, fontSize = 10.sp, fontWeight = FontWeight.SemiBold, color = color)
         }
     }
 }
+
+/** Maps legacy content markers to stable Material icons without changing stored data. */
+private fun toolIcon(marker: String): ImageVector = when {
+    marker.contains("💧") || marker.contains("🚰") || marker.contains("🧊") || marker.contains("🥤") -> Icons.Outlined.WaterDrop
+    marker.contains("🏥") -> Icons.Outlined.LocalHospital
+    marker.contains("🚨") || marker.contains("🛑") || marker.contains("❌") -> Icons.Outlined.Warning
+    marker.contains("⏰") || marker.contains("⏱") -> Icons.Outlined.Schedule
+    marker.contains("📱") -> Icons.Outlined.Notifications
+    marker.contains("🌡") || marker.contains("☀") -> Icons.Outlined.WbSunny
+    marker.contains("🏃") -> Icons.Outlined.DirectionsWalk
+    marker.contains("🤒") || marker.contains("🥵") || marker.contains("😴") || marker.contains("🤕") || marker.contains("💫") || marker.contains("👄") || marker.contains("🖐") || marker.contains("⏬") -> Icons.Outlined.HealthAndSafety
+    marker.contains("🧂") || marker.contains("🍌") || marker.contains("🥜") || marker.contains("🦴") || marker.contains("🥗") || marker.contains("🍉") || marker.contains("🍲") || marker.contains("🫖") || marker.contains("🥒") || marker.contains("🥬") || marker.contains("🍅") || marker.contains("🍓") || marker.contains("🫑") || marker.contains("🍈") || marker.contains("🍑") || marker.contains("🍊") || marker.contains("🍎") || marker.contains("🍇") || marker.contains("🥕") -> Icons.Outlined.Restaurant
+    else -> Icons.Outlined.Info
+}
+
+private fun hydrationLevelIcon(level: HydrationLevel): ImageVector = when (level) {
+    HydrationLevel.WELL_HYDRATED, HydrationLevel.ADEQUATE -> Icons.Outlined.CheckCircle
+    HydrationLevel.SLIGHTLY_DEHYDRATED, HydrationLevel.DEHYDRATED -> Icons.Outlined.Warning
+}
+
+private fun hydrationLevelColor(level: HydrationLevel): Color = when (level) {
+    HydrationLevel.WELL_HYDRATED -> HealthColors.Healthy
+    HydrationLevel.ADEQUATE -> HealthColors.Good
+    HydrationLevel.SLIGHTLY_DEHYDRATED -> HealthColors.Caution
+    HydrationLevel.DEHYDRATED -> HealthColors.Danger
+}
+
+private fun riskIcon(risk: DehydrationRisk): ImageVector = when (risk) {
+    DehydrationRisk.NONE -> Icons.Outlined.CheckCircle
+    DehydrationRisk.MILD -> Icons.Outlined.Info
+    DehydrationRisk.MODERATE, DehydrationRisk.HIGH -> Icons.Outlined.Warning
+}
+
+private fun riskColor(risk: DehydrationRisk): Color = when (risk) {
+    DehydrationRisk.NONE -> HealthColors.Healthy
+    DehydrationRisk.MILD -> HealthColors.Warning
+    DehydrationRisk.MODERATE -> HealthColors.Caution
+    DehydrationRisk.HIGH -> HealthColors.Danger
+}
+
+private val LeadingToolMarker = Regex("^[\\p{So}\\p{Sk}\\p{M}\\p{Cf}\\s]+")
+
+private fun cleanToolMarker(value: String): String =
+    value.replaceFirst(LeadingToolMarker, "").trim()

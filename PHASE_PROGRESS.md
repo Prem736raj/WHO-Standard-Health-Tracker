@@ -327,6 +327,24 @@ This file is the source of truth for the sequential product-development phases. 
 
 Updated: 2026-09-12
 
+## Follow-up — Hydration tools visual consistency
+
+- **Status:** Complete locally; device/accessibility validation remains open
+- **Major changes:** Urine-color, dehydration-symptom, water-from-food and
+  electrolyte tabs now use shared feature/health tokens and stable Material
+  icons for headers, statuses, risks, foods, recommendations and quick facts.
+  Legacy model markers remain compatible but are not rendered; explanatory
+  recommendation text is cleaned without changing its meaning.
+- **Tests:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  pass with `GRADLE_EXIT=0`.
+- **Known limitations:** Urine color and symptom checks are informational, not
+  diagnostic. Connected-device TalkBack, large-font, theme and tab interaction
+  checks remain open.
+- **Next phase:** Execute the documented device/console release checklist;
+  continue deep-screen cleanup only when it improves trust, accessibility or
+  reliability.
+
 ## Follow-up — Hydration education visual consistency
 
 - **Status:** Complete locally; device/accessibility validation remains open

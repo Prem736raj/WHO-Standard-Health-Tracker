@@ -406,3 +406,17 @@ These cannot be proven by a Windows unit/build run:
 - **Remaining gates:** Connected-device expandable-content rendering, TalkBack,
   large-font and theme checks, plus signing/Firebase/Play Console work, remain
   owner-only.
+
+## Hydration tools visual consistency follow-up — 2026-09-13
+
+- **Status:** Code-fixable polish complete; device/accessibility validation
+  remains open.
+- **Changes:** Urine, symptom, water-from-food and electrolyte tabs use shared
+  semantic colors and stable vector icons for headers, status/risk indicators,
+  foods, recommendations and quick facts. Legacy markers remain compatible but
+  are not rendered; recommendation copy is cleaned of leading glyphs.
+- **Verification:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  passed with `GRADLE_EXIT=0`.
+- **Remaining gates:** Connected-device tab interactions, TalkBack, large-font
+  and theme checks, plus signing/Firebase/Play Console work, remain owner-only.
