@@ -22,6 +22,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -33,6 +34,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +46,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.health.calculator.bmi.tracker.data.model.DailyFoodLog
 import com.health.calculator.bmi.tracker.data.model.FoodEntry
 import com.health.calculator.bmi.tracker.data.model.FoodPreset
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -201,10 +204,32 @@ private fun DailySummaryCard(log: DailyFoodLog) {
     val isNear = remaining in 0.0..200.0
 
     val (ringColor, statusText, statusColor) = when {
-        progress >= 1.2f -> Triple(Color(0xFFF44336), "⚠️ ${(-remaining).toInt()} cal over target — it's okay, tomorrow is a new day!", Color(0xFFF44336))
-        progress >= 1.0f -> Triple(Color(0xFFFF9800), "🍊 ${(-remaining).toInt()} cal over target. Watch your next meal.", Color(0xFFFF9800))
-        isNear -> Triple(Color(0xFFFFC107), "⚡ Almost there! ${remaining.toInt()} cal remaining.", Color(0xFFFFC107))
-        else -> Triple(Color(0xFF4CAF50), "✅ ${remaining.toInt()} calories remaining", Color(0xFF4CAF50))
+        progress >= 1.2f -> Triple(
+            HealthColors.Danger,
+            "${(-remaining).toInt()} cal over target — it's okay, tomorrow is a new day!",
+            HealthColors.Danger
+        )
+        progress >= 1.0f -> Triple(
+            HealthColors.Caution,
+            "${(-remaining).toInt()} cal over target. Consider a lighter next meal.",
+            HealthColors.Caution
+        )
+        isNear -> Triple(
+            HealthColors.Warning,
+            "Almost there! ${remaining.toInt()} cal remaining.",
+            HealthColors.Warning
+        )
+        else -> Triple(
+            HealthColors.Healthy,
+            "${remaining.toInt()} calories remaining",
+            HealthColors.Healthy
+        )
+    }
+    val statusIcon = when {
+        progress >= 1.2f -> Icons.Outlined.Warning
+        progress >= 1.0f -> Icons.Outlined.Info
+        isNear -> Icons.Outlined.Bolt
+        else -> Icons.Outlined.CheckCircle
     }
 
     val animatedProgress by animateFloatAsState(
@@ -270,13 +295,19 @@ private fun DailySummaryCard(log: DailyFoodLog) {
                 shape = RoundedCornerShape(8.dp),
                 color = statusColor.copy(alpha = 0.1f)
             ) {
-                Text(
-                    text = statusText,
-                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
-                    color = statusColor,
+                Row(
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                    textAlign = TextAlign.Center
-                )
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Icon(statusIcon, contentDescription = null, tint = statusColor, modifier = Modifier.size(16.dp))
+                    Text(
+                        text = statusText,
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+                        color = statusColor,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -286,12 +317,12 @@ private fun DailySummaryCard(log: DailyFoodLog) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                StatChip("Consumed", "${"%.0f".format(log.totalCalories)}", Color(0xFF2196F3))
-                StatChip("Target", "${"%.0f".format(log.targetCalories)}", Color(0xFF4CAF50))
+                StatChip("Consumed", "${"%.0f".format(log.totalCalories)}", HealthColors.Info)
+                StatChip("Target", "${"%.0f".format(log.targetCalories)}", HealthColors.Healthy)
                 StatChip(
                     if (isOver) "Over" else "Left",
                     "${"%.0f".format(kotlin.math.abs(remaining))}",
-                    if (isOver) Color(0xFFF44336) else Color(0xFFFF9800)
+                    if (isOver) HealthColors.Danger else HealthColors.Warning
                 )
             }
         }
@@ -334,7 +365,7 @@ private fun MacroProgressCard(log: DailyFoodLog) {
                 consumed = log.totalProtein,
                 target = log.targetProteinGrams,
                 progress = log.proteinProgress,
-                color = Color(0xFFF44336),
+                color = HealthColors.Info,
                 unit = "g"
             )
             Spacer(modifier = Modifier.height(10.dp))
@@ -343,7 +374,7 @@ private fun MacroProgressCard(log: DailyFoodLog) {
                 consumed = log.totalCarbs,
                 target = log.targetCarbGrams,
                 progress = log.carbProgress,
-                color = Color(0xFFFFEB3B),
+                color = HealthColors.Warning,
                 unit = "g"
             )
             Spacer(modifier = Modifier.height(10.dp))
@@ -352,7 +383,7 @@ private fun MacroProgressCard(log: DailyFoodLog) {
                 consumed = log.totalFat,
                 target = log.targetFatGrams,
                 progress = log.fatProgress,
-                color = Color(0xFF4CAF50),
+                color = HealthColors.Healthy,
                 unit = "g"
             )
         }
@@ -454,7 +485,7 @@ private fun QuickAddSection(
                     Icon(
                         Icons.Default.Bolt,
                         contentDescription = null,
-                        tint = Color(0xFFFFEB3B),
+                        tint = HealthColors.Warning,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
@@ -551,7 +582,12 @@ private fun PresetChip(
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(preset.emoji, fontSize = 20.sp)
+            Icon(
+                imageVector = foodPresetIcon(preset),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(20.dp)
+            )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
                 preset.name.split(" ").first(),
@@ -584,9 +620,12 @@ private fun MealLogSection(
     onRemoveEntry: (Long) -> Unit
 ) {
     val mealOrder = listOf("Breakfast", "Lunch", "Snack", "Dinner", "Other")
-    val mealEmojis = mapOf(
-        "Breakfast" to "🌅", "Lunch" to "☀️",
-        "Snack" to "🍎", "Dinner" to "🌙", "Other" to "🍽️"
+    val mealIcons = mapOf(
+        "Breakfast" to Icons.Outlined.WbSunny,
+        "Lunch" to Icons.Outlined.LocalDining,
+        "Snack" to Icons.Outlined.Restaurant,
+        "Dinner" to Icons.Outlined.NightsStay,
+        "Other" to Icons.Outlined.LocalDining
     )
 
     if (log.entries.isEmpty()) {
@@ -601,7 +640,20 @@ private fun MealLogSection(
                 modifier = Modifier.fillMaxWidth().padding(32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(stringResource(R.string.txt_text_placeholder_29), fontSize = 40.sp)
+                Surface(
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f),
+                    modifier = Modifier.size(64.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Outlined.LocalDining,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(30.dp)
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     stringResource(R.string.txt_no_food_logged_yet),
@@ -622,7 +674,7 @@ private fun MealLogSection(
         mealOrder.forEach { mealName ->
             val entries = log.entriesByMeal[mealName] ?: return@forEach
             val mealCalories = entries.sumOf { it.calories }
-            val emoji = mealEmojis[mealName] ?: "🍽️"
+            val mealIcon = mealIcons[mealName] ?: Icons.Outlined.LocalDining
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -636,7 +688,12 @@ private fun MealLogSection(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(emoji, fontSize = 18.sp)
+                            Icon(
+                                imageVector = mealIcon,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(20.dp)
+                            )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 mealName,
@@ -683,9 +740,9 @@ private fun FoodEntryRow(entry: FoodEntry, onRemove: () -> Unit) {
             }
             if (entry.proteinGrams > 0 || entry.carbGrams > 0 || entry.fatGrams > 0) {
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    if (entry.proteinGrams > 0) MacroMiniChip("P", "${"%.0f".format(entry.proteinGrams)}g", Color(0xFFF44336))
-                    if (entry.carbGrams > 0) MacroMiniChip("C", "${"%.0f".format(entry.carbGrams)}g", Color(0xFFFFEB3B))
-                    if (entry.fatGrams > 0) MacroMiniChip("F", "${"%.0f".format(entry.fatGrams)}g", Color(0xFF4CAF50))
+                    if (entry.proteinGrams > 0) MacroMiniChip("P", "${"%.0f".format(entry.proteinGrams)}g", HealthColors.Info)
+                    if (entry.carbGrams > 0) MacroMiniChip("C", "${"%.0f".format(entry.carbGrams)}g", HealthColors.Warning)
+                    if (entry.fatGrams > 0) MacroMiniChip("F", "${"%.0f".format(entry.fatGrams)}g", HealthColors.Healthy)
                 }
             }
         }
@@ -861,7 +918,16 @@ private fun AddCustomPresetDialog(
                             else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
-                                Text(emoji, fontSize = 18.sp)
+                                Icon(
+                                    imageVector = foodIconForMarker(emoji),
+                                    contentDescription = null,
+                                    tint = if (uiState.presetEmoji == emoji) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    },
+                                    modifier = Modifier.size(20.dp)
+                                )
                             }
                         }
                     }
@@ -947,4 +1013,17 @@ private fun MacroMiniChip(label: String, value: String, color: Color) {
             Text(value, style = MaterialTheme.typography.labelSmall, color = color.copy(alpha = 0.8f), fontSize = 8.sp)
         }
     }
+}
+
+private fun foodPresetIcon(preset: FoodPreset): ImageVector = foodIconForMarker(preset.emoji)
+
+/**
+ * Presets keep their legacy marker for backwards-compatible storage, but the
+ * rendered surface uses one consistent vector icon family instead of emoji.
+ */
+private fun foodIconForMarker(marker: String): ImageVector = when (marker) {
+    "🍗", "🐟", "🥚" -> Icons.Outlined.Restaurant
+    "🍎", "🍌", "🥦", "🥑", "🥗" -> Icons.Outlined.WbSunny
+    "🍞", "🍚", "🥣", "🍝", "🥜", "🥛", "🍠", "☕", "🧃" -> Icons.Outlined.LocalDining
+    else -> Icons.Outlined.Restaurant
 }
