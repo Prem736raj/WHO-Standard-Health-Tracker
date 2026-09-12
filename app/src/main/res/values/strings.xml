@@ -906,13 +906,13 @@
 <string name="txt_using_profile_data">Using profile data</string>
 <string name="txt_heart_rate_zones_help_you_exer">Heart rate zones help you exercise at the right intensity for your goals — whether it\'s fat burning, endurance, or peak performance.</string>
 <string name="txt_got_it_2">Got it!</string>
-<string name="txt_normal_resting_heart_rate_rang">Normal Resting Heart Rate Ranges</string>
+<string name="txt_normal_resting_heart_rate_rang">Resting heart-rate reference ranges</string>
 <string name="txt_count_beats_for_15_seconds_and">Count beats for 15 seconds and multiply by 4. Less accurate but faster.</string>
-<string name="txt_quick_alternative">⚡ Quick Alternative</string>
+<string name="txt_quick_alternative">Quick alternative</string>
 <string name="txt_step_by_step_guide">Step-by-Step Guide</string>
 <string name="txt_first_thing_in_the_morning_bef">First thing in the morning, before getting out of bed, after a good night\'s sleep.</string>
 <string name="txt_best_time_to_measure">Best Time to Measure</string>
-<string name="txt_how_to_measure_resting_heart_r">❤️ How to Measure Resting Heart Rate</string>
+<string name="txt_how_to_measure_resting_heart_r">How to measure resting heart rate</string>
 <string name="txt_tap_for_recovery_test_guide">Tap for recovery test guide</string>
 <string name="txt_track_your_recovery_hr_monthly">Track your recovery HR under similar conditions to look for trends. </string>
 <string name="txt_how_to_test_your_recovery_hr">How to Test Your Recovery HR</string>

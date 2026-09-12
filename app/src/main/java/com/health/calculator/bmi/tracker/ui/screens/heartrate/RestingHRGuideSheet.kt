@@ -12,16 +12,30 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
+
+/** Convert legacy guide markers to stable icons without changing saved copy. */
+private fun restingHeartRateIcon(legacyLabel: String): ImageVector = when {
+    legacyLabel.contains("❤️") -> Icons.Outlined.FavoriteBorder
+    legacyLabel.contains("🧘") -> Icons.Outlined.FavoriteBorder
+    legacyLabel.contains("✋") || legacyLabel.contains("👆") -> Icons.Outlined.Info
+    legacyLabel.contains("⏱") -> Icons.Outlined.Schedule
+    legacyLabel.contains("📝") -> Icons.Outlined.Assignment
+    legacyLabel.contains("💡") -> Icons.Outlined.Lightbulb
+    else -> Icons.Outlined.MonitorHeart
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,21 +73,26 @@ fun RestingHRGuideSheet(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(14.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFFE53935).copy(alpha = 0.08f)
+                    containerColor = HealthColors.Caution.copy(alpha = 0.08f)
                 )
             ) {
                 Row(
                     modifier = Modifier.padding(14.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(stringResource(R.string.txt_text_placeholder_31), fontSize = 24.sp)
+                    Icon(
+                        imageVector = Icons.Outlined.Schedule,
+                        contentDescription = null,
+                        tint = HealthColors.Caution,
+                        modifier = Modifier.size(26.dp)
+                    )
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
                             text = stringResource(R.string.txt_best_time_to_measure),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFFE53935)
+                            color = HealthColors.Caution
                         )
                         Text(
                             text = stringResource(R.string.txt_first_thing_in_the_morning_bef),
@@ -102,10 +121,10 @@ fun RestingHRGuideSheet(
                 Triple("5", "📝", "For best accuracy, measure on 3 different mornings and use the average.")
             )
 
-            steps.forEach { (number, emoji, text) ->
+            steps.forEach { (number, legacyIcon, text) ->
                 GuideStepItem(
                     stepNumber = number,
-                    emoji = emoji,
+                    legacyIcon = legacyIcon,
                     text = text
                 )
                 if (number != "5") {
@@ -140,6 +159,14 @@ fun RestingHRGuideSheet(
                 }
             }
 
+            Text(
+                text = "These are general reference bands, not a diagnosis. Resting heart rate can vary with medicines, illness, stress, sleep and training; compare readings taken under similar conditions.",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                lineHeight = 15.sp,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+
             Spacer(modifier = Modifier.height(16.dp))
 
             // Normal ranges reference
@@ -151,12 +178,12 @@ fun RestingHRGuideSheet(
             )
 
             val ranges = listOf(
-                Triple("Athletes", "40-60 BPM", Color(0xFF4CAF50)),
-                Triple("Excellent", "60-70 BPM", Color(0xFF8BC34A)),
-                Triple("Good", "70-80 BPM", Color(0xFFFFC107)),
-                Triple("Average", "80-90 BPM", Color(0xFFFF9800)),
-                Triple("Below Average", "90-100 BPM", Color(0xFFFF5722)),
-                Triple("Concerning", ">100 BPM", Color(0xFFF44336))
+                Triple("Often seen in trained adults", "40-60 BPM", HealthColors.Healthy),
+                Triple("Lower reference band", "60-70 BPM", HealthColors.Healthy),
+                Triple("Typical reference band", "70-80 BPM", HealthColors.Warning),
+                Triple("Higher reference band", "80-90 BPM", HealthColors.Caution),
+                Triple("Above reference band", "90-100 BPM", HealthColors.Caution),
+                Triple("Discuss if unexpected", ">100 BPM", HealthColors.Danger)
             )
 
             Card(
@@ -212,7 +239,7 @@ fun RestingHRGuideSheet(
                     Icon(
                         Icons.Default.Favorite,
                         contentDescription = null,
-                        tint = Color(0xFFE53935),
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -238,7 +265,7 @@ fun RestingHRGuideSheet(
 @Composable
 private fun GuideStepItem(
     stepNumber: String,
-    emoji: String,
+    legacyIcon: String,
     text: String
 ) {
     Row(
@@ -265,9 +292,11 @@ private fun GuideStepItem(
         Spacer(modifier = Modifier.width(12.dp))
 
         Column {
-            Text(
-                text = emoji,
-                fontSize = 18.sp
+            Icon(
+                imageVector = restingHeartRateIcon(legacyIcon),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(22.dp)
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(

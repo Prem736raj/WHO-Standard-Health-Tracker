@@ -326,3 +326,23 @@ This file is the source of truth for the sequential product-development phases. 
   reliability.
 
 Updated: 2026-09-12
+
+## Follow-up — Resting heart-rate guide trust and visual cleanup
+
+- **Status:** Complete locally; device/accessibility validation remains open
+- **Major changes:** Replaced the guide's emoji instructions and red literals
+  with stable Material icons and shared semantic colors. Reference bands now
+  use neutral, non-diagnostic labels, and the sheet explains that medicines,
+  illness, stress, sleep and training can change readings. The title, quick
+  alternative and measurement tip were also made calmer and more precise.
+- **Tests:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  pass with `GRADLE_EXIT=0`.
+- **Known limitations:** Reference bands are educational context rather than
+  clinical cut-offs. Physical-device TalkBack, large-font and sheet rendering
+  checks remain open.
+- **Next phase:** Execute the documented device/console release checklist;
+  continue deep-screen cleanup only where it improves trust, accessibility or
+  reliability.
+
+Updated: 2026-09-12

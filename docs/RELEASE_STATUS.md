@@ -129,3 +129,16 @@ These cannot be proven by a Windows unit/build run:
   `assembleRelease` and `bundleRelease` passed with `GRADLE_EXIT=0`.
 - **Remaining gates:** Physical-device TalkBack, large-font, theme and route
   rendering checks, plus signing/Firebase/Play Console work, remain owner-only.
+
+## Resting heart-rate guide trust and visual follow-up — 2026-09-12
+
+- **Status:** Code-fixable polish complete; device/accessibility validation
+  remains open.
+- **Changes:** Measurement steps now use stable Material icons and shared
+  semantic colors. Resting-heart-rate bands use neutral reference language
+  instead of “normal/concerning” labels, and the sheet explains common sources
+  of individual variation without diagnosing the reader.
+- **Verification:** `test`, `lintRelease`, `assembleDebug`,
+  `assembleRelease` and `bundleRelease` passed with `GRADLE_EXIT=0`.
+- **Remaining gates:** Physical-device TalkBack, large-font, theme and sheet
+  rendering checks, plus signing/Firebase/Play Console work, remain owner-only.
