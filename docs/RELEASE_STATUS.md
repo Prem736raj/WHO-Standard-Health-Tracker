@@ -99,3 +99,19 @@ These cannot be proven by a Windows unit/build run:
   history and provide fixtures if needed. Connected migration, Health Connect,
   accessibility, signed-artifact and Play/Firebase checks remain listed in
   `docs/DEVICE_QA_2026-09.md` and this file.
+
+## Heart-rate recommendation visual follow-up — 2026-09-12
+
+- **Status:** Code-fixable polish complete; device/accessibility validation
+  remains open.
+- **Changes:** Goal, fitness-level, zone, calorie, workout and tip markers now
+  render as stable Material icons instead of emoji. Legacy emoji fields remain
+  only for backwards-compatible saved data and generated copy, which is
+  cleaned before display. Shared semantic colors replace the local green,
+  expandable rows use a 48 dp minimum touch target, and zero-valued zone
+  distributions render a safe empty state without invalid Canvas arcs.
+- **Verification:** `test`, `lintRelease`, `assembleDebug`,
+  `assembleRelease` and `bundleRelease` passed with `GRADLE_EXIT=0`.
+- **Remaining gates:** Run TalkBack, large-font, light/dark theme and chart
+  rendering checks on a connected device; signing, Firebase and Play Console
+  tasks remain owner-only.

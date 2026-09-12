@@ -283,3 +283,26 @@ This file is the source of truth for the sequential product-development phases. 
 - **Next phase:** Execute the documented device/console release checklist;
   continue migrating remaining deep educational screens only when their copy
   or visual treatment has a verified trust or accessibility benefit.
+
+## Follow-up — Heart-rate recommendation visual consistency
+
+- **Status:** Complete locally; device/accessibility validation remains open
+- **Major changes:** Replaced rendered goal, fitness-level, zone, calorie,
+  workout and tip emoji with stable Material icons while retaining legacy
+  labels in stored recommendation data. Recommendation copy is cleaned at
+  render time so legacy decorative markers do not leak into the shipped UI.
+  The recommended-state treatment now uses the shared semantic health palette,
+  expandable rows meet a 48 dp minimum touch target, and an empty/zero-valued
+  zone distribution no longer attempts to draw invalid arcs.
+- **Tests:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  pass with `GRADLE_EXIT=0`.
+- **Known limitations:** The recommendation engine still keeps emoji fields
+  for backwards-compatible persistence and generated copy; no health values
+  are sent to analytics. TalkBack, large-font and chart rendering checks need
+  a connected device.
+- **Next phase:** Execute the documented device/console release checklist;
+  migrate another deep screen only when a verified trust, accessibility or
+  reliability benefit is identified.
+
+Updated: 2026-09-12

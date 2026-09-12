@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,6 +24,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
@@ -30,7 +32,46 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.health.calculator.bmi.tracker.ui.components.FitnessLevel
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
 import com.health.calculator.bmi.tracker.util.*
+
+/**
+ * Recommendation models retain legacy emoji labels for saved results and
+ * generated copy. Keep those values backwards-compatible, but render a
+ * stable Material icon so this screen is consistent across fonts and themes.
+ */
+private fun zoneRecommendationIcon(legacyLabel: String): ImageVector = when {
+    legacyLabel.contains("⚖") -> Icons.Outlined.MonitorWeight
+    legacyLabel.contains("❤️") -> Icons.Outlined.FavoriteBorder
+    legacyLabel.contains("🏔") -> Icons.Outlined.Timeline
+    legacyLabel.contains("🏆") -> Icons.Outlined.EmojiEvents
+    legacyLabel.contains("🌱") -> Icons.Outlined.DirectionsWalk
+    legacyLabel.contains("🚶") -> Icons.Outlined.DirectionsWalk
+    legacyLabel.contains("🔥") -> Icons.Outlined.Whatshot
+    legacyLabel.contains("💪") -> Icons.Outlined.FitnessCenter
+    legacyLabel.contains("⚡") || legacyLabel.contains("🚀") -> Icons.Outlined.Speed
+    legacyLabel.contains("🎯") -> Icons.Outlined.Flag
+    legacyLabel.contains("⏱") -> Icons.Outlined.Schedule
+    legacyLabel.contains("📅") -> Icons.Outlined.CalendarMonth
+    legacyLabel.contains("📋") -> Icons.Outlined.Assignment
+    legacyLabel.contains("💡") -> Icons.Outlined.Lightbulb
+    legacyLabel.contains("✅") -> Icons.Outlined.CheckCircle
+    legacyLabel.contains("⚠") -> Icons.Outlined.Warning
+    else -> Icons.Outlined.FavoriteBorder
+}
+
+/** Remove legacy decorative markers from persisted recommendation copy. */
+private fun cleanRecommendationCopy(text: String): String {
+    val legacyMarkers = listOf(
+        "⚖️", "⚖", "❤️", "🏔️", "🏔", "🏆", "🌱", "🚶", "🔥", "💪",
+        "⚡", "🚀", "🎯", "⏱️", "⏱", "📅", "📋", "💡", "✅", "⚠️", "⚠"
+    )
+    return text
+        .let { source -> legacyMarkers.fold(source) { cleaned, marker -> cleaned.replace(marker, "") } }
+        .lines()
+        .joinToString("\n") { it.trimStart() }
+        .trim()
+}
 
 @Composable
 fun ZoneRecommendationsSection(
@@ -60,11 +101,20 @@ fun ZoneRecommendationsSection(
             fontWeight = FontWeight.Bold
         )
 
-        Text(
-            text = "Based on your fitness level: ${fitnessLevel.emoji} ${fitnessLevel.label}",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = zoneRecommendationIcon(fitnessLevel.emoji),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = "Based on your fitness level: ${fitnessLevel.label}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            )
+        }
 
         // Calorie Burn per Zone Card
         CaloriesBurnedCard(calorieBurns = calorieBurns)
@@ -118,7 +168,12 @@ private fun CaloriesBurnedCard(calorieBurns: List<ZoneCalorieBurn>) {
                 .padding(18.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(stringResource(R.string.txt_text_placeholder_6), fontSize = 18.sp)
+                Icon(
+                    imageVector = Icons.Outlined.Whatshot,
+                    contentDescription = null,
+                    tint = HealthColors.Caution,
+                    modifier = Modifier.size(20.dp)
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = stringResource(R.string.txt_estimated_calories_burned_per_),
@@ -170,7 +225,12 @@ private fun CalorieBurnBar(burn: ZoneCalorieBurn, maxCalories: Int) {
             modifier = Modifier.width(72.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = burn.icon, fontSize = 14.sp)
+            Icon(
+                imageVector = zoneRecommendationIcon(burn.icon),
+                contentDescription = null,
+                tint = burn.color,
+                modifier = Modifier.size(18.dp)
+            )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = "Z${burn.zoneNumber}",
@@ -241,7 +301,7 @@ private fun GoalSelectorChips(
         ) {
             recommendations.take(3).forEachIndexed { index, rec ->
                 GoalChip(
-                    emoji = rec.goalEmoji,
+                    legacyIcon = rec.goalEmoji,
                     label = rec.goalName,
                     isSelected = selectedIndex == index,
                     isRecommended = rec.isRecommendedForLevel,
@@ -259,7 +319,7 @@ private fun GoalSelectorChips(
             recommendations.drop(3).forEachIndexed { index, rec ->
                 val actualIndex = index + 3
                 GoalChip(
-                    emoji = rec.goalEmoji,
+                    legacyIcon = rec.goalEmoji,
                     label = rec.goalName,
                     isSelected = selectedIndex == actualIndex,
                     isRecommended = rec.isRecommendedForLevel,
@@ -277,7 +337,7 @@ private fun GoalSelectorChips(
 
 @Composable
 private fun GoalChip(
-    emoji: String,
+    legacyIcon: String,
     label: String,
     isSelected: Boolean,
     isRecommended: Boolean,
@@ -320,7 +380,16 @@ private fun GoalChip(
                 .padding(vertical = 10.dp, horizontal = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = emoji, fontSize = 20.sp)
+            Icon(
+                imageVector = zoneRecommendationIcon(legacyIcon),
+                contentDescription = null,
+                tint = if (isSelected) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
+                modifier = Modifier.size(22.dp)
+            )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = label,
@@ -363,7 +432,12 @@ private fun GoalRecommendationCard(
         ) {
             // Header
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = recommendation.goalEmoji, fontSize = 28.sp)
+                Icon(
+                    imageVector = zoneRecommendationIcon(recommendation.goalEmoji),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(30.dp)
+                )
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
@@ -383,19 +457,24 @@ private fun GoalRecommendationCard(
             if (recommendation.isRecommendedForLevel) {
                 Surface(
                     shape = RoundedCornerShape(8.dp),
-                    color = Color(0xFF4CAF50).copy(alpha = 0.1f)
+                    color = HealthColors.Healthy.copy(alpha = 0.12f)
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(stringResource(R.string.txt_text_placeholder_22), fontSize = 14.sp)
+                        Icon(
+                            imageVector = Icons.Outlined.CheckCircle,
+                            contentDescription = null,
+                            tint = HealthColors.Healthy,
+                            modifier = Modifier.size(18.dp)
+                        )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = stringResource(R.string.txt_recommended_for_your_fitness_l),
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF4CAF50)
+                            color = HealthColors.Healthy
                         )
                     }
                 }
@@ -408,7 +487,7 @@ private fun GoalRecommendationCard(
 
             // Primary Zone
             InfoRow(
-                icon = "🎯",
+                icon = Icons.Outlined.Flag,
                 title = "Primary Zone",
                 content = recommendation.primaryZone
             )
@@ -419,13 +498,13 @@ private fun GoalRecommendationCard(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 CompactInfoCard(
-                    icon = "⏱️",
+                    icon = Icons.Outlined.Schedule,
                     title = "Duration",
                     value = recommendation.durationRange,
                     modifier = Modifier.weight(1f)
                 )
                 CompactInfoCard(
-                    icon = "📅",
+                    icon = Icons.Outlined.CalendarMonth,
                     title = "Frequency",
                     value = recommendation.frequencyPerWeek,
                     modifier = Modifier.weight(1f)
@@ -443,7 +522,12 @@ private fun GoalRecommendationCard(
                     modifier = Modifier.padding(14.dp),
                     verticalAlignment = Alignment.Top
                 ) {
-                    Text(stringResource(R.string.txt_text_placeholder_1), fontSize = 16.sp)
+                    Icon(
+                        imageVector = Icons.Outlined.Lightbulb,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         text = recommendation.keyAdvice,
@@ -457,7 +541,8 @@ private fun GoalRecommendationCard(
             // Sample Workout
             var showWorkout by remember { mutableStateOf(false) }
             ExpandableSection(
-                title = "📋 Sample Workout",
+                title = "Sample Workout",
+                icon = Icons.Outlined.Assignment,
                 isExpanded = showWorkout,
                 onToggle = { showWorkout = !showWorkout }
             ) {
@@ -468,7 +553,7 @@ private fun GoalRecommendationCard(
                     )
                 ) {
                     Text(
-                        text = recommendation.sampleWorkout,
+                        text = cleanRecommendationCopy(recommendation.sampleWorkout),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(14.dp),
                         lineHeight = 20.sp,
@@ -480,7 +565,8 @@ private fun GoalRecommendationCard(
             // Tips
             var showTips by remember { mutableStateOf(false) }
             ExpandableSection(
-                title = "✅ Tips (${recommendation.tips.size})",
+                title = "Tips (${recommendation.tips.size})",
+                icon = Icons.Outlined.CheckCircle,
                 isExpanded = showTips,
                 onToggle = { showTips = !showTips }
             ) {
@@ -490,15 +576,16 @@ private fun GoalRecommendationCard(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.Top
                         ) {
-                            Text(
-                                text = stringResource(R.string.txt_text_placeholder_3),
-                                style = MaterialTheme.typography.bodySmall,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(end = 8.dp, top = 1.dp)
+                            Icon(
+                                imageVector = Icons.Outlined.CheckCircle,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier
+                                    .padding(end = 8.dp, top = 1.dp)
+                                    .size(16.dp)
                             )
                             Text(
-                                text = tip,
+                                text = cleanRecommendationCopy(tip),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
                                 lineHeight = 17.sp
@@ -536,23 +623,25 @@ private fun ZoneDistributionChart(distribution: List<ZoneDistribution>) {
                 val gap = 2f
                 var startAngle = -90f
 
-                distribution.forEach { zone ->
-                    val sweep = (zone.percentage / totalPercent) * 360f
-                    drawArc(
-                        color = zone.color,
-                        startAngle = startAngle + gap / 2,
-                        sweepAngle = sweep - gap,
-                        useCenter = false,
-                        topLeft = topLeft,
-                        size = arcSize,
-                        style = Stroke(width = strokeWidth, cap = StrokeCap.Butt)
-                    )
-                    startAngle += sweep
+                if (totalPercent > 0f) {
+                    distribution.forEach { zone ->
+                        val sweep = (zone.percentage / totalPercent) * 360f
+                        drawArc(
+                            color = zone.color,
+                            startAngle = startAngle + gap / 2,
+                            sweepAngle = (sweep - gap).coerceAtLeast(0f),
+                            useCenter = false,
+                            topLeft = topLeft,
+                            size = arcSize,
+                            style = Stroke(width = strokeWidth, cap = StrokeCap.Butt)
+                        )
+                        startAngle += sweep
+                    }
                 }
             }
 
             Text(
-                text = "Zone\nSplit",
+                text = if (totalPercent > 0f) "Zone\nSplit" else "No zone\ndata",
                 style = MaterialTheme.typography.labelSmall,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Medium,
@@ -574,8 +663,15 @@ private fun ZoneDistributionChart(distribution: List<ZoneDistribution>) {
                             .background(zone.color)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
+                    Icon(
+                        imageVector = zoneRecommendationIcon(zone.icon),
+                        contentDescription = null,
+                        tint = zone.color,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "${zone.icon} ${zone.zoneName}",
+                        text = zone.zoneName,
                         style = MaterialTheme.typography.labelSmall,
                         modifier = Modifier.weight(1f)
                     )
@@ -592,9 +688,14 @@ private fun ZoneDistributionChart(distribution: List<ZoneDistribution>) {
 }
 
 @Composable
-private fun InfoRow(icon: String, title: String, content: String) {
+private fun InfoRow(icon: ImageVector, title: String, content: String) {
     Row(verticalAlignment = Alignment.Top) {
-        Text(text = icon, fontSize = 16.sp)
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(20.dp)
+        )
         Spacer(modifier = Modifier.width(10.dp))
         Column {
             Text(
@@ -614,7 +715,7 @@ private fun InfoRow(icon: String, title: String, content: String) {
 
 @Composable
 private fun CompactInfoCard(
-    icon: String,
+    icon: ImageVector,
     title: String,
     value: String,
     modifier: Modifier = Modifier
@@ -632,7 +733,12 @@ private fun CompactInfoCard(
                 .padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = icon, fontSize = 18.sp)
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(20.dp)
+            )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = title,
@@ -652,6 +758,7 @@ private fun CompactInfoCard(
 @Composable
 private fun ExpandableSection(
     title: String,
+    icon: ImageVector,
     isExpanded: Boolean,
     onToggle: () -> Unit,
     content: @Composable () -> Unit
@@ -662,15 +769,25 @@ private fun ExpandableSection(
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(10.dp))
                 .clickable { onToggle() }
+                .heightIn(min = 48.dp)
                 .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.SemiBold
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
             Icon(
                 imageVector = if (isExpanded) Icons.Default.ExpandLess
                 else Icons.Default.ExpandMore,
