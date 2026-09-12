@@ -242,3 +242,17 @@ These cannot be proven by a Windows unit/build run:
 - **Remaining gates:** Connected-device result rendering, large-font wrapping,
   TalkBack labels, theme contrast, and signing/Firebase/Play Console work
   remain owner-only.
+
+## Calorie input visual consistency follow-up — 2026-09-12
+
+- **Status:** Code-fixable polish complete; device/accessibility validation
+  remains open.
+- **Changes:** Calorie input controls render stable Material icons for gender,
+  activity and goal choices instead of legacy emoji. Goal loss/maintenance/gain
+  states now use shared semantic colors, and the header fire marker is a vector
+  icon; persisted option fields remain unchanged for compatibility.
+- **Verification:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  passed with `GRADLE_EXIT=0`.
+- **Remaining gates:** Connected-device TalkBack, large-font, theme and route
+  rendering checks, plus signing/Firebase/Play Console work, remain owner-only.

@@ -15,17 +15,18 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
 
 @Composable
 fun CalorieInputScreen(
@@ -68,7 +69,12 @@ fun CalorieInputScreen(
                 modifier = Modifier.padding(14.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(stringResource(R.string.txt_text_placeholder_6), fontSize = 28.sp)
+                Icon(
+                    imageVector = Icons.Outlined.LocalFireDepartment,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(28.dp)
+                )
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
@@ -121,12 +127,22 @@ fun CalorieInputScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            listOf("Male" to "♂️", "Female" to "♀️").forEach { (gender, emoji) ->
+            listOf("Male" to Icons.Outlined.Male, "Female" to Icons.Outlined.Female).forEach { (gender, icon) ->
                 FilterChip(
                     selected = uiState.gender == gender,
                     onClick = { onUpdateGender(gender) },
                     label = {
-                        Text("$emoji $gender")
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Text(gender)
+                        }
                     },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(12.dp),
@@ -504,10 +520,14 @@ private fun ActivityLevelSelector(
                     )
                     Spacer(modifier = Modifier.width(10.dp))
 
-                    Text(
-                        text = option.emoji,
-                        fontSize = 22.sp,
-                        modifier = Modifier.width(32.dp)
+                    Icon(
+                        imageVector = activityIcon(option.id),
+                        contentDescription = null,
+                        tint = if (isSelected) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .width(32.dp)
                     )
 
                     Column(modifier = Modifier.weight(1f)) {
@@ -603,7 +623,11 @@ private fun GoalOptionCard(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    val goalColor = Color(option.color)
+    val goalColor = when {
+        option.weeklyChangeKg < 0 -> HealthColors.Caution
+        option.weeklyChangeKg > 0 -> HealthColors.Good
+        else -> HealthColors.Healthy
+    }
 
     val animatedElevation by animateDpAsState(
         targetValue = if (isSelected) 3.dp else 0.dp,
@@ -643,10 +667,13 @@ private fun GoalOptionCard(
             )
             Spacer(modifier = Modifier.width(8.dp))
 
-            Text(
-                text = option.emoji,
-                fontSize = 18.sp,
-                modifier = Modifier.width(28.dp)
+            Icon(
+                imageVector = goalIcon(option),
+                contentDescription = null,
+                tint = goalColor,
+                modifier = Modifier
+                    .size(22.dp)
+                    .width(28.dp)
             )
 
             Column(modifier = Modifier.weight(1f)) {
@@ -683,4 +710,19 @@ private fun GoalOptionCard(
             }
         }
     }
+}
+
+private fun activityIcon(id: String): ImageVector = when (id) {
+    "sedentary" -> Icons.Outlined.EventSeat
+    "light" -> Icons.Outlined.DirectionsWalk
+    "moderate" -> Icons.Outlined.DirectionsRun
+    "very_active" -> Icons.Outlined.FitnessCenter
+    "extremely_active" -> Icons.Outlined.LocalFireDepartment
+    else -> Icons.Outlined.DirectionsRun
+}
+
+private fun goalIcon(option: GoalOption): ImageVector = when {
+    option.weeklyChangeKg < 0 -> Icons.Outlined.TrendingDown
+    option.weeklyChangeKg > 0 -> Icons.Outlined.TrendingUp
+    else -> Icons.Outlined.Flag
 }

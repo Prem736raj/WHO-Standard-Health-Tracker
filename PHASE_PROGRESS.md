@@ -327,6 +327,25 @@ This file is the source of truth for the sequential product-development phases. 
 
 Updated: 2026-09-12
 
+## Follow-up — Calorie input visual consistency
+
+- **Status:** Complete locally; device/accessibility validation remains open
+- **Major changes:** Calorie input now maps legacy gender, activity and goal
+  markers to stable Material icons at render time. Stored model fields remain
+  backwards compatible, while goal loss/maintenance/gain states use shared
+  semantic colors and the header fire marker is rendered as an icon.
+- **Tests:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  pass with `GRADLE_EXIT=0`.
+- **Known limitations:** Legacy option models retain emoji labels only for
+  compatibility. TalkBack, large-font, theme and route rendering checks
+  require a connected device.
+- **Next phase:** Execute the documented device/console release checklist;
+  continue deep-screen cleanup only when it improves trust, accessibility or
+  reliability.
+
+Updated: 2026-09-12
+
 ## Follow-up — Calorie result visual and wording consistency
 
 - **Status:** Complete locally; device/accessibility validation remains open
