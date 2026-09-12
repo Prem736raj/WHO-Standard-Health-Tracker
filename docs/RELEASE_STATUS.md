@@ -376,3 +376,18 @@ These cannot be proven by a Windows unit/build run:
 - **Remaining gates:** Connected-device keyboard/scroll, result navigation,
   TalkBack, large-font and light/dark theme checks, plus signing/Firebase/Play
   Console work, remain owner-only.
+
+## Water intake result visual consistency follow-up — 2026-09-13
+
+- **Status:** Code-fixable polish complete; device/accessibility validation
+  remains open.
+- **Changes:** Post-calculation goal, animated bottle, unit conversion, hourly
+  recommendation and save feedback surfaces use shared feature/health tokens;
+  calculation, disclosure, save/share/recalculate and tracking behavior remain
+  compatible.
+- **Verification:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  passed with `GRADLE_EXIT=0`.
+- **Remaining gates:** Connected-device bottle rendering, bottom actions,
+  TalkBack, large-font and light/dark theme checks, plus signing/Firebase/Play
+  Console work, remain owner-only.

@@ -327,6 +327,24 @@ This file is the source of truth for the sequential product-development phases. 
 
 Updated: 2026-09-12
 
+## Follow-up — Water intake result visual consistency
+
+- **Status:** Complete locally; device/accessibility validation remains open
+- **Major changes:** The post-calculation water-goal hero, bottle fill,
+  conversion card, hourly recommendation and saved-result feedback now use
+  shared water feature and health semantic tokens instead of local raw blue or
+  green values. Existing calculations, disclosures, save/share/recalculate and
+  tracking actions remain unchanged.
+- **Tests:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  pass with `GRADLE_EXIT=0`.
+- **Known limitations:** The route still needs connected-device verification
+  for bottle rendering, bottom actions, large fonts, TalkBack and light/dark
+  theme contrast.
+- **Next phase:** Execute the documented device/console release checklist;
+  continue deep-screen cleanup only when it improves trust, accessibility or
+  reliability.
+
 ## Follow-up — Water intake input visual consistency
 
 - **Status:** Complete locally; device/accessibility validation remains open

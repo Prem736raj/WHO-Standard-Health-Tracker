@@ -61,14 +61,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.health.calculator.bmi.tracker.data.model.WaterIntakeCalculation
+import com.health.calculator.bmi.tracker.ui.theme.FeatureColors
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
 import kotlinx.coroutines.delay
 import kotlin.math.PI
 import kotlin.math.sin
-
-// Water-themed colors (shared with input screen)
-private val WaterBlueMedium = Color(0xFF2196F3)
-private val WaterBlueDark = Color(0xFF1565C0)
-private val WaterCyan = Color(0xFF00BCD4)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -294,7 +291,7 @@ fun WaterIntakeResultScreen(
                 Card(
                     shape = RoundedCornerShape(12.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFF4CAF50)
+                        containerColor = HealthColors.Healthy
                     ),
                     elevation = CardDefaults.cardElevation(8.dp)
                 ) {
@@ -385,9 +382,9 @@ private fun WaterBottleResultCard(result: WaterIntakeCalculation) {
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(
-                            WaterBlueDark,
-                            WaterBlueMedium,
-                            WaterCyan
+                            FeatureColors.WaterDeep,
+                            FeatureColors.WaterStart,
+                            FeatureColors.WaterEnd
                         )
                     ),
                     shape = RoundedCornerShape(24.dp)
@@ -586,9 +583,9 @@ private fun DrawScope.drawWaterBottle(fillLevel: Float, wavePhase: Float) {
             path = waterPath,
             brush = Brush.verticalGradient(
                 colors = listOf(
-                    Color(0xFF42A5F5).copy(alpha = 0.6f),
-                    Color(0xFF1E88E5).copy(alpha = 0.8f),
-                    Color(0xFF1565C0).copy(alpha = 0.9f)
+                    FeatureColors.WaterEnd.copy(alpha = 0.6f),
+                    FeatureColors.WaterStart.copy(alpha = 0.8f),
+                    FeatureColors.WaterDeep.copy(alpha = 0.9f)
                 ),
                 startY = waterTop,
                 endY = bottleBottom
@@ -919,7 +916,7 @@ private fun HourlyBreakdownCard(result: WaterIntakeCalculation) {
                         Box(
                             modifier = Modifier
                                 .size(48.dp)
-                                .background(WaterBlueMedium.copy(alpha = 0.15f), CircleShape),
+                                .background(FeatureColors.WaterStart.copy(alpha = 0.15f), CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
