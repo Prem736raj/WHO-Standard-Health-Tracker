@@ -327,6 +327,24 @@ This file is the source of truth for the sequential product-development phases. 
 
 Updated: 2026-09-12
 
+## Follow-up — Water reminder settings visual consistency
+
+- **Status:** Complete locally; device/accessibility validation remains open
+- **Major changes:** Reminder status, notification controls, schedule/time
+  pickers, frequency selection, smart features and summary rows now use stable
+  Material icons and shared water/theme tokens instead of rendered emoji and
+  legacy raw color constants. Notification permission behavior, autosave and
+  inexact scheduling remain unchanged; selected controls retain clear contrast.
+- **Tests:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  pass with `GRADLE_EXIT=0`.
+- **Known limitations:** Notification permission and exact rendered time-picker
+  behavior still require connected-device checks across light/dark themes,
+  large fonts and TalkBack.
+- **Next phase:** Execute the documented device/console release checklist;
+  continue deep-screen cleanup only when it improves trust, accessibility or
+  reliability.
+
 ## Follow-up — Water history visual consistency
 
 - **Status:** Complete locally; device/accessibility validation remains open

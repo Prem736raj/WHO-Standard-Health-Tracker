@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -36,16 +38,14 @@ import com.health.calculator.bmi.tracker.data.model.WaterReminderSettings
 import com.health.calculator.bmi.tracker.data.datastore.SettingsDataStore
 import com.health.calculator.bmi.tracker.data.preferences.WaterReminderPreferences
 import com.health.calculator.bmi.tracker.notification.WaterReminderScheduler
+import com.health.calculator.bmi.tracker.ui.theme.FeatureColors
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
 
 import android.Manifest
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import com.health.calculator.bmi.tracker.notifications.NotificationPermissionHelper
-
-private val WaterBlueMedium = Color(0xFF2196F3)
-private val WaterBlueDark = Color(0xFF1565C0)
-private val WaterBlueSurface = Color(0xFFE3F2FD)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -101,7 +101,12 @@ fun WaterReminderSettingsScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(stringResource(R.string.txt_text_placeholder_68), fontSize = 22.sp)
+                        Icon(
+                            imageVector = Icons.Outlined.NotificationsActive,
+                            contentDescription = null,
+                            tint = FeatureColors.WaterStart,
+                            modifier = Modifier.size(22.dp)
+                        )
                         Text(stringResource(R.string.txt_water_reminders), fontWeight = FontWeight.Bold)
                     }
                 },
@@ -261,8 +266,8 @@ private fun ReminderHeaderCard(isEnabled: Boolean) {
                 .fillMaxWidth()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = if (isEnabled) listOf(WaterBlueMedium, WaterBlueDark)
-                        else listOf(Color.Gray, Color.DarkGray)
+                        colors = if (isEnabled) listOf(FeatureColors.WaterStart, FeatureColors.WaterDeep)
+                        else listOf(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.colorScheme.surface)
                     ),
                     shape = RoundedCornerShape(20.dp)
                 )
@@ -272,9 +277,11 @@ private fun ReminderHeaderCard(isEnabled: Boolean) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text(
-                    if (isEnabled) "🔔" else "🔕",
-                    fontSize = 40.sp
+                Icon(
+                    imageVector = if (isEnabled) Icons.Outlined.NotificationsActive else Icons.Outlined.NotificationsOff,
+                    contentDescription = null,
+                    tint = if (isEnabled) FeatureColors.OnWater else MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(40.dp)
                 )
                 Column {
                     Text(
@@ -320,12 +327,18 @@ private fun EnableToggleCard(enabled: Boolean, onToggle: (Boolean) -> Unit) {
                     modifier = Modifier
                         .size(44.dp)
                         .background(
-                            if (enabled) WaterBlueSurface else Color.Gray.copy(alpha = 0.1f),
+                            if (enabled) FeatureColors.WaterStart.copy(alpha = 0.14f)
+                            else MaterialTheme.colorScheme.surfaceVariant,
                             CircleShape
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(stringResource(R.string.txt_text_placeholder_71), fontSize = 22.sp)
+                    Icon(
+                        imageVector = Icons.Outlined.Notifications,
+                        contentDescription = null,
+                        tint = if (enabled) FeatureColors.WaterStart else MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(22.dp)
+                    )
                 }
                 Column {
                     Text(
@@ -344,7 +357,7 @@ private fun EnableToggleCard(enabled: Boolean, onToggle: (Boolean) -> Unit) {
                 checked = enabled,
                 onCheckedChange = onToggle,
                 colors = SwitchDefaults.colors(
-                    checkedTrackColor = WaterBlueMedium,
+                    checkedTrackColor = FeatureColors.WaterStart,
                     checkedThumbColor = Color.White
                 )
             )
@@ -374,7 +387,12 @@ private fun ScheduleCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(stringResource(R.string.txt_text_placeholder_31), fontSize = 18.sp)
+                Icon(
+                    imageVector = Icons.Outlined.Schedule,
+                    contentDescription = null,
+                    tint = FeatureColors.WaterStart,
+                    modifier = Modifier.size(20.dp)
+                )
                 Text(stringResource(R.string.txt_schedule), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
             }
 
@@ -388,7 +406,7 @@ private fun ScheduleCard(
                 TimePickerButton(
                     label = "Start Time",
                     time = settings.startTimeFormatted,
-                    icon = "🌅",
+                    icon = Icons.Outlined.WbSunny,
                     onClick = onStartTimeClick,
                     modifier = Modifier.weight(1f)
                 )
@@ -397,7 +415,7 @@ private fun ScheduleCard(
                 TimePickerButton(
                     label = "End Time",
                     time = settings.endTimeFormatted,
-                    icon = "🌙",
+                    icon = Icons.Outlined.NightsStay,
                     onClick = onEndTimeClick,
                     modifier = Modifier.weight(1f)
                 )
@@ -409,7 +427,7 @@ private fun ScheduleCard(
             Text(
                 text = "Active window: ${hours}h ${if (mins > 0) "${mins}m" else ""}",
                 fontSize = 12.sp,
-                color = WaterBlueMedium,
+                color = FeatureColors.WaterDeep,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
@@ -421,7 +439,7 @@ private fun ScheduleCard(
 private fun TimePickerButton(
     label: String,
     time: String,
-    icon: String,
+    icon: ImageVector,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -430,7 +448,7 @@ private fun TimePickerButton(
             .clip(RoundedCornerShape(12.dp))
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = WaterBlueSurface)
+        colors = CardDefaults.cardColors(containerColor = FeatureColors.WaterStart.copy(alpha = 0.12f))
     ) {
         Column(
             modifier = Modifier
@@ -439,9 +457,14 @@ private fun TimePickerButton(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            Text(icon, fontSize = 20.sp)
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = FeatureColors.WaterDeep,
+                modifier = Modifier.size(22.dp)
+            )
             Text(label, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
-            Text(time, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = WaterBlueDark)
+            Text(time, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = FeatureColors.WaterDeep)
         }
     }
 }
@@ -469,7 +492,12 @@ private fun FrequencyCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(stringResource(R.string.txt_text_placeholder_82), fontSize = 18.sp)
+                Icon(
+                    imageVector = Icons.Outlined.AccessTime,
+                    contentDescription = null,
+                    tint = FeatureColors.WaterStart,
+                    modifier = Modifier.size(20.dp)
+                )
                 Text(stringResource(R.string.txt_frequency), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
             }
 
@@ -481,23 +509,34 @@ private fun FrequencyCard(
                 if (glasses > 0) (wakingMinutes / glasses) else 60
             } else 60
 
-            Text(
-                text = "💡 Suggested: every ~${suggestedMinutes} min based on your goal",
-                fontSize = 12.sp,
-                color = WaterBlueMedium,
-                fontWeight = FontWeight.Medium
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Info,
+                    contentDescription = null,
+                    tint = FeatureColors.WaterDeep,
+                    modifier = Modifier.size(16.dp)
+                )
+                Text(
+                    text = "Suggested: every ~${suggestedMinutes} min based on your goal",
+                    fontSize = 12.sp,
+                    color = FeatureColors.WaterDeep,
+                    fontWeight = FontWeight.Medium
+                )
+            }
 
             // Frequency options
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 ReminderFrequency.entries.forEach { freq ->
                     val isSelected = selectedMinutes == freq.minutes
                     val borderColor by animateColorAsState(
-                        if (isSelected) WaterBlueMedium else MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
+                        if (isSelected) FeatureColors.WaterStart else MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
                         label = "freq_border"
                     )
                     val bgColor by animateColorAsState(
-                        if (isSelected) WaterBlueSurface else Color.Transparent,
+                        if (isSelected) FeatureColors.WaterStart.copy(alpha = 0.12f) else Color.Transparent,
                         label = "freq_bg"
                     )
 
@@ -519,7 +558,7 @@ private fun FrequencyCard(
                         Text(
                             freq.label,
                             fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                            color = if (isSelected) WaterBlueDark else MaterialTheme.colorScheme.onSurface
+                            color = if (isSelected) FeatureColors.WaterDeep else MaterialTheme.colorScheme.onSurface
                         )
 
                         val remindersPerDay = if (freq.minutes > 0) wakingMinutes / freq.minutes else 0
@@ -540,7 +579,7 @@ private fun FrequencyCard(
                                 Box(
                                     modifier = Modifier
                                         .size(22.dp)
-                                        .background(WaterBlueMedium, CircleShape),
+                                        .background(FeatureColors.WaterStart, CircleShape),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Icon(
@@ -582,14 +621,19 @@ private fun NotificationStyleCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(stringResource(R.string.txt_text_placeholder_81), fontSize = 18.sp)
+                Icon(
+                    imageVector = Icons.Outlined.Notifications,
+                    contentDescription = null,
+                    tint = FeatureColors.WaterStart,
+                    modifier = Modifier.size(20.dp)
+                )
                 Text(stringResource(R.string.txt_notification_style), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
             }
 
             HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f))
 
             SettingsToggleRow(
-                icon = "🔉",
+                icon = Icons.Outlined.VolumeUp,
                 title = "Sound",
                 subtitle = "Play notification sound",
                 checked = enableSound,
@@ -597,7 +641,7 @@ private fun NotificationStyleCard(
             )
 
             SettingsToggleRow(
-                icon = "📳",
+                icon = Icons.Outlined.Vibration,
                 title = "Vibration",
                 subtitle = "Vibrate on reminder",
                 checked = enableVibration,
@@ -630,14 +674,19 @@ private fun SmartFeaturesCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(stringResource(R.string.txt_text_placeholder_80), fontSize = 18.sp)
+                Icon(
+                    imageVector = Icons.Outlined.AutoAwesome,
+                    contentDescription = null,
+                    tint = FeatureColors.WaterStart,
+                    modifier = Modifier.size(20.dp)
+                )
                 Text(stringResource(R.string.txt_smart_features), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
             }
 
             HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f))
 
             SettingsToggleRow(
-                icon = "⏭️",
+                icon = Icons.Outlined.SkipNext,
                 title = "Smart Skip",
                 subtitle = "Skip reminder if you recently logged water",
                 checked = smartSkip,
@@ -645,7 +694,7 @@ private fun SmartFeaturesCard(
             )
 
             SettingsToggleRow(
-                icon = "⚠️",
+                icon = Icons.Outlined.WarningAmber,
                 title = "Behind Schedule Nudge",
                 subtitle = "Extra nudge when you're behind on hydration",
                 checked = behindNudge,
@@ -657,7 +706,7 @@ private fun SmartFeaturesCard(
 
 @Composable
 private fun SettingsToggleRow(
-    icon: String,
+    icon: ImageVector,
     title: String,
     subtitle: String,
     checked: Boolean,
@@ -672,7 +721,12 @@ private fun SettingsToggleRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text(icon, fontSize = 20.sp)
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = if (checked) FeatureColors.WaterStart else MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(22.dp)
+        )
         Column(modifier = Modifier.weight(1f)) {
             Text(title, fontWeight = FontWeight.Medium, fontSize = 14.sp)
             Text(
@@ -685,7 +739,7 @@ private fun SettingsToggleRow(
             checked = checked,
             onCheckedChange = onToggle,
             colors = SwitchDefaults.colors(
-                checkedTrackColor = WaterBlueMedium,
+                checkedTrackColor = FeatureColors.WaterStart,
                 checkedThumbColor = Color.White
             )
         )
@@ -701,7 +755,7 @@ private fun ReminderSummaryCard(settings: WaterReminderSettings) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = WaterBlueSurface)
+        colors = CardDefaults.cardColors(containerColor = FeatureColors.WaterStart.copy(alpha = 0.1f))
     ) {
         Column(
             modifier = Modifier
@@ -709,23 +763,50 @@ private fun ReminderSummaryCard(settings: WaterReminderSettings) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(stringResource(R.string.txt_reminder_summary), fontWeight = FontWeight.Bold, fontSize = 14.sp, color = WaterBlueDark)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.EventNote,
+                    contentDescription = null,
+                    tint = FeatureColors.WaterDeep,
+                    modifier = Modifier.size(18.dp)
+                )
+                Text(
+                    stringResource(R.string.txt_reminder_summary),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = FeatureColors.WaterDeep
+                )
+            }
 
             val summaryItems = listOf(
-                "⏰ Active from ${settings.startTimeFormatted} to ${settings.endTimeFormatted}",
-                "🔄 ${settings.frequencyLabel} (~$remindersPerDay reminders/day)",
-                "🔉 Sound: ${if (settings.enableSound) "On" else "Off"}",
-                "📳 Vibration: ${if (settings.enableVibration) "On" else "Off"}",
-                if (settings.smartSkipEnabled) "⏭️ Smart skip: Enabled" else "⏭️ Smart skip: Disabled",
-                if (settings.behindScheduleNudge) "⚠️ Behind-schedule nudge: Enabled" else "⚠️ Behind-schedule nudge: Disabled"
+                Icons.Outlined.Schedule to "Active from ${settings.startTimeFormatted} to ${settings.endTimeFormatted}",
+                Icons.Outlined.Repeat to "${settings.frequencyLabel} (~$remindersPerDay reminders/day)",
+                Icons.Outlined.VolumeUp to "Sound: ${if (settings.enableSound) "On" else "Off"}",
+                Icons.Outlined.Vibration to "Vibration: ${if (settings.enableVibration) "On" else "Off"}",
+                Icons.Outlined.SkipNext to "Smart skip: ${if (settings.smartSkipEnabled) "Enabled" else "Disabled"}",
+                Icons.Outlined.WarningAmber to "Behind-schedule nudge: ${if (settings.behindScheduleNudge) "Enabled" else "Disabled"}"
             )
 
-            summaryItems.forEach { item ->
-                Text(
-                    text = item,
-                    fontSize = 13.sp,
-                    color = WaterBlueDark.copy(alpha = 0.8f)
-                )
+            summaryItems.forEach { (icon, item) ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = FeatureColors.WaterDeep,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Text(
+                        text = item,
+                        fontSize = 13.sp,
+                        color = FeatureColors.WaterDeep.copy(alpha = 0.88f)
+                    )
+                }
             }
         }
     }
@@ -762,14 +843,14 @@ private fun WaterTimePicker(
                     text = title,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
-                    color = WaterBlueDark
+                    color = FeatureColors.WaterDeep
                 )
 
                 TimePicker(
                     state = timePickerState,
                     colors = TimePickerDefaults.colors(
-                        selectorColor = WaterBlueMedium,
-                        containerColor = WaterBlueSurface
+                        selectorColor = FeatureColors.WaterStart,
+                        containerColor = FeatureColors.WaterStart.copy(alpha = 0.12f)
                     )
                 )
 
@@ -785,7 +866,7 @@ private fun WaterTimePicker(
                         onClick = {
                             onConfirm(timePickerState.hour, timePickerState.minute)
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = WaterBlueMedium),
+                        colors = ButtonDefaults.buttonColors(containerColor = FeatureColors.WaterStart),
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Text(stringResource(R.string.txt_set_time))

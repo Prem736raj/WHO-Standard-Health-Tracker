@@ -347,3 +347,18 @@ These cannot be proven by a Windows unit/build run:
 - **Remaining gates:** Connected-device TalkBack, large-font, theme and
   achievement interaction checks, plus signing/Firebase/Play Console work,
   remain owner-only.
+
+## Water reminder settings visual consistency follow-up — 2026-09-13
+
+- **Status:** Code-fixable polish complete; device/accessibility validation
+  remains open.
+- **Changes:** Reminder status, toggle rows, schedule/time controls, frequency,
+  smart features, notification style and summary surfaces use shared semantic
+  colors and stable vector icons instead of rendered emoji/raw water colors.
+  Permission, autosave and scheduler behavior remain compatible.
+- **Verification:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  passed with `GRADLE_EXIT=0`.
+- **Remaining gates:** Connected-device notification permission, time-picker,
+  TalkBack, large-font and light/dark theme checks, plus signing/Firebase/Play
+  Console work, remain owner-only.
