@@ -327,6 +327,23 @@ This file is the source of truth for the sequential product-development phases. 
 
 Updated: 2026-09-12
 
+## Follow-up — BP advanced metrics visual consistency
+
+- **Status:** Complete locally; device/accessibility validation remains open
+- **Major changes:** Pulse-pressure, mean-arterial-pressure and heart-rate
+  advanced cards now use shared semantic colors for categories, scales and
+  highlights, with feature-specific accents for their headers. Informational
+  interpretation, reference ranges and expandable behavior are unchanged.
+- **Tests:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  pass with `GRADLE_EXIT=0`.
+- **Known limitations:** These derived metrics are informational context, not
+  a diagnosis or treatment target. Connected-device TalkBack, large-font,
+  theme and expandable-card checks remain open.
+- **Next phase:** Execute the documented device/console release checklist;
+  continue deep-screen cleanup only when it improves trust, accessibility or
+  reliability.
+
 ## Follow-up — Hydration tools visual consistency
 
 - **Status:** Complete locally; device/accessibility validation remains open

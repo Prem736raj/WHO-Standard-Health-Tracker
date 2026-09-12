@@ -420,3 +420,17 @@ These cannot be proven by a Windows unit/build run:
   passed with `GRADLE_EXIT=0`.
 - **Remaining gates:** Connected-device tab interactions, TalkBack, large-font
   and theme checks, plus signing/Firebase/Play Console work, remain owner-only.
+
+## BP advanced metrics visual consistency follow-up — 2026-09-13
+
+- **Status:** Code-fixable polish complete; device/accessibility validation
+  remains open.
+- **Changes:** Pulse pressure, MAP and heart-rate advanced cards/scales use
+  shared semantic health tokens and feature accents instead of isolated raw hex
+  colors. Reference ranges, interpretations and expansion behavior remain.
+- **Verification:** Focused Kotlin compilation and the complete `test`,
+  `lintRelease`, `assembleDebug`, `assembleRelease` and `bundleRelease` gate
+  passed with `GRADLE_EXIT=0`.
+- **Remaining gates:** Connected-device advanced-card rendering, TalkBack,
+  large-font, theme and interaction checks, plus signing/Firebase/Play Console
+  work, remain owner-only.

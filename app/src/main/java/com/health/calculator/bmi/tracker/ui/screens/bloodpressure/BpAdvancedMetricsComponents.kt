@@ -35,6 +35,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.health.calculator.bmi.tracker.data.model.*
+import com.health.calculator.bmi.tracker.ui.theme.FeatureColors
+import com.health.calculator.bmi.tracker.ui.theme.HealthColors
 
 // ─── Main Advanced Metrics Section ─────────────────────────────────────────────
 
@@ -100,14 +102,7 @@ private fun PulsePressureCard(analysis: PulsePressureAnalysis) {
     var isExpanded by remember { mutableStateOf(false) }
     val haptic = LocalHapticFeedback.current
 
-    val statusColor = when (analysis.category) {
-        PpCategory.VERY_NARROW -> Color(0xFF42A5F5)
-        PpCategory.NARROW -> Color(0xFF29B6F6)
-        PpCategory.NORMAL -> Color(0xFF4CAF50)
-        PpCategory.SLIGHTLY_WIDE -> Color(0xFFFFC107)
-        PpCategory.WIDE -> Color(0xFFFF9800)
-        PpCategory.VERY_WIDE -> Color(0xFFF44336)
-    }
+    val statusColor = pulsePressureColor(analysis.category)
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -133,13 +128,13 @@ private fun PulsePressureCard(analysis: PulsePressureAnalysis) {
                         modifier = Modifier
                             .size(40.dp)
                             .clip(RoundedCornerShape(10.dp))
-                            .background(Color(0xFF7E57C2).copy(alpha = 0.12f)),
+                            .background(FeatureColors.BpDeep.copy(alpha = 0.12f)),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             Icons.Outlined.CompareArrows,
                             contentDescription = null,
-                            tint = Color(0xFF7E57C2),
+                            tint = FeatureColors.BpDeep,
                             modifier = Modifier.size(22.dp)
                         )
                     }
@@ -202,12 +197,12 @@ private fun PulsePressureCard(analysis: PulsePressureAnalysis) {
                 position = analysis.normalizedPosition,
                 color = statusColor,
                 zones = listOf(
-                    ScaleZone("Very\nNarrow", Color(0xFF42A5F5), 0f, 0.15f),
-                    ScaleZone("Narrow", Color(0xFF29B6F6), 0.15f, 0.30f),
-                    ScaleZone("Normal", Color(0xFF4CAF50), 0.30f, 0.55f),
-                    ScaleZone("Slightly\nWide", Color(0xFFFFC107), 0.55f, 0.70f),
-                    ScaleZone("Wide", Color(0xFFFF9800), 0.70f, 0.85f),
-                    ScaleZone("Very\nWide", Color(0xFFF44336), 0.85f, 1f)
+                    ScaleZone("Very\nNarrow", pulsePressureColor(PpCategory.VERY_NARROW), 0f, 0.15f),
+                    ScaleZone("Narrow", pulsePressureColor(PpCategory.NARROW), 0.15f, 0.30f),
+                    ScaleZone("Normal", pulsePressureColor(PpCategory.NORMAL), 0.30f, 0.55f),
+                    ScaleZone("Slightly\nWide", pulsePressureColor(PpCategory.SLIGHTLY_WIDE), 0.55f, 0.70f),
+                    ScaleZone("Wide", pulsePressureColor(PpCategory.WIDE), 0.70f, 0.85f),
+                    ScaleZone("Very\nWide", pulsePressureColor(PpCategory.VERY_WIDE), 0.85f, 1f)
                 ),
                 valueLabel = "${analysis.value} mmHg"
             )
@@ -273,14 +268,7 @@ private fun PulsePressureCard(analysis: PulsePressureAnalysis) {
                                             .size(if (cat == analysis.category) 8.dp else 6.dp)
                                             .clip(CircleShape)
                                             .background(
-                                                when (cat) {
-                                                    PpCategory.VERY_NARROW -> Color(0xFF42A5F5)
-                                                    PpCategory.NARROW -> Color(0xFF29B6F6)
-                                                    PpCategory.NORMAL -> Color(0xFF4CAF50)
-                                                    PpCategory.SLIGHTLY_WIDE -> Color(0xFFFFC107)
-                                                    PpCategory.WIDE -> Color(0xFFFF9800)
-                                                    PpCategory.VERY_WIDE -> Color(0xFFF44336)
-                                                }
+                                                pulsePressureColor(cat)
                                             )
                                     )
                                     Text(
@@ -307,14 +295,7 @@ private fun MapCard(analysis: MapAnalysis) {
     var isExpanded by remember { mutableStateOf(false) }
     val haptic = LocalHapticFeedback.current
 
-    val statusColor = when (analysis.category) {
-        MapCategory.CRITICALLY_LOW -> Color(0xFFF44336)
-        MapCategory.LOW -> Color(0xFFFF9800)
-        MapCategory.NORMAL -> Color(0xFF4CAF50)
-        MapCategory.ELEVATED -> Color(0xFFFFC107)
-        MapCategory.HIGH -> Color(0xFFFF7043)
-        MapCategory.VERY_HIGH -> Color(0xFFD32F2F)
-    }
+    val statusColor = mapPressureColor(analysis.category)
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -339,13 +320,13 @@ private fun MapCard(analysis: MapAnalysis) {
                         modifier = Modifier
                             .size(40.dp)
                             .clip(RoundedCornerShape(10.dp))
-                            .background(Color(0xFF00897B).copy(alpha = 0.12f)),
+                            .background(FeatureColors.StepsDeep.copy(alpha = 0.12f)),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             Icons.Outlined.Speed,
                             contentDescription = null,
-                            tint = Color(0xFF00897B),
+                            tint = FeatureColors.StepsDeep,
                             modifier = Modifier.size(22.dp)
                         )
                     }
@@ -387,12 +368,12 @@ private fun MapCard(analysis: MapAnalysis) {
                 position = analysis.normalizedPosition,
                 color = statusColor,
                 zones = listOf(
-                    ScaleZone("Critical", Color(0xFFF44336), 0f, 0.17f),
-                    ScaleZone("Low", Color(0xFFFF9800), 0.17f, 0.30f),
-                    ScaleZone("Normal", Color(0xFF4CAF50), 0.30f, 0.60f),
-                    ScaleZone("Elevated", Color(0xFFFFC107), 0.60f, 0.72f),
-                    ScaleZone("High", Color(0xFFFF7043), 0.72f, 0.86f),
-                    ScaleZone("V.High", Color(0xFFD32F2F), 0.86f, 1f)
+                    ScaleZone("Critical", mapPressureColor(MapCategory.CRITICALLY_LOW), 0f, 0.17f),
+                    ScaleZone("Low", mapPressureColor(MapCategory.LOW), 0.17f, 0.30f),
+                    ScaleZone("Normal", mapPressureColor(MapCategory.NORMAL), 0.30f, 0.60f),
+                    ScaleZone("Elevated", mapPressureColor(MapCategory.ELEVATED), 0.60f, 0.72f),
+                    ScaleZone("High", mapPressureColor(MapCategory.HIGH), 0.72f, 0.86f),
+                    ScaleZone("V.High", mapPressureColor(MapCategory.VERY_HIGH), 0.86f, 1f)
                 ),
                 valueLabel = "${analysis.value} mmHg"
             )
@@ -426,14 +407,7 @@ private fun MapCard(analysis: MapAnalysis) {
                         Column(modifier = Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(stringResource(R.string.txt_reference_ranges), style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
                             MapCategory.entries.forEach { cat ->
-                                val catColor = when (cat) {
-                                    MapCategory.CRITICALLY_LOW -> Color(0xFFF44336)
-                                    MapCategory.LOW -> Color(0xFFFF9800)
-                                    MapCategory.NORMAL -> Color(0xFF4CAF50)
-                                    MapCategory.ELEVATED -> Color(0xFFFFC107)
-                                    MapCategory.HIGH -> Color(0xFFFF7043)
-                                    MapCategory.VERY_HIGH -> Color(0xFFD32F2F)
-                                }
+                                val catColor = mapPressureColor(cat)
                                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                                     Box(Modifier.size(if (cat == analysis.category) 8.dp else 6.dp).clip(CircleShape).background(catColor))
                                     Text(
@@ -459,15 +433,7 @@ private fun HeartRateCard(analysis: HeartRateAnalysis) {
     var isExpanded by remember { mutableStateOf(false) }
     val haptic = LocalHapticFeedback.current
 
-    val statusColor = when (analysis.category) {
-        HrCategory.SEVERELY_LOW -> Color(0xFFD32F2F)
-        HrCategory.BRADYCARDIA -> Color(0xFFFF9800)
-        HrCategory.ATHLETIC -> Color(0xFF2196F3)
-        HrCategory.NORMAL -> Color(0xFF4CAF50)
-        HrCategory.ELEVATED -> Color(0xFFFFC107)
-        HrCategory.TACHYCARDIA -> Color(0xFFFF7043)
-        HrCategory.DANGEROUS -> Color(0xFFB71C1C)
-    }
+    val statusColor = heartRateColor(analysis.category)
 
     val infiniteTransition = rememberInfiniteTransition(label = "hr_heartbeat")
     val heartScale by infiniteTransition.animateFloat(
@@ -496,12 +462,12 @@ private fun HeartRateCard(analysis: HeartRateAnalysis) {
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
                     Box(
                         modifier = Modifier.size(40.dp).clip(RoundedCornerShape(10.dp))
-                            .background(Color(0xFFE91E63).copy(alpha = 0.12f)),
+                            .background(FeatureColors.HeartDeep.copy(alpha = 0.12f)),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             Icons.Filled.Favorite, contentDescription = null,
-                            tint = Color(0xFFE91E63),
+                            tint = FeatureColors.HeartDeep,
                             modifier = Modifier.size(22.dp).graphicsLayer { scaleX = heartScale; scaleY = heartScale }
                         )
                     }
@@ -537,12 +503,12 @@ private fun HeartRateCard(analysis: HeartRateAnalysis) {
                 position = analysis.normalizedPosition,
                 color = statusColor,
                 zones = listOf(
-                    ScaleZone("Very\nLow", Color(0xFFD32F2F), 0f, 0.10f),
-                    ScaleZone("Brady", Color(0xFFFF9800), 0.10f, 0.28f),
-                    ScaleZone("Normal", Color(0xFF4CAF50), 0.28f, 0.63f),
-                    ScaleZone("Elevated", Color(0xFFFFC107), 0.63f, 0.75f),
-                    ScaleZone("Tachy", Color(0xFFFF7043), 0.75f, 0.88f),
-                    ScaleZone("Danger", Color(0xFFB71C1C), 0.88f, 1f)
+                    ScaleZone("Very\nLow", heartRateColor(HrCategory.SEVERELY_LOW), 0f, 0.10f),
+                    ScaleZone("Brady", heartRateColor(HrCategory.BRADYCARDIA), 0.10f, 0.28f),
+                    ScaleZone("Normal", heartRateColor(HrCategory.NORMAL), 0.28f, 0.63f),
+                    ScaleZone("Elevated", heartRateColor(HrCategory.ELEVATED), 0.63f, 0.75f),
+                    ScaleZone("Tachy", heartRateColor(HrCategory.TACHYCARDIA), 0.75f, 0.88f),
+                    ScaleZone("Danger", heartRateColor(HrCategory.DANGEROUS), 0.88f, 1f)
                 ),
                 valueLabel = "${analysis.bpm} BPM"
             )
@@ -589,15 +555,7 @@ private fun HeartRateCard(analysis: HeartRateAnalysis) {
                         Column(modifier = Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(stringResource(R.string.txt_reference_ranges), style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
                             HrCategory.entries.filter { it != HrCategory.ATHLETIC }.forEach { cat ->
-                                val catColor = when (cat) {
-                                    HrCategory.SEVERELY_LOW -> Color(0xFFD32F2F)
-                                    HrCategory.BRADYCARDIA -> Color(0xFFFF9800)
-                                    HrCategory.ATHLETIC -> Color(0xFF2196F3)
-                                    HrCategory.NORMAL -> Color(0xFF4CAF50)
-                                    HrCategory.ELEVATED -> Color(0xFFFFC107)
-                                    HrCategory.TACHYCARDIA -> Color(0xFFFF7043)
-                                    HrCategory.DANGEROUS -> Color(0xFFB71C1C)
-                                }
+                                val catColor = heartRateColor(cat)
                                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                                     Box(Modifier.size(if (cat == analysis.category) 8.dp else 6.dp).clip(CircleShape).background(catColor))
                                     Text(
@@ -710,4 +668,31 @@ private fun MetricHorizontalScale(
             }
         }
     }
+}
+
+private fun pulsePressureColor(category: PpCategory): Color = when (category) {
+    PpCategory.VERY_NARROW, PpCategory.NARROW -> HealthColors.Good
+    PpCategory.NORMAL -> HealthColors.Healthy
+    PpCategory.SLIGHTLY_WIDE -> HealthColors.Warning
+    PpCategory.WIDE -> HealthColors.Caution
+    PpCategory.VERY_WIDE -> HealthColors.Danger
+}
+
+private fun mapPressureColor(category: MapCategory): Color = when (category) {
+    MapCategory.CRITICALLY_LOW -> HealthColors.Danger
+    MapCategory.LOW -> HealthColors.Caution
+    MapCategory.NORMAL -> HealthColors.Healthy
+    MapCategory.ELEVATED -> HealthColors.Warning
+    MapCategory.HIGH -> HealthColors.Caution
+    MapCategory.VERY_HIGH -> HealthColors.Danger
+}
+
+private fun heartRateColor(category: HrCategory): Color = when (category) {
+    HrCategory.SEVERELY_LOW -> HealthColors.Danger
+    HrCategory.BRADYCARDIA -> HealthColors.Caution
+    HrCategory.ATHLETIC -> HealthColors.Good
+    HrCategory.NORMAL -> HealthColors.Healthy
+    HrCategory.ELEVATED -> HealthColors.Warning
+    HrCategory.TACHYCARDIA -> HealthColors.Caution
+    HrCategory.DANGEROUS -> HealthColors.Danger
 }
